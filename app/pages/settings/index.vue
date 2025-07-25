@@ -31,6 +31,7 @@ import { localDatabase } from '~/utils/local-database'
 useMeta({ title: `${appTitle} | Settings` })
 
 const $q = useQuasar()
+const router = useRouter()
 const logger = useLogger()
 const { goBack } = useRouting()
 const supabase = useSupabaseClient()
@@ -75,8 +76,9 @@ function onLogout() {
   }).onOk(async () => {
     try {
       $q.loading.show()
-      await supabase.auth.signOut() // TODO - Triggers redirect to login page right away?
+      await supabase.auth.signOut()
       logger.info('Successfully logged out')
+      await router.replace('/login')
     } catch (error) {
       logger.error('Error logging out', error as Error)
     } finally {
@@ -234,8 +236,9 @@ function onResetSettings() {
       $q.loading.show()
       await localDatabase.table(localTables.enum.settings).clear()
       await localDatabase.initializeSettings()
-      await supabase.auth.signOut() // TODO - Triggers redirect to login page right away?
+      await supabase.auth.signOut()
       logger.info('Successfully reset Settings')
+      await router.replace('/login')
     } catch (error) {
       logger.error('Error reseting Settings', error as Error)
     } finally {

@@ -7,6 +7,7 @@ import { appTitle } from '~~/shared/constants'
 useMeta({ title: `${appTitle} | Login` })
 
 const $q = useQuasar()
+const router = useRouter()
 const logger = useLogger()
 const supabase = useSupabaseClient()
 const settingsStore = useSettingsStore()
@@ -26,8 +27,7 @@ async function login() {
     if (loginError) {
       logger.error(loginError.message, loginError)
     } else {
-      logger.info('Login successful')
-      // TODO - Redirect here?
+      await router.replace('/')
     }
   } catch (error) {
     logger.error('Unexpected login error', error as Error)
@@ -52,7 +52,7 @@ async function login() {
         autofocus
         class="q-mb-md"
         :rules="[
-          (val: string) => emailSchema.safeParse(val).success || 'Must be a valid email address',
+          (val: string) => emailSchema.safeParse(val).success || 'Must use a valid email address',
         ]"
         :disable="$q.loading.isActive"
       />
@@ -84,7 +84,7 @@ async function login() {
 }
 
 .content-extra {
-  max-width: 400px;
+  max-width: 25rem;
   width: 100%;
 }
 </style>
