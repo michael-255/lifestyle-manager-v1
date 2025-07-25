@@ -41,7 +41,7 @@ jobs:
       - name: Commit File Changes
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
-          commit_message: GitHub Action - Generate Files
+          commit_message: Update Supabase Types
           branch: ${{ github.head_ref }}
           file_pattern: |
             shared/types/supabase.ts

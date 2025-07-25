@@ -5,11 +5,20 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 ## TODO
 
 - **Supabase**
-  - Test Supabase GitHub actions
+  - Create a Supabase User
+  - Login screen
   - Test SQL for solutions
   - Test doing subscriptions (live queries)
 
 ## Fitness
+
+- UX Design
+
+## Budget
+
+- UX Design
+
+## Measurements
 
 - UX Design
 

@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     },
   },
   supabase: {
-    redirect: false, // TODO - May go back to true when ready for auth
+    redirect: true, // To login page
     url: process.env.NUXT_PUBLIC_SUPABASE_URL,
     key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
   },
