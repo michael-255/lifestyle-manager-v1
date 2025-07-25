@@ -24,6 +24,9 @@ async function login() {
       password: password.value,
     })
 
+    console.log('NUXT_PUBLIC_SUPABASE_URL:', process.env.NUXT_PUBLIC_SUPABASE_URL)
+    console.log('NUXT_PUBLIC_SUPABASE_KEY:', process.env.NUXT_PUBLIC_SUPABASE_KEY)
+
     if (loginError) {
       logger.error(loginError.message, loginError)
     } else {

@@ -18,16 +18,16 @@ export default defineNuxtConfig({
   ],
   css: ['~/assets/css/main.css'],
   app: { baseURL: '/lifestyle-manager-v1/' },
-  runtimeConfig: {
-    public: {
-      url: process.env.NUXT_PUBLIC_SUPABASE_URL,
-      key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
-    },
-  },
+  // runtimeConfig: {
+  //   public: {
+  //     url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+  //     key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
+  //   },
+  // },
   supabase: {
     redirect: true, // To login page
-    url: process.env.NUXT_PUBLIC_SUPABASE_URL,
-    key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
+    // url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    // key: process.env.NUXT_PUBLIC_SUPABASE_KEY,
   },
   quasar: {
     config: {
