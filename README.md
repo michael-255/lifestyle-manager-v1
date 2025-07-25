@@ -4,20 +4,14 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## TODO
 
-- Timezone: `Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York';`
-
 - **Supabase**
-  - Reactivate Supabase test project
-    - Setup GitHub with secrets
-      - SUPABASE_PROJECT_ID
-      - SUPABASE_ACCESS_TOKEN
-      - SUPABASE_DB_PASSWORD
-    - Test Supabase GitHub actions
-    - Test SQL for solutions
+  - Test Supabase GitHub actions
+  - Test SQL for solutions
+  - Test doing subscriptions (live queries)
 
-## Project Goals
+## Fitness
 
-- Provide a test route for database subscriptions (live queries)
+- UX Design
 
 ## Setup
 
