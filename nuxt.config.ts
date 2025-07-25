@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     'nuxt-quasar-ui',
   ],
   css: ['~/assets/css/main.css'],
-  app: { baseURL: '/nuxt-template-v1/' },
+  app: { baseURL: '/lifestyle-manager-v1/' },
   runtimeConfig: {
     public: {
       url: process.env.NUXT_PUBLIC_SUPABASE_URL,

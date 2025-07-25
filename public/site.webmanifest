@@ -1,7 +1,7 @@
 {
   "name": "Web App Template",
   "short_name": "Web App Template",
-  "start_url": "/nuxt-template-v1/",
+  "start_url": "/lifestyle-manager-v1/",
   "theme_color": "#1976d2",
   "background_color": "black",
   "display": "standalone",
