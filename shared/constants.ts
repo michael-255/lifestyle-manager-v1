@@ -1,5 +1,7 @@
 import {
+  symRoundedAdd2,
   symRoundedAddCircle,
+  symRoundedAssignment,
   symRoundedBugReport,
   symRoundedCalendarToday,
   symRoundedCancel,
@@ -13,6 +15,7 @@ import {
   symRoundedEventAvailable,
   symRoundedExitToApp,
   symRoundedFeatureSearch,
+  symRoundedFitnessCenter,
   symRoundedGridView,
   symRoundedInfo,
   symRoundedLock,
@@ -31,6 +34,7 @@ import {
   symRoundedSmartToy,
   symRoundedStat2,
   symRoundedStorage,
+  symRoundedTactic,
   symRoundedTune,
   symRoundedViewWeek,
   symRoundedWarning,
@@ -95,9 +99,13 @@ export const dashboardIcon = symRoundedGridView
 export const logsIcon = symRoundedFeatureSearch
 export const notificationsIcon = symRoundedNotifications
 export const settingsIcon = symRoundedSettings
+export const fitnessIcon = symRoundedFitnessCenter
+export const planIcon = symRoundedTactic
+export const workoutIcon = symRoundedAssignment
 
 // Actions
 export const saveIcon = symRoundedSave
+export const addIcon = symRoundedAdd2
 export const createIcon = symRoundedAddCircle
 export const editIcon = symRoundedEdit
 export const closeIcon = symRoundedClose

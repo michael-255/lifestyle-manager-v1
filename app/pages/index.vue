@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { appTitle, examplesIcon, settingsIcon } from '#shared/constants'
+import { appTitle, fitnessIcon, settingsIcon } from '#shared/constants'
 import { useMeta } from 'quasar'
 
-useMeta({ title: `${appTitle} | Dashboard` })
+useMeta({ title: `${appTitle} | Applications` })
 
-const dashboardButtons = [
+const applicationButtons = [
   {
-    label: 'Examples',
-    icon: examplesIcon,
+    label: 'Fitness',
+    icon: fitnessIcon,
     color: 'primary',
-    to: '/examples',
+    to: '/fitness',
   },
 ]
 </script>
@@ -20,16 +20,16 @@ const dashboardButtons = [
   </SharedHeading>
 
   <div class="row q-col-gutter-md q-pa-sm">
-    <div v-for="button in dashboardButtons" :key="button.label" class="col-6">
+    <div v-for="button in applicationButtons" :key="button.label" class="col-6">
       <QBtn
-        class="dashboard-btn full-width q-py-lg"
+        class="application-btn full-width q-py-lg"
         stack
         glossy
         no-caps
         :color="button.color"
         :to="button.to"
       >
-        <!-- <QBadge color="red" floating size="lg">7 </QBadge> -->
+        <!-- <QBadge color="red" floating>7 </QBadge> -->
         <QIcon :name="button.icon" size="4rem" />
         <div class="q-mt-sm text-h6">
           {{ button.label }}
@@ -40,8 +40,8 @@ const dashboardButtons = [
 </template>
 
 <style scoped>
-.dashboard-btn {
-  height: 280;
-  border-radius: 8px;
+.application-btn {
+  height: 9.5rem;
+  border-radius: 1rem;
 }
 </style>

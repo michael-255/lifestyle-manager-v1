@@ -6,7 +6,7 @@ body {
 
 /* Standard width for page content */
 .page-width-limit {
-  max-width: 800px;
+  max-width: 50rem;
   width: 100%;
   overflow-wrap: break-word;
   word-break: break-word;

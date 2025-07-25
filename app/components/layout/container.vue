@@ -21,6 +21,6 @@ import { goToTopIcon } from '#shared/constants'
 
 <style scoped>
 .page-scroller-space {
-  height: 60px;
+  height: 4rem;
 }
 </style>
