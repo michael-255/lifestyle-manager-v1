@@ -39,4 +39,9 @@ jobs:
         run: supabase db push
 
       - name: Deploy Edge Functions
-        run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+        run: |
+          if [ -d supabase/functions ] && [ "$(ls -A supabase/functions)" ]; then
+            supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+          else
+            echo "No Edge Functions to deploy."
+          fi
