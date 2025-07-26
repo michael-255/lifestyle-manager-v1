@@ -2,13 +2,7 @@
 
 Lifestyle Manager is a project for managing your daily activities, health, and wellness.
 
-## TODO
-
-- **Supabase**
-  - Test SQL for solutions
-  - Test doing subscriptions (live queries)
-
-## Fitness
+## Fitness TODO
 
 **Routing**
 
@@ -25,11 +19,25 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
     - `Delete`
 - `/fitness/active-workout`
 
-## Budget
+**Today View**
+
+- Show all workouts that contain a schedule for the current day
+- Need the following data:
+  - `id`
+  - `name`
+  - `description`
+  - `schedule`
+  - `is_locked`
+  - Some data from the most recent `workout_result`, if any:
+    - `last_id`
+    - `last_created_at`
+    - `last_note`
+
+## Budget TODO
 
 - UX Design
 
-## Measurements
+## Measurements TODO
 
 - UX Design
 
