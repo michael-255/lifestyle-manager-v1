@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { appTitle } from '#shared/constants'
+import type { Database } from '#shared/types/supabase'
 
 useMeta({ title: `${appTitle} | Fitness: Today's Plan` })
 
@@ -7,7 +8,7 @@ definePageMeta({
   layout: 'fitness',
 })
 
-const supabase = useSupabaseClient()
+const supabase = useSupabaseClient<Database>()
 
 const recordsList = [
   {
