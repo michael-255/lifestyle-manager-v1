@@ -34,10 +34,6 @@ jobs:
       - name: Link to Supabase project
         run: supabase link --project-ref $SUPABASE_PROJECT_ID
 
-      - name: Generate Supabase types
-        run: |
-          npx supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" --schema public > shared/types/supabase.ts
-
       - name: Commit File Changes
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
@@ -56,3 +52,7 @@ jobs:
           else
             echo "No Edge Functions to deploy."
           fi
+
+      - name: Generate Supabase types
+        run: |
+          npx supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" --schema public > shared/types/supabase.ts
