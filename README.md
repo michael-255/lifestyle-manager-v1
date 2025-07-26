@@ -7,8 +7,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 - **Supabase**
   - Test SQL for solutions
   - Test doing subscriptions (live queries)
-  - Update enums: `Weight` -> `Weightlifting`
-  - Add Table COMMENTS
 
 ## Fitness
 
