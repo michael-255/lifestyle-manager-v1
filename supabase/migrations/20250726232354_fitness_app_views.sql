@@ -26,14 +26,14 @@ LEFT JOIN LATERAL (
 WHERE
   (
     -- Always show if 'Daily'
-    'Daily' = ANY(w.schedule)
+    'Daily' = ANY(w.schedule::text[])
     OR
     -- Show if today matches a weekday in schedule
-    TRIM(TO_CHAR(CURRENT_DATE, 'Day')) = ANY(w.schedule)
+    TRIM(TO_CHAR(CURRENT_DATE, 'Day')) = ANY(w.schedule::text[])
     OR
     -- Show if 'Weekly' and last result is before this week's
     (
-      'Weekly' = ANY(w.schedule)
+      'Weekly' = ANY(w.schedule::text[])
       AND (
         wr.created_at IS NULL
         OR wr.created_at::date < (CURRENT_DATE - INTERVAL '7 days')
