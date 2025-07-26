@@ -239,8 +239,8 @@ export type Database = {
       exercise_type:
         | "Checklist"
         | "Cardio"
-        | "Weight"
-        | "Sided Weight"
+        | "Weightlifting"
+        | "Sided Weightlifting"
         | "Climbing"
       workout_schedule_type:
         | "Daily"
@@ -382,8 +382,8 @@ export const Constants = {
       exercise_type: [
         "Checklist",
         "Cardio",
-        "Weight",
-        "Sided Weight",
+        "Weightlifting",
+        "Sided Weightlifting",
         "Climbing",
       ],
       workout_schedule_type: [
