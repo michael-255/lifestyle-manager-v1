@@ -14,7 +14,220 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      exercise_results: {
+        Row: {
+          created_at: string
+          data: Json | null
+          exercise_id: string
+          id: string
+          is_locked: boolean | null
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at: string
+          data?: Json | null
+          exercise_id: string
+          id?: string
+          is_locked?: boolean | null
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          exercise_id?: string
+          id?: string
+          is_locked?: boolean | null
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_results_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercises: {
+        Row: {
+          created_at: string
+          default_sets: number | null
+          description: string | null
+          id: string
+          is_locked: boolean | null
+          name: string
+          rest_timer: number | null
+          type: Database["public"]["Enums"]["exercise_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at: string
+          default_sets?: number | null
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          name: string
+          rest_timer?: number | null
+          type: Database["public"]["Enums"]["exercise_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          default_sets?: number | null
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          name?: string
+          rest_timer?: number | null
+          type?: Database["public"]["Enums"]["exercise_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      workout_exercises: {
+        Row: {
+          exercise_id: string
+          position: number
+          workout_id: string
+        }
+        Insert: {
+          exercise_id: string
+          position: number
+          workout_id: string
+        }
+        Update: {
+          exercise_id?: string
+          position?: number
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_exercises_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_result_exercise_results: {
+        Row: {
+          exercise_result_id: string
+          position: number
+          workout_result_id: string
+        }
+        Insert: {
+          exercise_result_id: string
+          position: number
+          workout_result_id: string
+        }
+        Update: {
+          exercise_result_id?: string
+          position?: number
+          workout_result_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_result_exercise_results_exercise_result_id_fkey"
+            columns: ["exercise_result_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_result_exercise_results_workout_result_id_fkey"
+            columns: ["workout_result_id"]
+            isOneToOne: false
+            referencedRelation: "workout_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_results: {
+        Row: {
+          created_at: string
+          finished_at: string | null
+          id: string
+          is_locked: boolean | null
+          note: string | null
+          user_id: string
+          workout_id: string
+        }
+        Insert: {
+          created_at: string
+          finished_at?: string | null
+          id?: string
+          is_locked?: boolean | null
+          note?: string | null
+          user_id: string
+          workout_id: string
+        }
+        Update: {
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          is_locked?: boolean | null
+          note?: string | null
+          user_id?: string
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_results_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workouts: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_locked: boolean | null
+          name: string
+          schedule:
+            | Database["public"]["Enums"]["workout_schedule_type"][]
+            | null
+          user_id: string
+        }
+        Insert: {
+          created_at: string
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          name: string
+          schedule?:
+            | Database["public"]["Enums"]["workout_schedule_type"][]
+            | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_locked?: boolean | null
+          name?: string
+          schedule?:
+            | Database["public"]["Enums"]["workout_schedule_type"][]
+            | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +236,22 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      exercise_type:
+        | "Checklist"
+        | "Cardio"
+        | "Weight"
+        | "Sided Weight"
+        | "Climbing"
+      workout_schedule_type:
+        | "Daily"
+        | "Weekly"
+        | "Sunday"
+        | "Monday"
+        | "Tuesday"
+        | "Wednesday"
+        | "Thursday"
+        | "Friday"
+        | "Saturday"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +378,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      exercise_type: [
+        "Checklist",
+        "Cardio",
+        "Weight",
+        "Sided Weight",
+        "Climbing",
+      ],
+      workout_schedule_type: [
+        "Daily",
+        "Weekly",
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
+    },
   },
 } as const
