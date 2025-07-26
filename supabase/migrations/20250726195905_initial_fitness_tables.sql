@@ -12,7 +12,7 @@ CREATE TYPE public.exercise_type AS ENUM (
 
 COMMENT ON TYPE public.exercise_type IS 'Type of exercise, used to determine what the user can record.';
 
-CREATE TYPE public.schedule_type AS ENUM (
+CREATE TYPE public.workout_schedule_type AS ENUM (
     -- By Time
     'Daily',
     'Weekly',
@@ -26,7 +26,7 @@ CREATE TYPE public.schedule_type AS ENUM (
     'Saturday'
 );
 
-COMMENT ON TYPE public.schedule_type IS 'Schedule type for workouts, used to determine when the workout should be performed.';
+COMMENT ON TYPE public.workout_schedule_type IS 'Schedule type for workouts, used to determine when the workout should be performed.';
 
 --
 -- Main Tables
@@ -42,7 +42,7 @@ CREATE TABLE public.exercises (
     default_sets INTEGER DEFAULT 1,
     rest_timer INTEGER,
     is_locked BOOLEAN DEFAULT FALSE
-)
+);
 
 COMMENT ON COLUMN public.exercises.id IS 'Unique identifier for the exercise.';
 COMMENT ON COLUMN public.exercises.user_id IS 'ID of the user who owns the exercise.';
@@ -60,9 +60,9 @@ CREATE TABLE public.workouts (
     created_at TIMESTAMPTZ NOT NULL,
     name TEXT NOT NULL,
     description TEXT,
-    schedule public.schedule_type[],
+    schedule public.workout_schedule_type[],
     is_locked BOOLEAN DEFAULT FALSE
-)
+);
 
 COMMENT ON COLUMN public.workouts.id IS 'Unique identifier for the workout.';
 COMMENT ON COLUMN public.workouts.user_id IS 'ID of the user who owns the workout.';
@@ -84,7 +84,7 @@ CREATE TABLE public.exercise_results (
     note TEXT,
     data JSONB, -- For all potential exercise data
     is_locked BOOLEAN DEFAULT FALSE
-)
+);
 
 COMMENT ON COLUMN public.exercise_results.id IS 'Unique identifier for the exercise result.';
 COMMENT ON COLUMN public.exercise_results.user_id IS 'ID of the user who owns the exercise result.';
@@ -102,7 +102,7 @@ CREATE TABLE public.workout_results (
     finished_at TIMESTAMPTZ,
     note TEXT,
     is_locked BOOLEAN DEFAULT FALSE
-)
+);
 
 COMMENT ON COLUMN public.workout_results.id IS 'Unique identifier for the workout result.';
 COMMENT ON COLUMN public.workout_results.user_id IS 'ID of the user who owns the workout result.';
@@ -122,7 +122,7 @@ CREATE TABLE public.workout_exercises (
     position INTEGER NOT NULL,
     UNIQUE (workout_id, position),
     PRIMARY KEY (workout_id, exercise_id)
-)
+);
 
 COMMENT ON COLUMN public.workout_exercises.workout_id IS 'ID of the workout to which the exercise belongs.';
 COMMENT ON COLUMN public.workout_exercises.exercise_id IS 'ID of the exercise in the workout.';
@@ -134,7 +134,7 @@ CREATE TABLE public.workout_result_exercise_results (
     position INTEGER NOT NULL,
     UNIQUE (workout_result_id, position),
     PRIMARY KEY (workout_result_id, exercise_result_id)
-)
+);
 
 COMMENT ON COLUMN public.workout_result_exercise_results.workout_result_id IS 'ID of the workout result to which the exercise result belongs.';
 COMMENT ON COLUMN public.workout_result_exercise_results.exercise_result_id IS 'ID of the exercise result in the workout result.';
