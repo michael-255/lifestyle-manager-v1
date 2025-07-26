@@ -6,6 +6,9 @@ useMeta({ title: `${appTitle} | Fitness: Today's Plan` })
 definePageMeta({
   layout: 'fitness',
 })
+
+const supabase = useSupabaseClient()
+
 const recordsList = [
   {
     id: 1,
@@ -23,10 +26,20 @@ const recordsList = [
 ]
 
 const records = ref(recordsList)
+
+function onTest() {
+  supabase.from('exercises').insert({
+    name: 'Test Exercise',
+    description: 'This is a test exercise.',
+    type: 'Weight',
+  })
+}
 </script>
 
 <template>
-  <SharedHeading title="Today's Plan" />
+  <SharedHeading title="Today's Plan">
+    <QBtn icon="add" label="Test" color="primary" @click="onTest" />
+  </SharedHeading>
 
   <QList padding>
     <div v-if="records.length === 0">

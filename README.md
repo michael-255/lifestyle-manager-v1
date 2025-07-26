@@ -7,18 +7,13 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 - **Supabase**
   - Test SQL for solutions
   - Test doing subscriptions (live queries)
+  - Update enums: `Weight` -> `Weightlifting`
+  - Add Table COMMENTS
 
 ## Fitness
 
-**Design**
-
-- Today's Plan page should only show workouts for today
-- Workouts should be sorted alphabetically
-
 **Routing**
 
-- `/fitness` (Today's Plan)
-  - Cards for each workout sorted alphabetically
 - `/fitness/data`
   - Links to access each data table
     - `fitness/view-workouts`
