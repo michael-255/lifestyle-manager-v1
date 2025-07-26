@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import {
+  calendarIcon,
   cardMenuIcon,
   chartsIcon,
   deleteIcon,
   editIcon,
   inspectIcon,
+  noteIcon,
   startIcon,
 } from '#shared/constants'
 
@@ -52,57 +54,68 @@ function onStart() {
           </QItemSection>
 
           <QItemSection top side>
-            <div class="row">
-              <QBtn :icon="cardMenuIcon" flat round>
-                <QMenu
-                  auto-close
-                  anchor="top right"
-                  transition-show="flip-right"
-                  transition-hide="flip-left"
-                >
-                  <QList>
-                    <QItem clickable @click="onCharts">
-                      <QItemSection avatar>
-                        <QIcon color="cyan" :name="chartsIcon" />
-                      </QItemSection>
+            <QBtn :icon="cardMenuIcon" flat round>
+              <QMenu
+                auto-close
+                anchor="top right"
+                transition-show="flip-right"
+                transition-hide="flip-left"
+              >
+                <QList>
+                  <QItem clickable @click="onCharts">
+                    <QItemSection avatar>
+                      <QIcon color="cyan" :name="chartsIcon" />
+                    </QItemSection>
 
-                      <QItemSection>Charts</QItemSection>
-                    </QItem>
+                    <QItemSection>Charts</QItemSection>
+                  </QItem>
 
-                    <QItem clickable @click="onInspect">
-                      <QItemSection avatar>
-                        <QIcon color="primary" :name="inspectIcon" />
-                      </QItemSection>
+                  <QItem clickable @click="onInspect">
+                    <QItemSection avatar>
+                      <QIcon color="primary" :name="inspectIcon" />
+                    </QItemSection>
 
-                      <QItemSection>Inspect</QItemSection>
-                    </QItem>
+                    <QItemSection>Inspect</QItemSection>
+                  </QItem>
 
-                    <QItem clickable @click="onEdit">
-                      <QItemSection avatar>
-                        <QIcon color="amber" :name="editIcon" />
-                      </QItemSection>
+                  <QItem clickable @click="onEdit">
+                    <QItemSection avatar>
+                      <QIcon color="amber" :name="editIcon" />
+                    </QItemSection>
 
-                      <QItemSection>Edit</QItemSection>
-                    </QItem>
+                    <QItemSection>Edit</QItemSection>
+                  </QItem>
 
-                    <QItem clickable @click="onDelete">
-                      <QItemSection avatar>
-                        <QIcon color="negative" :name="deleteIcon" />
-                      </QItemSection>
+                  <QItem clickable @click="onDelete">
+                    <QItemSection avatar>
+                      <QIcon color="negative" :name="deleteIcon" />
+                    </QItemSection>
 
-                      <QItemSection>Delete</QItemSection>
-                    </QItem>
-                  </QList>
-                </QMenu>
-              </QBtn>
-            </div>
+                    <QItemSection>Delete</QItemSection>
+                  </QItem>
+                </QList>
+              </QMenu>
+            </QBtn>
+          </QItemSection>
+        </QItem>
+
+        <QItem v-if="record.last_note">
+          <QItemSection>
+            <QItemLabel>
+              <QIcon size="xs" class="q-pb-xs" :name="noteIcon" />
+              Previous Note
+            </QItemLabel>
+            <QItemLabel caption class="text-italic">{{ record.last_note }}</QItemLabel>
           </QItemSection>
         </QItem>
 
         <QItem>
           <QItemSection>
-            <QItemLabel>Scheduled</QItemLabel>
-            <QItemLabel caption class="text-italic">{{ record.scheduled }}</QItemLabel>
+            <QItemLabel>
+              <QIcon size="xs" class="q-pb-xs" :name="calendarIcon" />
+              Schedule
+            </QItemLabel>
+            <QItemLabel caption class="text-italic">{{ record.schedule }}</QItemLabel>
           </QItemSection>
         </QItem>
 

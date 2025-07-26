@@ -11,13 +11,14 @@ const recordsList = [
     id: 1,
     name: 'Barbell Strength - A',
     last_created_at: new Date().toISOString(),
-    scheduled: ['Monday', 'Wednesday', 'Friday'],
+    schedule: ['Monday', 'Wednesday', 'Friday'],
   },
   {
     id: 2,
     name: 'Warmup & Posture',
     last_created_at: new Date().toISOString(),
-    scheduled: ['Daily'],
+    last_note: 'Focus on hip mobility and shoulder stability.',
+    schedule: ['Daily'],
   },
 ]
 

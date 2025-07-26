@@ -37,6 +37,7 @@ import {
   symRoundedSettings,
   symRoundedSmartToy,
   symRoundedStat2,
+  symRoundedStickyNote2,
   symRoundedStorage,
   symRoundedTune,
   symRoundedViewWeek,
@@ -127,6 +128,7 @@ export const searchIcon = symRoundedSearch
 export const cardMenuIcon = symRoundedLists
 export const startIcon = symRoundedPlayArrow
 export const completedIcon = symRoundedCheckCircle
+export const noteIcon = symRoundedStickyNote2
 
 // Design Elements
 export const userIcon = symRoundedPerson
