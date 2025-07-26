@@ -116,6 +116,13 @@ export type Database = {
             foreignKeyName: "workout_exercises_workout_id_fkey"
             columns: ["workout_id"]
             isOneToOne: false
+            referencedRelation: "todays_workouts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_exercises_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
             referencedRelation: "workouts"
             referencedColumns: ["id"]
           },
@@ -144,6 +151,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "exercise_results"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_result_exercise_results_workout_result_id_fkey"
+            columns: ["workout_result_id"]
+            isOneToOne: false
+            referencedRelation: "todays_workouts"
+            referencedColumns: ["last_id"]
           },
           {
             foreignKeyName: "workout_result_exercise_results_workout_result_id_fkey"
@@ -183,6 +197,13 @@ export type Database = {
           workout_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "workout_results_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "todays_workouts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "workout_results_workout_id_fkey"
             columns: ["workout_id"]
@@ -230,10 +251,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      todays_workouts: {
+        Row: {
+          description: string | null
+          id: string | null
+          is_locked: boolean | null
+          last_created_at: string | null
+          last_id: string | null
+          last_note: string | null
+          name: string | null
+          schedule:
+            | Database["public"]["Enums"]["workout_schedule_type"][]
+            | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      seed_workouts_for_user: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       exercise_type:
