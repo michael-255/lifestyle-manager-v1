@@ -27,18 +27,27 @@ const recordsList = [
 
 const records = ref(recordsList)
 
-function onTest() {
-  supabase.from('exercises').insert({
+async function onTest() {
+  const { data, error } = await supabase.from('exercises').insert({
+    user_id: useSupabaseUser().value?.id,
+    created_at: new Date().toISOString(),
     name: 'Test Exercise',
     description: 'This is a test exercise.',
-    type: 'Weight',
+    type: 'Weightlifting',
   })
+
+  if (error) {
+    console.error('Error inserting test exercise:', error)
+  } else {
+    console.log('Test exercise inserted:', data)
+    // Optionally, you can refresh the records or show a success message
+  }
 }
 </script>
 
 <template>
   <SharedHeading title="Today's Plan">
-    <QBtn icon="add" label="Test" color="primary" @click="onTest" />
+    <QBtn icon="add" label="Test" color="accent" @click="onTest" />
   </SharedHeading>
 
   <QList padding>
