@@ -30,8 +30,6 @@ const records = ref(recordsList)
 
 async function onTest() {
   const { data, error } = await supabase.from('exercises').insert({
-    user_id: useSupabaseUser().value?.id,
-    created_at: new Date().toISOString(),
     name: 'Test Exercise',
     description: 'This is a test exercise.',
     type: 'Weightlifting',

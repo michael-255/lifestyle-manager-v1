@@ -34,7 +34,7 @@ COMMENT ON TYPE public.workout_schedule_type IS 'Schedule type for workouts, use
 
 CREATE TABLE public.exercises (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     name TEXT NOT NULL,
     description TEXT,
@@ -57,7 +57,7 @@ COMMENT ON COLUMN public.exercises.is_locked IS 'Indicates if the exercise is lo
 
 CREATE TABLE public.workouts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     name TEXT NOT NULL,
     description TEXT,
@@ -80,7 +80,7 @@ COMMENT ON COLUMN public.workouts.is_locked IS 'Indicates if the workout is lock
 
 CREATE TABLE public.exercise_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
     exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     note TEXT,
@@ -99,7 +99,7 @@ COMMENT ON COLUMN public.exercise_results.is_locked IS 'Indicates if the exercis
 
 CREATE TABLE public.workout_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
     workout_id UUID NOT NULL REFERENCES public.workouts(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     finished_at TIMESTAMPTZ,
