@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { appTitle } from '#shared/constants'
+import { addIcon, appTitle, databaseIcon } from '#shared/constants'
+import { recordCount } from '#shared/utils/utils'
 
-useMeta({ title: `${appTitle} | Fitness Data` })
+useMeta({ title: `${appTitle} | Fitness: Data Management` })
 
 definePageMeta({
   layout: 'fitness',
@@ -9,13 +10,79 @@ definePageMeta({
 </script>
 
 <template>
-  <SharedHeading title="Data" />
+  <SharedHeading title="Data Management" />
 
   <QList padding>
-    <div v-for="i in 100" :key="i">
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore ad, laboriosam odit quae
-      est quo. Molestias numquam nihil quisquam inventore, quasi dolores accusantium, ullam odio
-      fugiat officia magni neque voluptatibus.
-    </div>
+    <QItem>
+      <QItemSection>
+        <QCard flat bordered>
+          <QItem class="q-mt-sm">
+            <QItemSection top>
+              <QItemLabel class="text-body1">Workouts</QItemLabel>
+              <QItemLabel caption>{{ recordCount(11) }}</QItemLabel>
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="addIcon" color="positive" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="databaseIcon" color="primary" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+          </QItem>
+
+          <QItem>
+            <QItemSection top>
+              <QItemLabel class="text-body1">Results</QItemLabel>
+              <QItemLabel caption>{{ recordCount(111) }}</QItemLabel>
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="addIcon" color="positive" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="databaseIcon" color="primary" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+          </QItem>
+        </QCard>
+      </QItemSection>
+    </QItem>
+
+    <QItem>
+      <QItemSection>
+        <QCard flat bordered>
+          <QItem class="q-mt-sm">
+            <QItemSection top>
+              <QItemLabel class="text-body1">Exercises</QItemLabel>
+              <QItemLabel caption>{{ recordCount(11) }}</QItemLabel>
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="addIcon" color="positive" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="databaseIcon" color="primary" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+          </QItem>
+
+          <QItem>
+            <QItemSection top>
+              <QItemLabel class="text-body1">Results</QItemLabel>
+              <QItemLabel caption>{{ recordCount(111) }}</QItemLabel>
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="addIcon" color="positive" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn :icon="databaseIcon" color="primary" class="q-px-sm q-mb-sm" />
+            </QItemSection>
+          </QItem>
+        </QCard>
+      </QItemSection>
+    </QItem>
   </QList>
 </template>

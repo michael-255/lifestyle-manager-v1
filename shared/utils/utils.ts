@@ -150,21 +150,25 @@ export function visibleColumnsFromTableColumns(tableColumns: QTableColumn[]) {
 }
 
 /**
- * Display string for the number of Settings found in the live data.
- * @param records Array of records
+ * Display string for the number of records found in the live data.
+ * @param recordsOrCount Array of records or a number
  * @param labelSingular Singular label for the records
  * @param labelPlural Plural label for the records
- * @returns `999 Settings found`
+ * @returns `999 Settings records`
  */
-export function recordCount(records: any[], labelSingular: string, labelPlural: string) {
-  const count = records?.length ?? 0
+export function recordCount(
+  recordsOrCount: any[] | number,
+  labelSingular: string = '',
+  labelPlural: string = '',
+) {
+  const count = typeof recordsOrCount === 'number' ? recordsOrCount : (recordsOrCount?.length ?? 0)
 
   if (count === 0) {
-    return `No ${labelPlural} found`
+    return `No ${labelPlural} records`
   } else if (count === 1) {
-    return `1 ${labelSingular} found`
+    return `1 ${labelSingular} record`
   } else {
-    return `${count} ${labelPlural} found`
+    return `${count} ${labelPlural} records`
   }
 }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { databaseIcon, exitIcon, planIcon } from '#shared/constants'
+import { databaseIcon, exitIcon, workoutIcon } from '#shared/constants'
 import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
@@ -10,7 +10,7 @@ const isDesktop = computed(() => $q.screen.gt.xs)
   <QLayout view="hHh lpr lfr">
     <QHeader bordered>
       <QTabs class="text-caption" active-color="yellow" outside-arrows mobile-arrows>
-        <QRouteTab no-caps :icon="planIcon" exact to="/fitness">
+        <QRouteTab no-caps :icon="workoutIcon" exact to="/fitness">
           <template v-if="isDesktop">Today</template>
         </QRouteTab>
 

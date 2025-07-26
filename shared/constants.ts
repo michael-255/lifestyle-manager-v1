@@ -5,6 +5,7 @@ import {
   symRoundedBugReport,
   symRoundedCalendarToday,
   symRoundedCancel,
+  symRoundedCheckCircle,
   symRoundedClose,
   symRoundedDatabase,
   symRoundedDelete,
@@ -18,13 +19,16 @@ import {
   symRoundedFitnessCenter,
   symRoundedGridView,
   symRoundedInfo,
+  symRoundedLists,
   symRoundedLock,
   symRoundedLockOpenRight,
   symRoundedLogout,
   symRoundedManageSearch,
+  symRoundedMonitoring,
   symRoundedMoreVert,
   symRoundedNotifications,
   symRoundedPerson,
+  symRoundedPlayArrow,
   symRoundedPublish,
   symRoundedRefresh,
   symRoundedSave,
@@ -34,7 +38,6 @@ import {
   symRoundedSmartToy,
   symRoundedStat2,
   symRoundedStorage,
-  symRoundedTactic,
   symRoundedTune,
   symRoundedViewWeek,
   symRoundedWarning,
@@ -100,8 +103,8 @@ export const logsIcon = symRoundedFeatureSearch
 export const notificationsIcon = symRoundedNotifications
 export const settingsIcon = symRoundedSettings
 export const fitnessIcon = symRoundedFitnessCenter
-export const planIcon = symRoundedTactic
 export const workoutIcon = symRoundedAssignment
+export const chartsIcon = symRoundedMonitoring
 
 // Actions
 export const saveIcon = symRoundedSave
@@ -121,6 +124,9 @@ export const deleteXIcon = symRoundedDeleteForever
 export const exitIcon = symRoundedExitToApp
 export const logoutIcon = symRoundedLogout
 export const searchIcon = symRoundedSearch
+export const cardMenuIcon = symRoundedLists
+export const startIcon = symRoundedPlayArrow
+export const completedIcon = symRoundedCheckCircle
 
 // Design Elements
 export const userIcon = symRoundedPerson
