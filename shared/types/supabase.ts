@@ -31,7 +31,7 @@ export type Database = {
           id?: string
           is_locked?: boolean | null
           note?: string | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           created_at?: string
@@ -73,7 +73,7 @@ export type Database = {
           name: string
           rest_timer?: number | null
           type: Database["public"]["Enums"]["exercise_type"]
-          user_id: string
+          user_id?: string
         }
         Update: {
           created_at?: string
@@ -170,7 +170,7 @@ export type Database = {
           id?: string
           is_locked?: boolean | null
           note?: string | null
-          user_id: string
+          user_id?: string
           workout_id: string
         }
         Update: {
@@ -213,7 +213,7 @@ export type Database = {
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           created_at?: string
