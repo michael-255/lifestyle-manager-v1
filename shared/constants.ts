@@ -3,6 +3,7 @@ import {
   symRoundedAddCircle,
   symRoundedAssignment,
   symRoundedBugReport,
+  symRoundedCalendarMonth,
   symRoundedCalendarToday,
   symRoundedCancel,
   symRoundedCheckCircle,
@@ -139,5 +140,6 @@ export const inspectIcon = symRoundedManageSearch
 export const databaseIcon = symRoundedDatabase
 export const calendarIcon = symRoundedCalendarToday
 export const calendarCheckIcon = symRoundedEventAvailable
+export const calendarScheduleIcon = symRoundedCalendarMonth
 export const scheduleTimeIcon = symRoundedSchedule
 export const verticalDotMenuIcon = symRoundedMoreVert

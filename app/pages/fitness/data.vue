@@ -2,7 +2,7 @@
 import { addIcon, appTitle, databaseIcon } from '#shared/constants'
 import { recordCount } from '#shared/utils/utils'
 
-useMeta({ title: `${appTitle} | Fitness: Data Management` })
+useMeta({ title: `${appTitle} | Fitness - Data Management` })
 
 definePageMeta({
   layout: 'fitness',

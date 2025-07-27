@@ -2,7 +2,9 @@
 -- Views
 --
 
-CREATE VIEW public.todays_workouts AS
+CREATE VIEW public.todays_workouts
+WITH (security_invoker=on)
+AS
 SELECT
   w.id,
   w.name,

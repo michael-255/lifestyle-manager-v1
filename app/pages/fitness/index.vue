@@ -2,55 +2,47 @@
 import { appTitle } from '#shared/constants'
 import type { Database } from '#shared/types/supabase'
 
-useMeta({ title: `${appTitle} | Fitness: Today's Plan` })
+useMeta({ title: `${appTitle} | Fitness - Today's Plan` })
 
 definePageMeta({
   layout: 'fitness',
 })
 
+const $q = useQuasar()
+const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 
-const recordsList = [
-  {
-    id: 1,
-    name: 'Barbell Strength - A',
-    last_created_at: new Date().toISOString(),
-    schedule: ['Monday', 'Wednesday', 'Friday'],
-  },
-  {
-    id: 2,
-    name: 'Warmup & Posture',
-    last_created_at: new Date().toISOString(),
-    last_note: 'Focus on hip mobility and shoulder stability.',
-    schedule: ['Daily'],
-  },
-]
+const records = ref<Record<string, any>[]>([])
+const finishedLoading = ref(false)
 
-const records = ref(recordsList)
+onMounted(async () => {
+  try {
+    $q.loading.show()
 
-async function onTest() {
-  const { data, error } = await supabase.from('exercises').insert({
-    name: 'Test Exercise',
-    description: 'This is a test exercise.',
-    type: 'Weightlifting',
-  })
+    // TODO - Move this to the data-layer?
+    const { data, error } = await supabase
+      .from('todays_workouts')
+      .select('*')
+      .order('name', { ascending: true })
 
-  if (error) {
-    console.error('Error inserting test exercise:', error)
-  } else {
-    console.log('Test exercise inserted:', data)
-    // Optionally, you can refresh the records or show a success message
+    if (error) throw error
+
+    logger.info("Successfully fetched today's workouts", { count: data.length })
+    records.value = data
+  } catch (error) {
+    logger.error(`Error fetching today's workouts`, error as Error)
+  } finally {
+    finishedLoading.value = true
+    $q.loading.hide()
   }
-}
+})
 </script>
 
 <template>
-  <SharedHeading title="Today's Plan">
-    <QBtn icon="add" label="Test" color="accent" @click="onTest" />
-  </SharedHeading>
+  <SharedHeading title="Today's Plan" />
 
   <QList padding>
-    <div v-if="records.length === 0">
+    <div v-if="finishedLoading && records.length === 0">
       <QItem>
         <QItemSection>
           <QCard flat bordered>

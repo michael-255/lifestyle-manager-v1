@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  calendarIcon,
   cardMenuIcon,
   chartsIcon,
   deleteIcon,
@@ -43,14 +42,16 @@ function onStart() {
           <QItemSection top>
             <QItemLabel class="text-body1">{{ record.name }}</QItemLabel>
 
-            <QItemLabel caption>
-              <QBadge outline :color="timeAgo(record.last_created_at).color" class="q-mr-xs">
+            <QItemLabel v-if="record.last_created_at" caption>
+              <QBadge class="q-my-xs" outline :color="timeAgo(record.last_created_at).color">
                 {{ timeAgo(record.last_created_at).message }}
               </QBadge>
               <div class="q-mt-xs">
                 {{ compactDate(record.last_created_at) }}
               </div>
             </QItemLabel>
+
+            <QItemLabel v-else caption> No previous records </QItemLabel>
           </QItemSection>
 
           <QItemSection top side>
@@ -105,17 +106,9 @@ function onStart() {
               <QIcon size="xs" class="q-pb-xs" :name="noteIcon" />
               Previous Note
             </QItemLabel>
-            <QItemLabel caption class="text-italic">{{ record.last_note }}</QItemLabel>
-          </QItemSection>
-        </QItem>
-
-        <QItem>
-          <QItemSection>
-            <QItemLabel>
-              <QIcon size="xs" class="q-pb-xs" :name="calendarIcon" />
-              Schedule
+            <QItemLabel caption>
+              <SharedUserText :text="record.last_note" />
             </QItemLabel>
-            <QItemLabel caption class="text-italic">{{ record.schedule }}</QItemLabel>
           </QItemSection>
         </QItem>
 

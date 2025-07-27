@@ -4,34 +4,33 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness TODO
 
-**Routing**
+Mock the remaining **pages**:
 
-- `/fitness/data`
-  - Links to access each data table
-    - `fitness/view-workouts`
-    - `fitness/view-exercises`
-  - Data tables give access to all other options
-    - `Create`
-    - `Start` (Workout/Exercise)
-    - `Charts`
-    - `Inspect`
-    - `Edit`
-    - `Delete`
-- `/fitness/active-workout`
+- `fitness/data/workouts`
+- `fitness/data/exercises`
+- `fitness/data/workout-results`
+- `fitness/data/exercise-results`
+- `fitness/active-workout`
 
-**Today View**
+Mock the remaining **dialogs**:
 
-- Show all workouts that contain a schedule for the current day
-- Need the following data:
-  - `id`
-  - `name`
-  - `description`
-  - `schedule`
-  - `is_locked`
-  - Some data from the most recent `workout_result`, if any:
-    - `last_id`
-    - `last_created_at`
-    - `last_note`
+- `/dialog/charts`
+
+The following options should all be on the data tables:
+
+- `Create`
+- `Start` (Workout/Exercise)
+- `Charts`
+- `Inspect`
+- `Edit`
+- `Delete`
+
+```sh
+# Install the Plot library for charts
+npm i @observablehq/plot
+```
+
+- Hook up some basic dialogs if you can get them working.
 
 ## Budget TODO
 

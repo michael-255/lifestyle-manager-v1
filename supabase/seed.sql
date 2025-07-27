@@ -2,7 +2,10 @@
 -- SELECT public.seed_workouts_for_user('YOUR-USER-UUID');
 --
 CREATE FUNCTION public.seed_workouts_for_user(p_user_id UUID)
-RETURNS void AS $$
+RETURNS void
+SECURITY DEFINER
+SET search_path = '' -- Should always include so you must use fully qualified schema names
+AS $$
 DECLARE
   daily_id UUID;
   weekly_id UUID;

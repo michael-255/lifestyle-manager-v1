@@ -42,8 +42,8 @@ export class LocalDatabase extends Dexie {
   async initializeSettings(): Promise<void> {
     const defaultSettings: Record<SettingNameType, SettingValueType> = {
       'User Email': '',
-      'Console Logs': true,
-      'Info Popups': true,
+      'Console Logs': false,
+      'Info Popups': false,
       'Log Rentention Duration': durationNames.enum['Six Months'],
     }
 

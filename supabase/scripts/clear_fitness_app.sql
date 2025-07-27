@@ -12,6 +12,12 @@ DROP TABLE IF EXISTS
   public.exercises
 CASCADE;
 
+-- Views
+DROP VIEW IF EXISTS public.todays_workouts;
+
 -- Enums
 DROP TYPE IF EXISTS public.exercise_type;
 DROP TYPE IF EXISTS public.workout_schedule_type;
+
+-- Functions
+DROP FUNCTION IF EXISTS public.seed_workouts_for_user(uuid);
