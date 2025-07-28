@@ -4,17 +4,7 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness TODO
 
-Mock the remaining **pages**:
-
-- `fitness/data/workouts`
-- `fitness/data/exercises`
-- `fitness/data/workout-results`
-- `fitness/data/exercise-results`
-- `fitness/active-workout`
-
-Mock the remaining **dialogs**:
-
-- `/dialog/charts`
+- Hook up dialogs if you can get them working
 
 The following options should all be on the data tables:
 
@@ -29,8 +19,6 @@ The following options should all be on the data tables:
 # Install the Plot library for charts
 npm i @observablehq/plot
 ```
-
-- Hook up some basic dialogs if you can get them working.
 
 ## Budget TODO
 

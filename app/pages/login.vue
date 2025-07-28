@@ -2,7 +2,9 @@
 import { useSupabaseClient } from '#imports'
 import { QBtn, QInput } from 'quasar'
 import { ref } from 'vue'
-import { appTitle } from '~~/shared/constants'
+import { Setting } from '~/models/Setting'
+import { localDatabase } from '~/utils/local-database'
+import { appTitle, localTables, settingNames } from '~~/shared/constants'
 
 useMeta({ title: `${appTitle} | Login` })
 
@@ -14,6 +16,14 @@ const settingsStore = useSettingsStore()
 
 const email = ref(settingsStore.userEmail || '')
 const password = ref('')
+
+onMounted(() => {
+  // Pre-fill email if available in settings
+  // This allows the user to quickly log in if they have previously logged in
+  if (settingsStore.userEmail) {
+    email.value = settingsStore.userEmail
+  }
+})
 
 async function login() {
   try {
@@ -27,6 +37,13 @@ async function login() {
     if (loginError) {
       logger.error(loginError.message, loginError)
     } else {
+      // Store or update user email in local database
+      localDatabase.table(localTables.enum.settings).put(
+        new Setting({
+          id: settingNames.enum['User Email'],
+          value: email.value,
+        }),
+      )
       await router.replace('/')
     }
   } catch (error) {

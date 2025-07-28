@@ -33,10 +33,7 @@ const subscription = localDatabase.liveSettings().subscribe({
   },
 })
 
-/**
- * Opens the Inspect Setting dialog using the data from the clicked row.
- */
-function onInspectSetting(record: Record<string, any>) {
+function onInspect(record: Record<string, any>) {
   $q.dialog({
     component: DialogInspect,
     componentProps: {
@@ -75,7 +72,7 @@ onUnmounted(() => {
     </template>
 
     <template #body="props">
-      <QTr :props="props" class="cursor-pointer" @click="onInspectSetting(props.row)">
+      <QTr :props="props" class="cursor-pointer" @click="onInspect(props.row)">
         <QTd v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.value }}
         </QTd>

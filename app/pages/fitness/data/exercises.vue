@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import {
-  DialogInspect,
-  DialogInspectItemDate,
-  DialogInspectItemObject,
-  DialogInspectItemText,
-} from '#components'
 import { useRouting } from '#imports'
 import { appTitle, closeIcon, columnsIcon, searchIcon } from '#shared/constants'
 import {
@@ -14,80 +8,38 @@ import {
   tableColumn,
   visibleColumnsFromTableColumns,
 } from '#shared/utils/utils'
-import useLogger from '@/composables/useLogger'
-import { useMeta, useQuasar, type QTableColumn } from 'quasar'
-import { onUnmounted, ref, type Ref } from 'vue'
-import { localDatabase } from '~/utils/local-database'
+import { useMeta, type QTableColumn } from 'quasar'
+import { ref, type Ref } from 'vue'
 
-useMeta({ title: `${appTitle} | View Logs` })
+useMeta({ title: `${appTitle} | Exercises Data` })
 
-const $q = useQuasar()
-const logger = useLogger()
 const { goBack } = useRouting()
 
-const labelSingular = 'Log'
-const labelPlural = 'Logs'
+const labelSingular = 'Exercise'
+const labelPlural = 'Exercises'
 const searchFilter: Ref<string> = ref('')
 const tableColumns = [
   hiddenTableColumn('id'),
   tableColumn('id', 'Id', 'UUID'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
-  tableColumn('log_level', 'Log Level'),
-  tableColumn('label', 'Label', 'TEXT'),
-  tableColumn('details', 'Details', 'OBJECT'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))
 
-const liveData: Ref<LogType[]> = ref([])
-const isLiveQueryFinished = ref(false)
+const records: Ref<any[]> = ref([])
 
-const subscription = localDatabase.liveLogs().subscribe({
-  next: (data) => {
-    liveData.value = data
-    isLiveQueryFinished.value = true
-  },
-  error: (error) => {
-    logger.error(`Error loading live ${labelPlural} data`, error as Error)
-    isLiveQueryFinished.value = true
-  },
-})
-
+/**
+ * Opens the Inspect Log dialog using the data from the clicked row.
+ */
 function onInspect(record: Record<string, any>) {
-  $q.dialog({
-    component: DialogInspect,
-    componentProps: {
-      label: 'Log',
-      record,
-      subComponents: [
-        { component: DialogInspectItemText, props: { label: 'Id', field: 'id', record } },
-        {
-          component: DialogInspectItemDate,
-          props: { label: 'Created Date', field: 'created_at', record },
-        },
-        {
-          component: DialogInspectItemText,
-          props: { label: 'Log Level', field: 'log_level', record },
-        },
-        { component: DialogInspectItemText, props: { label: 'Label', field: 'label', record } },
-        {
-          component: DialogInspectItemObject,
-          props: { label: 'Details', field: 'details', record },
-        },
-      ],
-    },
-  })
+  console.log('Inspecting record:', record)
 }
-
-onUnmounted(() => {
-  subscription.unsubscribe()
-})
 </script>
 
 <template>
   <QTable
     fullscreen
-    :rows="liveData"
+    :rows="records"
     :columns="tableColumns"
     :visible-columns="visibleColumns"
     :rows-per-page-options="[0]"
@@ -134,7 +86,7 @@ onUnmounted(() => {
       <div class="row justify-start full-width">
         <QInput
           v-model="searchFilter"
-          :disable="!liveData.length"
+          :disable="!records.length"
           outlined
           dense
           clearable
@@ -146,7 +98,7 @@ onUnmounted(() => {
             <QSelect
               v-model="visibleColumns"
               :options="columnOptions"
-              :disable="!liveData.length"
+              :disable="!records.length"
               multiple
               dense
               options-dense
@@ -170,7 +122,7 @@ onUnmounted(() => {
     </template>
 
     <template #bottom>
-      {{ recordCount(liveData, labelSingular, labelPlural) }}
+      {{ recordCount(records, labelSingular, labelPlural) }}
     </template>
   </QTable>
 </template>
