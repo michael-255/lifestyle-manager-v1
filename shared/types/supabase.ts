@@ -268,10 +268,7 @@ export type Database = {
       }
     }
     Functions: {
-      seed_workouts_for_user: {
-        Args: { p_user_id: string }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
       exercise_type:
