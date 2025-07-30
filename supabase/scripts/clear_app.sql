@@ -2,6 +2,9 @@
 -- SQL commands to clear out all fitness tables, enums, functions, and data
 --
 
+-- Migrations
+DELETE FROM supabase_migrations.schema_migrations;
+
 -- Tables
 DROP TABLE IF EXISTS
   public.workout_result_exercise_results,

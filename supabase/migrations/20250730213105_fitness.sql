@@ -34,7 +34,7 @@ COMMENT ON TYPE public.workout_schedule_type IS 'Schedule type for workouts, use
 
 CREATE TABLE public.exercises (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     name TEXT NOT NULL,
     description TEXT,
@@ -57,7 +57,7 @@ COMMENT ON COLUMN public.exercises.is_locked IS 'Indicates if the exercise is lo
 
 CREATE TABLE public.workouts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     name TEXT NOT NULL,
     description TEXT,
@@ -74,13 +74,9 @@ COMMENT ON COLUMN public.workouts.description IS 'Description of the workout.';
 COMMENT ON COLUMN public.workouts.schedule IS 'Schedule for the workout, indicating when it should be performed.';
 COMMENT ON COLUMN public.workouts.is_locked IS 'Indicates if the workout is locked for editing.';
 
---
--- Result Tables
---
-
 CREATE TABLE public.exercise_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
     exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     note TEXT,
@@ -99,7 +95,7 @@ COMMENT ON COLUMN public.exercise_results.is_locked IS 'Indicates if the exercis
 
 CREATE TABLE public.workout_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL DEFAULT (auth.uid()) REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
     workout_id UUID NOT NULL REFERENCES public.workouts(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     finished_at TIMESTAMPTZ,
@@ -147,31 +143,73 @@ COMMENT ON COLUMN public.workout_result_exercise_results.exercise_result_id IS '
 COMMENT ON COLUMN public.workout_result_exercise_results.position IS 'Position of the exercise result in the workout result, used for ordering.';
 
 --
--- Policies
+-- Views
+--
+
+CREATE VIEW public.todays_workouts
+WITH (security_invoker=on)
+AS
+SELECT
+  w.id,
+  w.name,
+  w.description,
+  w.schedule,
+  w.is_locked,
+  wr.id AS last_id,
+  wr.created_at AS last_created_at,
+  wr.note AS last_note
+FROM public.workouts w
+LEFT JOIN LATERAL (
+  SELECT
+    wr.id,
+    wr.created_at,
+    wr.note
+  FROM public.workout_results wr
+  WHERE wr.workout_id = w.id
+  ORDER BY wr.created_at DESC
+  LIMIT 1
+) wr ON TRUE
+WHERE
+  w.user_id = auth.uid()
+  AND (
+    'Daily' = ANY(w.schedule::text[])
+    OR TRIM(TO_CHAR(CURRENT_DATE, 'Day')) = ANY(w.schedule::text[])
+    OR (
+      'Weekly' = ANY(w.schedule::text[])
+      AND (
+        wr.created_at IS NULL
+        OR wr.created_at::date < (CURRENT_DATE - INTERVAL '7 days')
+      )
+    )
+  );
+
+--
+-- RLS Policies
 --
 
 -- exercises
 ALTER TABLE public.exercises ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Authenticated users can select exercises"
+CREATE POLICY "Authenticated user can select"
 ON public.exercises
 FOR SELECT
 TO authenticated
 USING (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can insert exercises"
+CREATE POLICY "Authenticated user can insert"
 ON public.exercises
 FOR INSERT
 TO authenticated
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can update exercises"
+CREATE POLICY "Authenticated user can update"
 ON public.exercises
 FOR UPDATE
 TO authenticated
+USING (user_id = (select auth.uid()))
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can delete exercises"
+CREATE POLICY "Authenticated user can delete"
 ON public.exercises
 FOR DELETE
 TO authenticated
@@ -180,25 +218,26 @@ USING (user_id = (select auth.uid()));
 -- workouts
 ALTER TABLE public.workouts ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Authenticated users can select workouts"
+CREATE POLICY "Authenticated user can select"
 ON public.workouts
 FOR SELECT
 TO authenticated
 USING (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can insert workouts"
+CREATE POLICY "Authenticated user can insert"
 ON public.workouts
 FOR INSERT
 TO authenticated
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can update workouts"
+CREATE POLICY "Authenticated user can update"
 ON public.workouts
 FOR UPDATE
 TO authenticated
+USING (user_id = (select auth.uid()))
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can delete workouts"
+CREATE POLICY "Authenticated user can delete"
 ON public.workouts
 FOR DELETE
 TO authenticated
@@ -207,25 +246,26 @@ USING (user_id = (select auth.uid()));
 -- exercise_results
 ALTER TABLE public.exercise_results ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Authenticated users can select"
+CREATE POLICY "Authenticated user can select"
 ON public.exercise_results
 FOR SELECT
 TO authenticated
 USING (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can insert"
+CREATE POLICY "Authenticated user can insert"
 ON public.exercise_results
 FOR INSERT
 TO authenticated
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can update"
+CREATE POLICY "Authenticated user can update"
 ON public.exercise_results
 FOR UPDATE
 TO authenticated
+USING (user_id = (select auth.uid()))
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can delete"
+CREATE POLICY "Authenticated user can delete"
 ON public.exercise_results
 FOR DELETE
 TO authenticated
@@ -234,25 +274,26 @@ USING (user_id = (select auth.uid()));
 -- workout_results
 ALTER TABLE public.workout_results ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Authenticated users can select"
+CREATE POLICY "Authenticated user can select"
 ON public.workout_results
 FOR SELECT
 TO authenticated
 USING (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can insert"
+CREATE POLICY "Authenticated user can insert"
 ON public.workout_results
 FOR INSERT
 TO authenticated
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can update"
+CREATE POLICY "Authenticated user can update"
 ON public.workout_results
 FOR UPDATE
 TO authenticated
+USING (user_id = (select auth.uid()))
 WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Authenticated users can delete"
+CREATE POLICY "Authenticated user can delete"
 ON public.workout_results
 FOR DELETE
 TO authenticated
@@ -261,25 +302,26 @@ USING (user_id = (select auth.uid()));
 -- workout_exercises
 ALTER TABLE public.workout_exercises ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Authenticated users can select"
+CREATE POLICY "Authenticated user can select"
 ON public.workout_exercises
 FOR SELECT
 TO authenticated
 USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())));
 
-CREATE POLICY "Authenticated users can insert"
+CREATE POLICY "Authenticated user can insert"
 ON public.workout_exercises
 FOR INSERT
 TO authenticated
 WITH CHECK (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())));
 
-CREATE POLICY "Authenticated users can update"
+CREATE POLICY "Authenticated user can update"
 ON public.workout_exercises
 FOR UPDATE
 TO authenticated
+USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())))
 WITH CHECK (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())));
 
-CREATE POLICY "Authenticated users can delete"
+CREATE POLICY "Authenticated user can delete"
 ON public.workout_exercises
 FOR DELETE
 TO authenticated
@@ -288,25 +330,26 @@ USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select aut
 -- workout_result_exercise_results
 ALTER TABLE public.workout_result_exercise_results ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Authenticated users can select"
+CREATE POLICY "Authenticated user can select"
 ON public.workout_result_exercise_results
 FOR SELECT
 TO authenticated
 USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
 
-CREATE POLICY "Authenticated users can insert"
+CREATE POLICY "Authenticated user can insert"
 ON public.workout_result_exercise_results
 FOR INSERT
 TO authenticated
 WITH CHECK (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
 
-CREATE POLICY "Authenticated users can update"
+CREATE POLICY "Authenticated user can update"
 ON public.workout_result_exercise_results
 FOR UPDATE
 TO authenticated
+USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())))
 WITH CHECK (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
 
-CREATE POLICY "Authenticated users can delete"
+CREATE POLICY "Authenticated user can delete"
 ON public.workout_result_exercise_results
 FOR DELETE
 TO authenticated
