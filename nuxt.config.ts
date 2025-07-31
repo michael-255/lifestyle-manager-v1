@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'nuxt-quasar-ui',
   ],
-  css: ['~/assets/css/main.css'],
+  css: ['@/assets/css/main.css'],
   app: { baseURL: '/lifestyle-manager-v1/' },
   supabase: {
     redirect: true, // To login page

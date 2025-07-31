@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { DialogInspect, DialogInspectItemText } from '#components'
 import { appTitle, closeIcon } from '#shared/constants'
 import type { SettingType } from '#shared/types/types'
 import { recordCount, tableColumn, visibleColumnsFromTableColumns } from '#shared/utils/utils'
-import { useMeta, useQuasar } from 'quasar'
+import { useMeta } from 'quasar'
 import { onUnmounted, ref, type Ref } from 'vue'
 import { localDatabase } from '~/utils/local-database'
 
 useMeta({ title: `${appTitle} | View Settings` })
 
-const $q = useQuasar()
 const logger = useLogger()
 const { goBack } = useRouting()
+const { openInspectSetting } = useLocalTableDialogs()
 
 const labelSingular = 'Setting'
 const labelPlural = 'Settings'
@@ -32,20 +31,6 @@ const subscription = localDatabase.liveSettings().subscribe({
     isLiveQueryFinished.value = true
   },
 })
-
-function onInspect(record: Record<string, any>) {
-  $q.dialog({
-    component: DialogInspect,
-    componentProps: {
-      label: 'Setting',
-      record,
-      subComponents: [
-        { component: DialogInspectItemText, props: { label: 'Id', field: 'id', record } },
-        { component: DialogInspectItemText, props: { label: 'Value', field: 'value', record } },
-      ],
-    },
-  })
-}
 
 onUnmounted(() => {
   subscription.unsubscribe()
@@ -72,7 +57,7 @@ onUnmounted(() => {
     </template>
 
     <template #body="props">
-      <QTr :props="props" class="cursor-pointer" @click="onInspect(props.row)">
+      <QTr :props="props" class="cursor-pointer" @click="openInspectSetting(props.row)">
         <QTd v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.value }}
         </QTd>

@@ -9,8 +9,8 @@ import { useLocalRecordStore } from '~/stores/local-record'
 const props = defineProps<{
   label: string
   record: Record<string, any>
-  onSubmitHandler: (record: Record<string, any>) => Promise<void>
   subComponents: Array<{ component: string; props: Record<string, any> }>
+  onSubmitHandler: (record: Record<string, any>) => Promise<void>
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -88,7 +88,7 @@ async function onSubmit() {
     maximized
     @hide="onDialogHide"
   >
-    <QToolbar class="bg-primary text-white toolbar-height q-pr-xs">
+    <QToolbar class="bg-primary text-white fullscreen-toolbar-height q-pr-xs">
       <QIcon :name="createIcon" size="sm" />
       <QToolbarTitle>Create {{ label }}</QToolbarTitle>
       <QBtn v-show="showResetBtn" flat round color="yellow" :icon="refreshIcon" @click="onReset" />
@@ -98,7 +98,7 @@ async function onSubmit() {
     <QCard class="q-dialog-plugin">
       <QCardSection>
         <div class="row justify-center">
-          <div class="responsive-container">
+          <div class="page-width-limit">
             <QForm
               class="q-mb-xl"
               @submit.prevent="onSubmit"
@@ -145,13 +145,3 @@ async function onSubmit() {
     </QCard>
   </QDialog>
 </template>
-
-<style scoped>
-.toolbar-height {
-  max-height: 3rem;
-}
-.responsive-container {
-  width: 100%;
-  max-width: 50rem;
-}
-</style>

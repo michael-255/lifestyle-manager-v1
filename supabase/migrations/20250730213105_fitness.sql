@@ -150,11 +150,7 @@ CREATE VIEW public.todays_workouts
 WITH (security_invoker=on)
 AS
 SELECT
-  w.id,
-  w.name,
-  w.description,
-  w.schedule,
-  w.is_locked,
+  w.*,
   wr.id AS last_id,
   wr.created_at AS last_created_at,
   wr.note AS last_note

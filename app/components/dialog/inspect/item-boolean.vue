@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-
-const props = defineProps<{
+defineProps<{
   label: string
-  field: string
-  record: Record<string, any>
+  value?: boolean
 }>()
-
-const value = computed(() => {
-  return props.record[props.field]
-})
 </script>
 
 <template>
   <DialogInspectItem :label="label">
-    <div v-if="value === true" class="text-weight-bold text-positive">Yes</div>
-
-    <div v-else-if="value === false" class="text-weight-bold text-negative">No</div>
-
+    <div v-if="value === true">Yes</div>
+    <div v-else-if="value === false">No</div>
     <div v-else class="text-italic text-secondary">-empty-</div>
   </DialogInspectItem>
 </template>

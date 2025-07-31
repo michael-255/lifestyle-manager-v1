@@ -4,7 +4,29 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness TODO
 
-- Hook up dialogs if you can get them working
+- `TODO` Must fully seed the database with mock data.
+
+Refactor dialogs into composables.
+
+```ts
+export function useWorkoutDialogs() {
+  const $q = useQuasar()
+
+  async function openInspectWorkoutDialog(id: IdType) {
+    const { DialogFitnessInspectWorkout } = await import('#components')
+    $q.dialog({
+      component: DialogFitnessInspectWorkout,
+      componentProps: { id },
+    })
+  }
+
+  return { openWorkoutDialog }
+}
+```
+
+Get table dialogs working for CRUD operations.
+
+- All inspect dialogs
 
 The following options should all be on the data tables:
 
@@ -15,9 +37,16 @@ The following options should all be on the data tables:
 - `Edit`
 - `Delete`
 
+Try Observable Plot for Charts:
+
 ```sh
-# Install the Plot library for charts
 npm i @observablehq/plot
+```
+
+Try Tanstack for data-layer:
+
+```sh
+npm i @tanstack/vue-query
 ```
 
 ## Budget TODO

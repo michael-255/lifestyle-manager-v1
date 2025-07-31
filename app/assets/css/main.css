@@ -12,3 +12,8 @@ body {
   word-break: break-word;
   white-space: normal;
 }
+
+/* Standard fullscreen toolbar height */
+.q-toolbar.fullscreen-toolbar-height {
+  height: 3rem;
+}

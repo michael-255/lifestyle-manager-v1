@@ -12,7 +12,8 @@ const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 
-const records = ref<Record<string, any>[]>([])
+// TODO - fix type
+const workouts = ref<Record<string, any>[]>([])
 const finishedLoading = ref(false)
 
 onMounted(async () => {
@@ -28,7 +29,7 @@ onMounted(async () => {
     if (error) throw error
 
     logger.info("Successfully fetched today's workouts", { count: data.length })
-    records.value = data
+    workouts.value = data
   } catch (error) {
     logger.error(`Error fetching today's workouts`, error as Error)
   } finally {
@@ -42,7 +43,7 @@ onMounted(async () => {
   <SharedHeading title="Today's Plan" />
 
   <QList padding>
-    <div v-if="finishedLoading && records.length === 0">
+    <div v-if="finishedLoading && workouts.length === 0">
       <QItem>
         <QItemSection>
           <QCard flat bordered>
@@ -58,7 +59,7 @@ onMounted(async () => {
     </div>
 
     <div v-else>
-      <FitnessPlanCard v-for="record in records" :key="record.id" :record="record" />
+      <FitnessWorkoutCard v-for="workout in workouts" :key="workout.id" :workout />
     </div>
   </QList>
 </template>

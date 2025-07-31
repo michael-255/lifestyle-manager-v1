@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { DialogInspectItem } from '#components'
-import { computed } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   label: string
-  field: string
-  record: Record<string, any>
+  value: any
 }>()
-
-const value = computed(() => {
-  return props.record[props.field]
-})
 </script>
 
 <template>

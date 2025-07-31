@@ -20,7 +20,7 @@ const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent()
     maximized
     @hide="onDialogHide()"
   >
-    <QToolbar class="bg-info text-white toolbar-height">
+    <QToolbar class="bg-info text-white fullscreen-toolbar-height">
       <QIcon :name="inspectIcon" size="sm" class="q-mx-sm" />
       <QToolbarTitle>Chart {{ label }}</QToolbarTitle>
       <QBtn flat round :icon="closeIcon" @click="onDialogCancel()" />
@@ -38,9 +38,3 @@ const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent()
     </QCard>
   </QDialog>
 </template>
-
-<style scoped>
-.toolbar-height {
-  max-height: 50px;
-}
-</style>

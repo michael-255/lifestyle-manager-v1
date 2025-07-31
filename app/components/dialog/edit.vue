@@ -88,7 +88,7 @@ async function onSubmit() {
     maximized
     @hide="onDialogHide"
   >
-    <QToolbar class="bg-primary text-white toolbar-height q-pr-xs">
+    <QToolbar class="bg-primary text-white fullscreen-toolbar-height q-pr-xs">
       <QIcon :name="createIcon" size="sm" />
       <QToolbarTitle>Edit {{ label }}</QToolbarTitle>
       <QBtn v-show="showResetBtn" flat round color="yellow" :icon="refreshIcon" @click="onReset" />
@@ -98,7 +98,7 @@ async function onSubmit() {
     <QCard class="q-dialog-plugin">
       <QCardSection>
         <div class="row justify-center">
-          <div class="responsive-container">
+          <div class="page-width-limit">
             <QForm
               class="q-mb-xl"
               @submit.prevent="onSubmit"
@@ -145,13 +145,3 @@ async function onSubmit() {
     </QCard>
   </QDialog>
 </template>
-
-<style scoped>
-.toolbar-height {
-  max-height: 3rem;
-}
-.responsive-container {
-  width: 100%;
-  max-width: 50rem;
-}
-</style>

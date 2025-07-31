@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  DialogInspect,
-  DialogInspectItemDate,
-  DialogInspectItemObject,
-  DialogInspectItemText,
-} from '#components'
-import { useRouting } from '#imports'
+import { useRouting, type LogType } from '#imports'
 import { appTitle, closeIcon, columnsIcon, searchIcon } from '#shared/constants'
 import {
   columnOptionsFromTableColumns,
@@ -15,15 +9,15 @@ import {
   visibleColumnsFromTableColumns,
 } from '#shared/utils/utils'
 import useLogger from '@/composables/useLogger'
-import { useMeta, useQuasar, type QTableColumn } from 'quasar'
+import { useMeta, type QTableColumn } from 'quasar'
 import { onUnmounted, ref, type Ref } from 'vue'
 import { localDatabase } from '~/utils/local-database'
 
 useMeta({ title: `${appTitle} | View Logs` })
 
-const $q = useQuasar()
 const logger = useLogger()
 const { goBack } = useRouting()
+const { openInspectLog } = useLocalTableDialogs()
 
 const labelSingular = 'Log'
 const labelPlural = 'Logs'
@@ -52,32 +46,6 @@ const subscription = localDatabase.liveLogs().subscribe({
     isLiveQueryFinished.value = true
   },
 })
-
-function onInspect(record: Record<string, any>) {
-  $q.dialog({
-    component: DialogInspect,
-    componentProps: {
-      label: 'Log',
-      record,
-      subComponents: [
-        { component: DialogInspectItemText, props: { label: 'Id', field: 'id', record } },
-        {
-          component: DialogInspectItemDate,
-          props: { label: 'Created Date', field: 'created_at', record },
-        },
-        {
-          component: DialogInspectItemText,
-          props: { label: 'Log Level', field: 'log_level', record },
-        },
-        { component: DialogInspectItemText, props: { label: 'Label', field: 'label', record } },
-        {
-          component: DialogInspectItemObject,
-          props: { label: 'Details', field: 'details', record },
-        },
-      ],
-    },
-  })
-}
 
 onUnmounted(() => {
   subscription.unsubscribe()
@@ -109,7 +77,7 @@ onUnmounted(() => {
     </template>
 
     <template #body="props">
-      <QTr :props="props" class="cursor-pointer" @click="onInspect(props.row)">
+      <QTr :props="props" class="cursor-pointer" @click="openInspectLog(props.row)">
         <QTd v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.value }}
         </QTd>

@@ -9,10 +9,7 @@ definePageMeta({
 })
 
 const router = useRouter()
-
-function onCreateWorkout() {
-  console.log('Create Workout')
-}
+const { openCreateWorkout } = useFitnessDialogs()
 
 function onCreateWorkoutResult() {
   console.log('Create Workout Result')
@@ -45,7 +42,7 @@ function onCreateExerciseResult() {
                 :icon="addIcon"
                 color="positive"
                 class="q-px-sm q-mb-sm"
-                @click="onCreateWorkout"
+                @click="openCreateWorkout"
               />
             </QItemSection>
 

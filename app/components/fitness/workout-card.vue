@@ -9,20 +9,16 @@ import {
   startIcon,
 } from '#shared/constants'
 
+type Workout = Database['public']['Tables']['workouts']['Row']
+
 defineProps<{
-  record: Record<string, any>
+  workout: Workout
 }>()
+
+const { openInspectWorkout, openEditWorkout } = useFitnessDialogs()
 
 function onCharts() {
   console.log('Charts clicked')
-}
-
-function onInspect() {
-  console.log('Inspect clicked')
-}
-
-function onEdit() {
-  console.log('Edit clicked')
 }
 
 function onDelete() {
@@ -40,14 +36,14 @@ function onStart() {
       <QCard flat bordered>
         <QItem class="q-mt-sm">
           <QItemSection top>
-            <QItemLabel class="text-body1">{{ record.name }}</QItemLabel>
+            <QItemLabel class="text-body1">{{ workout.name }}</QItemLabel>
 
-            <QItemLabel v-if="record.last_created_at" caption>
-              <QBadge class="q-my-xs" outline :color="timeAgo(record.last_created_at).color">
-                {{ timeAgo(record.last_created_at).message }}
+            <QItemLabel v-if="workout.last_created_at" caption>
+              <QBadge class="q-my-xs" outline :color="timeAgo(workout.last_created_at).color">
+                {{ timeAgo(workout.last_created_at).message }}
               </QBadge>
               <div class="q-mt-xs">
-                {{ compactDate(record.last_created_at) }}
+                {{ compactDate(workout.last_created_at) }}
               </div>
             </QItemLabel>
 
@@ -71,7 +67,7 @@ function onStart() {
                     <QItemSection>Charts</QItemSection>
                   </QItem>
 
-                  <QItem clickable @click="onInspect">
+                  <QItem clickable @click="openInspectWorkout(workout.id)">
                     <QItemSection avatar>
                       <QIcon color="primary" :name="inspectIcon" />
                     </QItemSection>
@@ -79,7 +75,7 @@ function onStart() {
                     <QItemSection>Inspect</QItemSection>
                   </QItem>
 
-                  <QItem clickable @click="onEdit">
+                  <QItem clickable @click="openEditWorkout(workout)">
                     <QItemSection avatar>
                       <QIcon color="amber" :name="editIcon" />
                     </QItemSection>
@@ -100,14 +96,14 @@ function onStart() {
           </QItemSection>
         </QItem>
 
-        <QItem v-if="record.last_note">
+        <QItem v-if="workout.last_note">
           <QItemSection>
             <QItemLabel>
               <QIcon size="xs" class="q-pb-xs" :name="noteIcon" />
               Previous Note
             </QItemLabel>
             <QItemLabel caption>
-              <SharedUserText :text="record.last_note" />
+              <SharedUserText :text="workout.last_note" />
             </QItemLabel>
           </QItemSection>
         </QItem>
