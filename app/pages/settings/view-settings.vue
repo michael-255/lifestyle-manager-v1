@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { appTitle, closeIcon } from '#shared/constants'
-import type { SettingType } from '#shared/types/types'
+import type { SettingType } from '#shared/types/local-schemas'
 import { recordCount, tableColumn, visibleColumnsFromTableColumns } from '#shared/utils/utils'
 import { useMeta } from 'quasar'
 import { onUnmounted, ref, type Ref } from 'vue'
@@ -15,7 +15,7 @@ const { openInspectSetting } = useLocalTableDialogs()
 const labelSingular = 'Setting'
 const labelPlural = 'Settings'
 const searchFilter: Ref<string> = ref('')
-const tableColumns = [tableColumn('id', 'Id'), tableColumn('value', 'Value', 'SETTING')]
+const tableColumns = [tableColumn('key', 'Key'), tableColumn('value', 'Value', 'SETTING')]
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))
 
 const liveData: Ref<SettingType[]> = ref([])
@@ -46,7 +46,7 @@ onUnmounted(() => {
     :rows-per-page-options="[0]"
     :filter="searchFilter"
     virtual-scroll
-    row-key="id"
+    row-key="key"
   >
     <template #header="props">
       <QTr :props="props">
@@ -94,7 +94,7 @@ onUnmounted(() => {
     </template>
 
     <template #bottom>
-      {{ recordCount(liveData, labelSingular, labelPlural) }}
+      {{ recordCount(liveData, labelSingular) }}
     </template>
   </QTable>
 </template>

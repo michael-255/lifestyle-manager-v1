@@ -1,5 +1,5 @@
+import type { DurationNameType } from '#shared/types/common-schemas'
 import { date, type QTableColumn } from 'quasar'
-import type { DurationNameType } from '../types/types'
 
 /**
  * Used to look up the duration in milliseconds for a given duration name..
@@ -152,23 +152,18 @@ export function visibleColumnsFromTableColumns(tableColumns: QTableColumn[]) {
 /**
  * Display string for the number of records found in the live data.
  * @param recordsOrCount Array of records or a number
- * @param labelSingular Singular label for the records
- * @param labelPlural Plural label for the records
+ * @param label Label for the records
  * @returns `999 Settings records`
  */
-export function recordCount(
-  recordsOrCount: any[] | number,
-  labelSingular: string = '',
-  labelPlural: string = '',
-) {
+export function recordCount(recordsOrCount: any[] | number, label: string = '') {
   const count = typeof recordsOrCount === 'number' ? recordsOrCount : (recordsOrCount?.length ?? 0)
 
   if (count === 0) {
-    return `No ${labelPlural} records`
+    return `No ${label} records`
   } else if (count === 1) {
-    return `1 ${labelSingular} record`
+    return `1 ${label} record`
   } else {
-    return `${count} ${labelPlural} records`
+    return `${count} ${label} records`
   }
 }
 

@@ -14,7 +14,7 @@ export default function useLocalTableDialogs() {
       componentProps: {
         label: 'Log',
         subComponents: [
-          { component: DialogInspectItemText, props: { label: 'Id', value: log.id } },
+          { component: DialogInspectItemText, props: { label: 'Auto Id', value: log.autoId } },
           {
             component: DialogInspectItemDate,
             props: { label: 'Created Date', value: log.created_at },
@@ -41,7 +41,7 @@ export default function useLocalTableDialogs() {
         subComponents: [
           {
             component: DialogInspectItemText,
-            props: { label: 'Id', value: setting.id },
+            props: { label: 'Key', value: setting.key },
           },
           {
             component: DialogInspectItemText,

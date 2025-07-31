@@ -4,7 +4,7 @@ import { QBtn, QInput } from 'quasar'
 import { ref } from 'vue'
 import { Setting } from '~/models/Setting'
 import { localDatabase } from '~/utils/local-database'
-import { appTitle, localTables, settingNames } from '~~/shared/constants'
+import { appTitle, settingKeys } from '~~/shared/constants'
 
 useMeta({ title: `${appTitle} | Login` })
 
@@ -38,12 +38,7 @@ async function login() {
       logger.error(loginError.message, loginError)
     } else {
       // Store or update user email in local database
-      localDatabase.table(localTables.enum.settings).put(
-        new Setting({
-          id: settingNames.enum['User Email'],
-          value: email.value,
-        }),
-      )
+      localDatabase.settings.put(new Setting(settingKeys.enum['User Email'], email.value))
       await router.replace('/')
     }
   } catch (error) {

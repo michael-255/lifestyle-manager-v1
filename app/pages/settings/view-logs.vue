@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRouting, type LogType } from '#imports'
 import { appTitle, closeIcon, columnsIcon, searchIcon } from '#shared/constants'
+import type { LogType } from '#shared/types/local-schemas'
 import {
   columnOptionsFromTableColumns,
   hiddenTableColumn,
@@ -24,7 +24,7 @@ const labelPlural = 'Logs'
 const searchFilter: Ref<string> = ref('')
 const tableColumns = [
   hiddenTableColumn('id'),
-  tableColumn('id', 'Id', 'UUID'),
+  tableColumn('autoId', 'Auto Id'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('log_level', 'Log Level'),
   tableColumn('label', 'Label', 'TEXT'),
@@ -61,7 +61,7 @@ onUnmounted(() => {
     :rows-per-page-options="[0]"
     :filter="searchFilter"
     virtual-scroll
-    row-key="id"
+    row-key="autoId"
   >
     <template #header="props">
       <QTr :props="props">
@@ -138,7 +138,7 @@ onUnmounted(() => {
     </template>
 
     <template #bottom>
-      {{ recordCount(liveData, labelSingular, labelPlural) }}
+      {{ recordCount(liveData, labelSingular) }}
     </template>
   </QTable>
 </template>

@@ -1,20 +1,15 @@
-import type { SettingNameType, SettingValueType } from '#shared/types/types'
-
-interface SettingParams {
-  id: SettingNameType // Instead of standard Id
-  value: SettingValueType
-}
+import type { SettingKeyType, SettingValueType } from '#shared/types/local-schemas'
 
 /**
  * Setting model is used for app wide settings. They are initialized and live
  * queried during startup in `App.vue` and inserted into a store for easy access.
  */
 export class Setting {
-  id: SettingNameType // Instead of standard Id
+  key: SettingKeyType
   value: SettingValueType
 
-  constructor(params: SettingParams) {
-    this.id = params.id
-    this.value = params.value
+  constructor(key: SettingKeyType, value: SettingValueType) {
+    this.key = key
+    this.value = value
   }
 }

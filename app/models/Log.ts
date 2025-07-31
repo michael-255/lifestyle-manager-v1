@@ -1,42 +1,29 @@
-import type {
-  IdType,
-  LogDetailsType,
-  LogLabelType,
-  LogLevelType,
-  TimestampzType,
-} from '#shared/types/types'
-import { v4 as uid } from 'uuid'
-
-interface LogParams {
-  logLevel: LogLevelType
-  label: LogLabelType
-  details: LogDetailsType | Error
-}
+import type { TimestampzType } from '#shared/types/common-schemas'
+import type { LogDetailsType, LogLabelType, LogLevelType } from '#shared/types/local-schemas'
 
 /**
  * Log stored in the local browser databse for the app.
  */
 export class Log {
-  id: IdType
+  autoId?: number // Auto-incremented by Dexie
   created_at: TimestampzType
   log_level: LogLevelType
   label: LogLabelType
-  details: LogDetailsType
+  details?: LogDetailsType
 
-  constructor(params: LogParams) {
-    this.id = uid()
+  constructor(logLevel: LogLevelType, label: LogLabelType, details?: LogDetailsType | Error) {
     this.created_at = new Date().toISOString()
-    this.log_level = params.logLevel
-    this.label = params.label
+    this.log_level = logLevel
+    this.label = label
 
-    if (params.details instanceof Error) {
+    if (details instanceof Error) {
       this.details = {
-        name: params.details.name,
-        message: params.details.message,
-        stack: params.details.stack,
+        name: details.name,
+        message: details.message,
+        stack: details.stack,
       }
     } else {
-      this.details = params.details
+      this.details = details
     }
   }
 }

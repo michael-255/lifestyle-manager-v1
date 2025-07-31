@@ -1,13 +1,16 @@
-import { appTitle, durationNames, localTables, settingNames } from '#shared/constants'
-import { timestampzSchema } from '#shared/types/schemas'
+import { appTitle, durationNames, settingKeys } from '#shared/constants'
+import {
+  timestampzSchema,
+  type DurationNameType,
+  type TimestampzType,
+} from '#shared/types/common-schemas'
 import type {
-  DurationNameType,
-  IdType,
+  LogAutoIdType,
   LogType,
+  SettingKeyType,
   SettingType,
   SettingValueType,
-  TimestampzType,
-} from '#shared/types/types'
+} from '#shared/types/local-schemas'
 import Dexie, { liveQuery, type Observable, type Table } from 'dexie'
 import { Log } from '~/models/Log'
 import { Setting } from '~/models/Setting'
@@ -19,19 +22,19 @@ import { durationLookup } from '~~/shared/utils/utils'
  */
 export class LocalDatabase extends Dexie {
   // Required for easier TypeScript usage
-  [localTables.enum.logs]!: Table<Log>;
-  [localTables.enum.settings]!: Table<Setting>
+  logs!: Table<Log>
+  settings!: Table<Setting>
 
   constructor(name: string) {
     super(name)
 
     this.version(1).stores({
-      [localTables.enum.logs]: '&id, created_at',
-      [localTables.enum.settings]: '&id',
+      logs: '++autoId, created_at',
+      settings: '&key',
     })
 
-    this[localTables.enum.logs].mapToClass(Log)
-    this[localTables.enum.settings].mapToClass(Setting)
+    this.logs.mapToClass(Log)
+    this.settings.mapToClass(Setting)
   }
 
   /**
@@ -40,7 +43,7 @@ export class LocalDatabase extends Dexie {
    * @note This MUST be called in `App.vue` on startup
    */
   async initializeSettings(): Promise<void> {
-    const defaultSettings: Record<SettingNameType, SettingValueType> = {
+    const defaultSettings: Record<SettingKeyType, SettingValueType> = {
       'User Email': '',
       'Console Logs': false,
       'Info Popups': false,
@@ -49,20 +52,17 @@ export class LocalDatabase extends Dexie {
 
     // Get all settings or create them with default values
     const settings = await Promise.all(
-      settingNames.options.map(async (name) => {
-        const setting = await this.table(localTables.enum.settings).get(name)
+      settingKeys.options.map(async (key: SettingKeyType) => {
+        const setting = await this.settings.get(key)
         if (setting) {
           return setting
         } else {
-          return new Setting({
-            id: name,
-            value: defaultSettings[name],
-          })
+          return new Setting(key, defaultSettings[key])
         }
       }),
     )
 
-    await Promise.all(settings.map((setting) => this.table(localTables.enum.settings).put(setting)))
+    await Promise.all(settings.map((setting) => this.settings.put(setting)))
   }
 
   /**
@@ -71,9 +71,7 @@ export class LocalDatabase extends Dexie {
    * @returns The number of logs deleted
    */
   async deleteExpiredLogs() {
-    const setting = await this.table(localTables.enum.settings).get(
-      settingNames.enum['Log Rentention Duration'],
-    )
+    const setting = await this.settings.get(settingKeys.enum['Log Rentention Duration'])
     const durationName = setting?.value as DurationNameType
     const durationValue = durationLookup[durationName]
     const durationForever = durationLookup.Forever
@@ -82,7 +80,7 @@ export class LocalDatabase extends Dexie {
       return 0 // No logs purged
     }
 
-    const allLogs = await this.table(localTables.enum.logs).toArray()
+    const allLogs = await this.logs.toArray()
     const now = Date.now()
 
     // Find Logs that are older than the retention time and map them to their keys
@@ -96,9 +94,9 @@ export class LocalDatabase extends Dexie {
         const logAge = now - logTimestamp
         return logAge > durationValue
       })
-      .map((log: LogType) => log.id) // Map remaining Log ids for removal
+      .map((log: LogType) => log.autoId) // Map remaining Log ids for removal
 
-    await this.table(localTables.enum.logs).bulkDelete(removableLogs as IdType[])
+    await this.logs.bulkDelete(removableLogs as LogAutoIdType[])
     return removableLogs.length // Number of logs deleted
   }
 
@@ -108,9 +106,7 @@ export class LocalDatabase extends Dexie {
    * changes.
    */
   liveLogs(): Observable<LogType[]> {
-    return liveQuery(() =>
-      this.table(localTables.enum.logs).orderBy('created_at').reverse().toArray(),
-    )
+    return liveQuery(() => this.logs.orderBy('created_at').reverse().toArray())
   }
 
   /**
@@ -119,7 +115,7 @@ export class LocalDatabase extends Dexie {
    * changes.
    */
   liveSettings(): Observable<SettingType[]> {
-    return liveQuery(() => this.table(localTables.enum.settings).toArray())
+    return liveQuery(() => this.settings.toArray())
   }
 }
 

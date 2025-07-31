@@ -122,7 +122,7 @@ function onInspect(record: Record<string, any>) {
     </template>
 
     <template #bottom>
-      {{ recordCount(records, labelSingular, labelPlural) }}
+      {{ recordCount(records, labelSingular) }}
     </template>
   </QTable>
 </template>

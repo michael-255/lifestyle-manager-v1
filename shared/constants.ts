@@ -56,10 +56,7 @@ export const appDescription = `${appTitle} is a project for managing your daily 
 export const displayDateFormat = 'ddd, YYYY MMM Do, h:mm A' // Sun, 2024 Sep 1st, 12:17 PM
 export const pickerDateFormat = 'YYYY-MM-DDTHH:mm'
 
-export const localTables = z.enum(['settings', 'logs'])
-
-// Used as a readable Id for the setting in the local database
-export const settingNames = z.enum([
+export const settingKeys = z.enum([
   'User Email',
   'Console Logs',
   'Info Popups',

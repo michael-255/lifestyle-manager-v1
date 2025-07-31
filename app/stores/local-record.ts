@@ -27,5 +27,5 @@ export const useLocalRecordStore = defineStore('local-record', {
     },
   },
 
-  // TODO - Getters for accessing specific common properties
+  // TODO - Getters for accessing specific common properties?
 })

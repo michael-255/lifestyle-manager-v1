@@ -1,13 +1,5 @@
-import {
-  appTitle,
-  debugIcon,
-  errorIcon,
-  infoIcon,
-  localTables,
-  logLevels,
-  warnIcon,
-} from '#shared/constants'
-import type { LogDetailsType } from '#shared/types/types'
+import { appTitle, debugIcon, errorIcon, infoIcon, logLevels, warnIcon } from '#shared/constants'
+import type { LogDetailsType } from '#shared/types/local-schemas'
 import { Log } from '@/models/Log'
 import { Notify, colors } from 'quasar'
 import { useSettingsStore } from '~/stores/settings'
@@ -71,14 +63,8 @@ export default function useLogger() {
       console.log(loggerName, style.info, `[${logLevels.enum.INFO}]`, label, details)
     }
 
-    const log = new Log({
-      logLevel: logLevels.enum.INFO,
-      label,
-      details,
-    })
-
-    await localDatabase.table(localTables.enum.logs).add(log)
-
+    const log = new Log(logLevels.enum.INFO, label, details)
+    await localDatabase.logs.add(log)
     if (settingsStore.infoPopus) {
       Notify.create({ message: label, icon: infoIcon, color: 'primary' })
     }
@@ -92,14 +78,8 @@ export default function useLogger() {
       console.warn(loggerName, style.warn, `[${logLevels.enum.WARN}]`, label, details)
     }
 
-    const log = new Log({
-      logLevel: logLevels.enum.WARN,
-      label,
-      details,
-    })
-
-    await localDatabase.table(localTables.enum.logs).add(log)
-
+    const log = new Log(logLevels.enum.WARN, label, details)
+    await localDatabase.logs.add(log)
     Notify.create({ message: label, icon: warnIcon, color: 'warning' })
   }
 
@@ -111,14 +91,8 @@ export default function useLogger() {
       console.error(loggerName, style.error, `[${logLevels.enum.ERROR}]`, label, details)
     }
 
-    const log = new Log({
-      logLevel: logLevels.enum.ERROR,
-      label,
-      details,
-    })
-
-    await localDatabase.table(localTables.enum.logs).add(log)
-
+    const log = new Log(logLevels.enum.ERROR, label, details)
+    await localDatabase.logs.add(log)
     Notify.create({ message: label, icon: errorIcon, color: 'negative' })
   }
 
