@@ -253,6 +253,7 @@ export type Database = {
     Views: {
       todays_workouts: {
         Row: {
+          created_at: string | null
           description: string | null
           id: string | null
           is_locked: boolean | null
@@ -263,12 +264,16 @@ export type Database = {
           schedule:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
+          user_id: string | null
         }
         Relationships: []
       }
     }
     Functions: {
-      [_ in never]: never
+      seed_workouts_for_user: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       exercise_type:
