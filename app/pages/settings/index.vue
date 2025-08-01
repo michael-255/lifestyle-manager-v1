@@ -21,7 +21,7 @@ import {
   warnIcon,
 } from '#shared/constants'
 import { useSettingsStore } from '@/stores/settings'
-import { exportFile, QSpinnerGears, useQuasar } from 'quasar'
+import { exportFile, useQuasar } from 'quasar'
 import { ref, type Ref } from 'vue'
 import { localDatabase } from '~/utils/local-database'
 
@@ -303,11 +303,6 @@ function onDeleteLocalDatabase() {
  * Generates test logs for the application. Only available in development mode.
  */
 function onTestLogs() {
-  $q.loading.show({
-    message: 'Testing Logs',
-    spinner: QSpinnerGears,
-  })
-
   const testData = {
     userId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
     userName: 'Test User',
@@ -321,8 +316,6 @@ function onTestLogs() {
   logger.info('Log - Info', testData)
   logger.warn('Log - Warn', testData)
   logger.error('Log - Error', new Error('Test Error'))
-
-  $q.loading.hide()
 }
 </script>
 

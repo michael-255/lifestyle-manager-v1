@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { appTitle } from '#shared/constants'
+import type { TodaysWorkout } from '#shared/types/fitness-schemas'
 import type { Database } from '#shared/types/supabase'
 
 useMeta({ title: `${appTitle} | Fitness - Today's Plan` })
@@ -12,15 +13,13 @@ const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 
-// TODO - fix type
-const workouts = ref<Record<string, any>[]>([])
+const todaysWorkouts = ref<TodaysWorkout[]>([])
 const finishedLoading = ref(false)
 
 onMounted(async () => {
   try {
     $q.loading.show()
 
-    // TODO - Move this to the data-layer?
     const { data, error } = await supabase
       .from('todays_workouts')
       .select('*')
@@ -28,8 +27,8 @@ onMounted(async () => {
 
     if (error) throw error
 
-    logger.info("Successfully fetched today's workouts", { count: data.length })
-    workouts.value = data
+    logger.info("Successfully fetched today's workouts", { count: data.length, workouts: data })
+    todaysWorkouts.value = data
   } catch (error) {
     logger.error(`Error fetching today's workouts`, error as Error)
   } finally {
@@ -43,7 +42,7 @@ onMounted(async () => {
   <SharedHeading title="Today's Plan" />
 
   <QList padding>
-    <div v-if="finishedLoading && workouts.length === 0">
+    <div v-if="finishedLoading && todaysWorkouts.length === 0">
       <QItem>
         <QItemSection>
           <QCard flat bordered>
@@ -59,7 +58,11 @@ onMounted(async () => {
     </div>
 
     <div v-else>
-      <FitnessWorkoutCard v-for="workout in workouts" :key="workout.id" :workout />
+      <FitnessWorkoutCard
+        v-for="workout in todaysWorkouts"
+        :key="workout.id!"
+        :todays-workout="workout"
+      />
     </div>
   </QList>
 </template>

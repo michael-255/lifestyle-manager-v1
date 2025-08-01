@@ -4,8 +4,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness TODO
 
-- `TODO` Must fully seed the database with mock data.
-
 Refactor dialogs into composables.
 
 ```ts

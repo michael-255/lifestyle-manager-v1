@@ -150,14 +150,14 @@ CREATE VIEW public.todays_workouts
 WITH (security_invoker=on)
 AS
 SELECT
-  w.*,
-  wr.id AS last_id,
+  w.id,
+  w.name,
+  w.is_locked,
   wr.created_at AS last_created_at,
   wr.note AS last_note
 FROM public.workouts w
 LEFT JOIN LATERAL (
   SELECT
-    wr.id,
     wr.created_at,
     wr.note
   FROM public.workout_results wr

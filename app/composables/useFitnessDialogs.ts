@@ -1,4 +1,5 @@
 import {
+  DialogConfirm,
   DialogCreate,
   DialogEdit,
   DialogFormItemCreatedDate,
@@ -7,8 +8,7 @@ import {
   DialogInspectItemList,
   DialogInspectItemText,
 } from '#components'
-
-type Workout = Database['public']['Tables']['workouts']['Row']
+import { deleteIcon } from '#shared/constants'
 
 export default function useFitnessDialogs() {
   const $q = useQuasar()
@@ -19,6 +19,7 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
+      // TODO
       const { data, error } = await supabase.from('workouts').select('*').eq('id', id).single()
 
       if (error) throw error
@@ -79,21 +80,58 @@ export default function useFitnessDialogs() {
     }
   }
 
-  function openEditWorkout(workout: Workout) {
+  async function openEditWorkout(id: IdType) {
     try {
+      $q.loading.show()
+
+      // TODO
+      const { data, error } = await supabase.from('workouts').select('*').eq('id', id).single()
+
+      if (error) throw error
+
       $q.dialog({
         component: DialogEdit,
         componentProps: {
           label: 'Workout',
-          record: workout,
+          record: data,
           subComponents: [{ component: DialogFormItemCreatedDate }],
           onSubmitHandler: () => logger.info('Edit Workout Handler'),
         },
       })
     } catch (error) {
       logger.error('Error opening workout edit dialog', error as Error)
+    } finally {
+      $q.loading.hide()
     }
   }
 
-  return { openInspectWorkout, openCreateWorkout, openEditWorkout }
+  function openDeleteWorkout(id: IdType) {
+    try {
+      $q.dialog({
+        component: DialogConfirm,
+        componentProps: {
+          title: 'Delete Workout',
+          message: `Are you sure you want to delete workout "${id}"?`,
+          color: 'negative',
+          icon: deleteIcon,
+          requiresUnlock: true,
+        },
+      }).onOk(async () => {
+        try {
+          $q.loading.show()
+          const { data, error } = await supabase.from('workouts').delete().eq('id', id)
+          if (error) throw error
+          logger.info('Workout deleted', { result: data })
+        } catch (error) {
+          logger.error('Error deleting workout', error as Error)
+        } finally {
+          $q.loading.hide()
+        }
+      })
+    } catch (error) {
+      logger.error('Error opening workout delete dialog', error as Error)
+    }
+  }
+
+  return { openInspectWorkout, openCreateWorkout, openEditWorkout, openDeleteWorkout }
 }
