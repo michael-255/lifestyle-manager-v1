@@ -156,13 +156,6 @@ export type Database = {
             foreignKeyName: "workout_result_exercise_results_workout_result_id_fkey"
             columns: ["workout_result_id"]
             isOneToOne: false
-            referencedRelation: "todays_workouts"
-            referencedColumns: ["last_id"]
-          },
-          {
-            foreignKeyName: "workout_result_exercise_results_workout_result_id_fkey"
-            columns: ["workout_result_id"]
-            isOneToOne: false
             referencedRelation: "workout_results"
             referencedColumns: ["id"]
           },
@@ -253,18 +246,11 @@ export type Database = {
     Views: {
       todays_workouts: {
         Row: {
-          created_at: string | null
-          description: string | null
           id: string | null
           is_locked: boolean | null
           last_created_at: string | null
-          last_id: string | null
           last_note: string | null
           name: string | null
-          schedule:
-            | Database["public"]["Enums"]["workout_schedule_type"][]
-            | null
-          user_id: string | null
         }
         Relationships: []
       }
