@@ -1,3 +1,5 @@
+import { z } from 'zod'
+
 export type TodaysWorkout = Tables<'todays_workouts'>
 
 export type Workout = Database['public']['Tables']['workouts']['Row']
@@ -7,3 +9,34 @@ export type Exercise = Database['public']['Tables']['exercises']['Row']
 export type ExerciseResult = Database['public']['Tables']['exercise_results']['Row']
 
 export type WorkoutSchedule = Database['public']['Enums']['workout_schedule_type']
+
+export const workoutScheduleSchema = z.enum(Constants.public.Enums.workout_schedule_type)
+
+export const inspectWorkoutSchema = z.object({
+  id: z.string().uuid(),
+  user_id: z.string().uuid(),
+  created_at: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  schedule: z.array(workoutScheduleSchema).nullable(),
+  is_locked: z.boolean(),
+  exercises: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+      }),
+    )
+    .nullable(), // could be null if no exercises
+  last_workout_result: z
+    .object({
+      id: z.string().uuid(),
+      created_at: z.string(),
+      finished_at: z.string().nullable(),
+      duration_seconds: z.number().nullable(),
+      note: z.string().nullable(),
+    })
+    .nullable(), // could be null if no previous workout results
+})
+
+export type InspectWorkout = z.infer<typeof inspectWorkoutSchema>

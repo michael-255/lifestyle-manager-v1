@@ -11,10 +11,17 @@ import {
   DialogInspectItemBoolean,
   DialogInspectItemDate,
   DialogInspectItemList,
+  DialogInspectItemObject,
+  DialogInspectItemObjectList,
   DialogInspectItemText,
 } from '#components'
 import { deleteIcon } from '#shared/constants'
-import type { Exercise, WorkoutResult } from '~~/shared/types/fitness-schemas'
+import {
+  inspectWorkoutSchema,
+  type Exercise,
+  type InspectWorkout,
+  type WorkoutResult,
+} from '#shared/types/fitness-schemas'
 
 export default function useFitnessDialogs() {
   const $q = useQuasar()
@@ -30,8 +37,10 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      const { data, error } = await supabase.from('workouts').select('*').eq('id', id).single()
+      const { data, error } = await supabase.rpc('inspect_workout', { w_id: id })
       if (error) throw error
+
+      const inspectWorkout: InspectWorkout = inspectWorkoutSchema.parse(data)
 
       $q.dialog({
         component: DialogInspect,
@@ -40,33 +49,40 @@ export default function useFitnessDialogs() {
           subComponents: [
             {
               component: DialogInspectItemText,
-              props: { label: 'Id', value: data.id },
+              props: { label: 'Id', value: inspectWorkout.id },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'User Id', value: data.user_id },
+              props: { label: 'User Id', value: inspectWorkout.user_id },
             },
             {
               component: DialogInspectItemDate,
-              props: { label: 'Created At', value: data.created_at },
+              props: { label: 'Created At', value: inspectWorkout.created_at },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'Name', value: data.name },
+              props: { label: 'Name', value: inspectWorkout.name },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'Description', value: data.description },
+              props: { label: 'Description', value: inspectWorkout.description },
             },
             {
               component: DialogInspectItemList,
-              props: { label: 'Schedule', value: data.schedule },
+              props: { label: 'Schedule', value: inspectWorkout.schedule },
             },
             {
               component: DialogInspectItemBoolean,
-              props: { label: 'Locked', value: data.is_locked },
+              props: { label: 'Locked', value: inspectWorkout.is_locked },
             },
-            // TODO - Exercises
+            {
+              component: DialogInspectItemObject,
+              props: { label: 'Last Workout', value: inspectWorkout.last_workout_result },
+            },
+            {
+              component: DialogInspectItemObjectList,
+              props: { label: 'Exercises', value: inspectWorkout.exercises },
+            },
           ],
         },
       })

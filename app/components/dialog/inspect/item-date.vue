@@ -10,6 +10,6 @@ defineProps<{
     <div v-if="value">
       {{ localDisplayDate(value) }}
     </div>
-    <div v-else class="text-italic text-secondary">-empty-</div>
+    <div v-else class="text-italic text-secondary">empty</div>
   </DialogInspectItem>
 </template>

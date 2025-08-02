@@ -12,8 +12,6 @@ Consider using `tanstack/vue-query` soon!
 npm i @tanstack/vue-query
 ```
 
-`IMPORTANT` Update your VIEWS to include the exact data you need for various pages and dialogs.
-
 #### Create/Edit Workout
 
 - [@] `item-created-date.vue`

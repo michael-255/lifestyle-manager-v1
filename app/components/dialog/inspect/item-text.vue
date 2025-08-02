@@ -22,6 +22,6 @@ const computedValue = computed(() => {
       <div v-for="line in computedValue" :key="line">{{ line }}<br /></div>
     </div>
     <div v-else-if="value">{{ value }}</div>
-    <div v-else class="text-italic text-secondary">-empty-</div>
+    <div v-else class="text-italic text-secondary">empty</div>
   </DialogInspectItem>
 </template>
