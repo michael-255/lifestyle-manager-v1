@@ -154,11 +154,13 @@ SELECT
   w.name,
   w.is_locked,
   wr.created_at AS last_created_at,
-  wr.note AS last_note
+  wr.note AS last_note,
+  (EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at))::integer) AS last_duration_seconds
 FROM public.workouts w
 LEFT JOIN LATERAL (
   SELECT
     wr.created_at,
+    wr.finished_at,
     wr.note
   FROM public.workout_results wr
   WHERE wr.workout_id = w.id
@@ -178,6 +180,8 @@ WHERE
       )
     )
   );
+
+COMMENT ON VIEW public.todays_workouts IS 'View for the today''s workouts page.';
 
 --
 -- RLS Policies
@@ -350,3 +354,50 @@ ON public.workout_result_exercise_results
 FOR DELETE
 TO authenticated
 USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
+
+--
+-- Functions
+--
+
+CREATE OR REPLACE FUNCTION public.inspect_workout(w_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  inspect_workout JSONB;
+BEGIN
+  SELECT to_jsonb(w)
+    || jsonb_build_object(
+      'exercises',
+        (
+          SELECT jsonb_agg(jsonb_build_object('id', e.id, 'name', e.name) ORDER BY we.position)
+          FROM public.workout_exercises we
+          JOIN public.exercises e ON e.id = we.exercise_id
+          WHERE we.workout_id = w.id
+        ),
+      'last_workout_result',
+        (
+          SELECT jsonb_build_object(
+            'id', wr.id,
+            'created_at', wr.created_at,
+            'finished_at', wr.finished_at,
+            'duration_seconds', EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at)),
+            'note', wr.note
+          )
+          FROM public.workout_results wr
+          WHERE wr.workout_id = w.id
+          ORDER BY wr.created_at DESC
+          LIMIT 1
+        )
+    )
+  INTO inspect_workout
+  FROM public.workouts w
+  WHERE w.id = w_id
+  AND w.user_id = auth.uid();
+
+  RETURN inspect_workout;
+END;
+$$;
+
+COMMENT ON FUNCTION public.inspect_workout(w_id UUID) IS 'Function for inspect workout dialogs.';

@@ -47,7 +47,7 @@ jobs:
 
       - name: Generate Supabase types
         run: |
-          supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" --debug > shared/types/supabase.ts
+          supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" > shared/types/supabase.ts
 
       - name: Commit File Changes
         uses: stefanzweifel/git-auto-commit-action@v6
