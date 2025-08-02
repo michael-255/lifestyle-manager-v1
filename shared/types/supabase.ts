@@ -249,6 +249,7 @@ export type Database = {
           id: string | null
           is_locked: boolean | null
           last_created_at: string | null
+          last_duration_seconds: number | null
           last_note: string | null
           name: string | null
         }
@@ -256,6 +257,10 @@ export type Database = {
       }
     }
     Functions: {
+      inspect_workout: {
+        Args: { w_id: string }
+        Returns: Json
+      }
       seed_workouts_for_user: {
         Args: { p_user_id: string }
         Returns: undefined
