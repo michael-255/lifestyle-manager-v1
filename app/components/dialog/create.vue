@@ -41,16 +41,8 @@ function onReset() {
       icon: refreshIcon,
       requiresUnlock: false,
     },
-  }).onOk(async () => {
-    try {
-      $q.loading.show()
-      localRecordStore.resetRecord()
-      logger.info(`Reset ${props.label}`)
-    } catch (error) {
-      logger.error(`Error reseting ${props.label}`, error as Error)
-    } finally {
-      $q.loading.hide()
-    }
+  }).onOk(() => {
+    localRecordStore.resetRecord()
   })
 }
 
@@ -120,7 +112,6 @@ async function onSubmit() {
                         <QBtn
                           :label="`Create ${label}`"
                           :icon="saveIcon"
-                          :disable="!isFormValid"
                           color="positive"
                           type="submit"
                         />

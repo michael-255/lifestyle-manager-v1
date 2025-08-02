@@ -1,5 +1,6 @@
 import type { DurationNameType } from '#shared/types/common-schemas'
 import { date, type QTableColumn } from 'quasar'
+import { localDisplayDateFormat, localPickerDateFormat } from '../constants'
 
 /**
  * Used to look up the duration in milliseconds for a given duration name..
@@ -29,7 +30,7 @@ export const durationLookup: Record<DurationNameType, number> = {
  */
 export const limitRuleLookup = {
   maxTextArea: 300,
-  maxTextLine: 50,
+  maxTextLabel: 50,
 } as const
 
 /**
@@ -102,7 +103,7 @@ export function tableColumn(
       return tableColumn
     case 'ISO-DATE':
       // Converts to a compact date string
-      tableColumn.format = (val: string) => compactDate(val)
+      tableColumn.format = (val: string) => localDisplayDate(val)
       return tableColumn
     case 'LIST-COUNT':
       // Converts list to a count of the number of items
@@ -172,32 +173,35 @@ export function recordCount(recordsOrCount: any[] | number, label: string = '') 
  * @param str Original string to be truncated
  * @param maxLength How much of the original string to keep
  * @param ending Any valid string like `...` or `*` make good endings
- * @returns
+ * @returns `This string is truncated...`
  */
 export function truncateText(text: string | null | undefined, maxLength: number, ending: string) {
   return text && text.length > maxLength ? text.slice(0, maxLength) + ending : text || ''
 }
 
 /**
- * Compact readable date string from a UTC ISO date string, converted to local time, or an empty
- * string if invalid.
- * @param utcIsoDate UTC ISO date string
- * @returns `Sat, 2021 Jan 2nd, 12:00 PM`
+ * Returns a formatted local display date string from a UTC date string.
+ * @param utcDate UTC date string in ISO format
+ * @returns `Sun, 2024 Sep 1st, 12:17 PM`
  */
-export function compactDate(utcIsoDate?: string) {
-  if (!utcIsoDate) {
-    return ''
-  }
-
-  const dateObj = new Date(utcIsoDate)
-  if (isNaN(dateObj.getTime())) {
-    return ''
-  }
-
-  // Convert to local time by using the Date object as-is
-  return date.formatDate(dateObj, 'ddd, YYYY MMM Do, h:mm A')
+export function localDisplayDate(utcDate: string): string {
+  if (!utcDate) return 'No Date'
+  const localDate = new Date(utcDate).toLocaleString()
+  return date.formatDate(localDate, localDisplayDateFormat)
 }
 
+/**
+ * Returns a formatted local date-time string for date-time pickers from a UTC date string.
+ * @param utcDate UTC date string in ISO format
+ * @returns `2024-09-01T12:17:00`
+ */
+export function localPickerDate(utcDate: string): string {
+  if (!utcDate) return 'No Date'
+  const localDate = new Date(utcDate).toLocaleString()
+  return date.formatDate(localDate, localPickerDateFormat)
+}
+
+// TODO - likely need to correct this for date conversions to local?
 /**
  * Readable time duration string from a UTC ISO date string (converted to local time) to now, or an
  * empty string if invalid or less than one second.
@@ -233,6 +237,7 @@ export function timeFromDate(utcIsoDate?: string): string {
   return `${daysStr}${hoursStr}${minutesStr}${secondsStr}`
 }
 
+// TODO - likely need to correct this for date conversions to local?
 /**
  * Calculates relative time difference between the current time and a given UTC ISO date string
  * (converted to local time). Returns a formatted string with a color for the difference.

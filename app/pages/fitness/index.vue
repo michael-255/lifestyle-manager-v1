@@ -27,7 +27,7 @@ onMounted(async () => {
 
     if (error) throw error
 
-    logger.info("Successfully fetched today's workouts", { count: data.length, workouts: data })
+    logger.info("Successfully fetched today's workouts", { count: data.length })
     todaysWorkouts.value = data
   } catch (error) {
     logger.error(`Error fetching today's workouts`, error as Error)

@@ -2,69 +2,50 @@
 import {
   calendarCheckIcon,
   calendarIcon,
-  displayDateFormat,
-  pickerDateFormat,
+  localPickerDateFormat,
   scheduleTimeIcon,
 } from '#shared/constants'
-import { date } from 'quasar'
+import { localDisplayDate, localPickerDate } from '#shared/utils/utils'
 import { computed, ref, watch } from 'vue'
 
 const localRecordStore = useLocalRecordStore()
 
-function isoToLocalString(iso: string) {
-  if (!iso) return ''
-  return date.formatDate(iso, pickerDateFormat)
-}
-
-function localStringToIso(local: string) {
-  if (!local) return ''
-  return new Date(local).toISOString()
-}
-
-function onNow() {
-  localRecordStore.record.created_at = new Date().toISOString()
-  dateTimePicker.value = isoToLocalString(localRecordStore.record.created_at)
-}
-
-const displayDate = computed(() =>
-  localRecordStore.record?.created_at
-    ? date.formatDate(localRecordStore.record?.created_at, displayDateFormat)
-    : '',
-)
-
-const dateTimePicker = ref(
-  localRecordStore.record?.created_at ? isoToLocalString(localRecordStore.record.created_at) : '',
-)
-
-watch(
-  () => localRecordStore.record?.created_at,
-  (newTimestamp) => {
-    dateTimePicker.value = newTimestamp ? isoToLocalString(newTimestamp) : ''
-  },
-)
+const dateTimePicker = ref(localPickerDate(localRecordStore.record?.created_at))
+const displayDate = computed(() => localDisplayDate(localRecordStore.record?.created_at))
 
 watch(dateTimePicker, () => {
   if (dateTimePicker.value) {
-    localRecordStore.record.created_at = localStringToIso(dateTimePicker.value)
+    // Convert back to UTC string for the store
+    localRecordStore.record.created_at = new Date(dateTimePicker.value).toISOString()
   }
 })
+
+function onNow() {
+  // Start with a UTC string for the store
+  const utcDate = new Date().toISOString()
+  localRecordStore.record.created_at = utcDate
+  dateTimePicker.value = localPickerDate(utcDate)
+}
 </script>
 
 <template>
-  <DialogFormItem label="Created Date">
-    <QItemLabel v-if="displayDate" class="text-h6">{{ displayDate }}</QItemLabel>
-    <QItemLabel v-else class="text-h6">No Date</QItemLabel>
+  <DialogFormItem label="Created Date" class="q-mb-md">
+    <QItemLabel class="q-pt-xs text-body2">{{ displayDate }}</QItemLabel>
 
-    <QItemLabel class="q-gutter-xs">
+    <QItemLabel class="q-gutter-sm">
       <QBtn :icon="calendarIcon" size="sm" label="Date" color="primary">
         <QPopupProxy>
-          <QDate v-model="dateTimePicker" :mask="pickerDateFormat" today-btn no-unset />
+          <QDate v-model="dateTimePicker" :mask="localPickerDateFormat" today-btn no-unset>
+            <QBtn v-close-popup flat dense label="Close" />
+          </QDate>
         </QPopupProxy>
       </QBtn>
 
       <QBtn :icon="scheduleTimeIcon" size="sm" label="Time" color="primary">
         <QPopupProxy>
-          <QTime v-model="dateTimePicker" :mask="pickerDateFormat" />
+          <QTime v-model="dateTimePicker" :mask="localPickerDateFormat" now-btn>
+            <QBtn v-close-popup flat dense label="Close" />
+          </QTime>
         </QPopupProxy>
       </QBtn>
 

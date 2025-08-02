@@ -1,32 +1,43 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+// TODO
+
 const localRecordStore = useLocalRecordStore()
 
-// Reminder options from enum (excluding 'None')
-const reminderOptions = ['Daily', 'Weekly', 'Monthly', 'Yearly']
+const scheduleOptions = [
+  'Daily',
+  'Weekly',
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+]
 
 // Split options into two columns
-const mid = Math.ceil(reminderOptions.length / 2)
-const col1 = reminderOptions.slice(0, mid)
-const col2 = reminderOptions.slice(mid)
+const mid = Math.ceil(scheduleOptions.length / 2)
+const col1 = scheduleOptions.slice(0, mid)
+const col2 = scheduleOptions.slice(mid)
 
-// Ensure reminders is always an array
-const reminders = computed({
-  get: () => localRecordStore.record.reminders || [],
-  set: (val) => (localRecordStore.record.reminders = val),
+// Ensure schedule is always an array
+const schedule = computed({
+  get: () => localRecordStore.record.schedule || [],
+  set: (val) => (localRecordStore.record.schedule = val),
 })
 </script>
 
 <template>
-  <DialogFormItem label="Reminders">
+  <DialogFormItem label="Schedule">
     <QItemLabel>
       <div class="row">
         <div class="col column">
           <QCheckbox
             v-for="option in col1"
             :key="option"
-            v-model="reminders"
+            v-model="schedule"
             :val="option"
             :label="option"
             color="primary"
@@ -37,7 +48,7 @@ const reminders = computed({
           <QCheckbox
             v-for="option in col2"
             :key="option"
-            v-model="reminders"
+            v-model="schedule"
             :val="option"
             :label="option"
             color="primary"

@@ -38,7 +38,7 @@ function onStart() {
                 {{ timeAgo(todaysWorkout.last_created_at).message }}
               </QBadge>
               <div class="q-mt-xs">
-                {{ compactDate(todaysWorkout.last_created_at) }}
+                {{ localDisplayDate(todaysWorkout.last_created_at) }}
               </div>
             </QItemLabel>
 

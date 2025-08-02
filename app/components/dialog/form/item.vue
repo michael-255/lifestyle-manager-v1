@@ -6,9 +6,9 @@ defineProps<{
 </script>
 
 <template>
-  <QItem class="q-mb-sm">
+  <QItem>
     <QItemSection>
-      <QItemLabel class="text-bold">{{ label }}</QItemLabel>
+      <QItemLabel class="text-body1">{{ label }}</QItemLabel>
 
       <QItemLabel v-if="description">
         {{ description }}

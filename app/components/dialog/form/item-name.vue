@@ -6,32 +6,32 @@ const localRecordStore = useLocalRecordStore()
 </script>
 
 <template>
-  <DialogFormItem label="Message">
+  <DialogFormItem label="Name">
     <QItemLabel>
       <QInput
-        v-model="localRecordStore.record.message"
+        v-model="localRecordStore.record.name"
         :rules="[
+          (val: string) => (!!val && val.trim().length >= 1) || 'Name is required',
           (val: string) =>
             !val ||
-            val.length <= limitRuleLookup.maxTextArea ||
-            `Messages cannot exceed ${limitRuleLookup.maxTextArea} characters`,
+            val.length <= limitRuleLookup.maxTextLabel ||
+            `Name cannot exceed ${limitRuleLookup.maxTextLabel} characters`,
         ]"
-        :maxlength="limitRuleLookup.maxTextArea"
-        type="textarea"
+        :maxlength="limitRuleLookup.maxTextLabel"
+        type="text"
         lazy-rules
-        autogrow
         counter
         dense
         outlined
         color="primary"
-        @blur="localRecordStore.record.message = localRecordStore.record?.message?.trim()"
+        @blur="localRecordStore.record.name = localRecordStore.record?.name?.trim()"
       >
         <template #append>
           <QIcon
-            v-if="localRecordStore.record.message && localRecordStore.record.message !== ''"
+            v-if="localRecordStore.record.name && localRecordStore.record.name !== ''"
             class="cursor-pointer"
             :name="cancelIcon"
-            @click="localRecordStore.record.message = ''"
+            @click="localRecordStore.record.name = ''"
           />
         </template>
       </QInput>

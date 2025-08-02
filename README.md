@@ -2,31 +2,73 @@
 
 Lifestyle Manager is a project for managing your daily activities, health, and wellness.
 
-## Fitness TODO
+## Fitness App
 
-Refactor dialogs into composables.
+Consider using `tanstack/vue-query` soon!
 
-```ts
-export function useWorkoutDialogs() {
-  const $q = useQuasar()
-
-  async function openInspectWorkoutDialog(id: IdType) {
-    const { DialogFitnessInspectWorkout } = await import('#components')
-    $q.dialog({
-      component: DialogFitnessInspectWorkout,
-      componentProps: { id },
-    })
-  }
-
-  return { openWorkoutDialog }
-}
+```sh
+npm i @tanstack/vue-query
 ```
 
-Get table dialogs working for CRUD operations.
+### TODO - Dialogs
 
-- All inspect dialogs
+#### Create/Edit Workout Components
 
-The following options should all be on the data tables:
+- [@] `item-created-date.vue`
+- [@] `item-name.vue`
+- [@] `item-description.vue`
+- [ ] `item-schedule.vue` (WIP)
+- [ ] `item-workout-exercises.vue` (adding/removing exercises from workout)
+
+#### Create Workout Results
+
+- [ ] `item-parent-workout.vue`
+- [ ] `item-created-date.vue`
+- [ ] `item-finished-date.vue`
+- [@] `item-note.vue`
+
+#### Edit Workout Results
+
+- ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
+- [@] `item-created-date.vue`
+- [ ] `item-finished-date.vue`
+- [@] `item-note.vue`
+
+#### Create Exercise Components
+
+- [@] `item-created-date.vue`
+- [@] `item-name.vue`
+- [@] `item-description.vue`
+- [ ] `item-exercise-type.vue`
+- [ ] `item-default-sets.vue`
+- [ ] `item-rest-timer.vue`
+
+#### Edit Exercise Components
+
+- [@] `item-created-date.vue`
+- [@] `item-name.vue`
+- [@] `item-description.vue`
+- ~~`item-exercise-type.vue`~~ (cant't edit type once created)
+- [ ] `item-default-sets.vue`
+- [ ] `item-rest-timer.vue`
+
+#### Create Exercise Results
+
+- [ ] `item-parent-exercise.vue`
+- [@] `item-created-date.vue`
+- [@] `item-note.vue`
+- [ ] `item-exercise-data.vue` (may break this up into multiple components)
+
+#### Edit Exercise Results
+
+- ~~`item-parent-exercise.vue`~~ (cant't edit parent once created)
+- [@] `item-created-date.vue`
+- [@] `item-note.vue`
+- [ ] `item-exercise-data.vue` (may break this up into multiple components)
+
+### TODO - Data Tables
+
+The following options should be on the data tables:
 
 - `Create`
 - `Start` (Workout/Exercise)
@@ -35,16 +77,16 @@ The following options should all be on the data tables:
 - `Edit`
 - `Delete`
 
+### TODO - Active Workout
+
+- WIP
+
+### TODO - Charts
+
 Try Observable Plot for Charts:
 
 ```sh
 npm i @observablehq/plot
-```
-
-Try Tanstack for data-layer:
-
-```sh
-npm i @tanstack/vue-query
 ```
 
 ## Budget TODO

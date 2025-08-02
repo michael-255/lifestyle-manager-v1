@@ -53,8 +53,12 @@ import { z } from 'zod'
 export const appTitle = 'Lifestyle Manager'
 export const appDescription = `${appTitle} is a project for managing your daily activities, health, and wellness.`
 
-export const displayDateFormat = 'ddd, YYYY MMM Do, h:mm A' // Sun, 2024 Sep 1st, 12:17 PM
-export const pickerDateFormat = 'YYYY-MM-DDTHH:mm'
+// Date format for displaying readable dates in the UI
+export const localDisplayDateFormat = 'ddd, YYYY MMM Do, h:mm A' // Sun, 2024 Sep 1st, 12:17 PM
+// Date format for displaying in date-time pickers
+export const localPickerDateFormat = 'YYYY-MM-DDTHH:mm' // 2024-09-01T12:17:00.000
+// Date format for saving to the database in UTC
+export const utcDateFormat = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]' // 2024-09-01T12:17:00.000Z
 
 export const settingKeys = z.enum([
   'User Email',
