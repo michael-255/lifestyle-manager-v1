@@ -9,9 +9,9 @@ export class Log {
   created_at: TimestampzType
   log_level: LogLevelType
   label: LogLabelType
-  details?: LogDetailsType
+  details: LogDetailsType
 
-  constructor(logLevel: LogLevelType, label: LogLabelType, details?: LogDetailsType | Error) {
+  constructor(logLevel: LogLevelType, label: LogLabelType, details: LogDetailsType) {
     this.created_at = new Date().toISOString()
     this.log_level = logLevel
     this.label = label

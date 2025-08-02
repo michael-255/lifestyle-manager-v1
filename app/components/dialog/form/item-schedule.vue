@@ -1,26 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-// TODO
-
 const localRecordStore = useLocalRecordStore()
 
-const scheduleOptions = [
-  'Daily',
-  'Weekly',
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-]
+const scheduleOptions = Constants.public.Enums.workout_schedule_type
 
-// Split options into two columns
-const mid = Math.ceil(scheduleOptions.length / 2)
-const col1 = scheduleOptions.slice(0, mid)
-const col2 = scheduleOptions.slice(mid)
+const weekDayOptions = scheduleOptions.filter((opt) => opt.includes('day'))
+const specialOptions = scheduleOptions.filter((opt) => !opt.includes('day'))
 
 // Ensure schedule is always an array
 const schedule = computed({
@@ -35,7 +21,7 @@ const schedule = computed({
       <div class="row">
         <div class="col column">
           <QCheckbox
-            v-for="option in col1"
+            v-for="option in weekDayOptions"
             :key="option"
             v-model="schedule"
             :val="option"
@@ -46,7 +32,7 @@ const schedule = computed({
 
         <div class="col column">
           <QCheckbox
-            v-for="option in col2"
+            v-for="option in specialOptions"
             :key="option"
             v-model="schedule"
             :val="option"

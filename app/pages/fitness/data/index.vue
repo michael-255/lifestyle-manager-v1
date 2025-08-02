@@ -9,8 +9,7 @@ definePageMeta({
 })
 
 const router = useRouter()
-const { openCreateWorkout, openCreateWorkoutResult, openCreateExercise, openCreateExerciseResult } =
-  useFitnessDialogs()
+const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
 </script>
 
 <template>
@@ -49,15 +48,6 @@ const { openCreateWorkout, openCreateWorkoutResult, openCreateExercise, openCrea
             <QItemSection top>
               <QItemLabel class="text-body1">Results</QItemLabel>
               <QItemLabel caption>{{ recordCount(111) }}</QItemLabel>
-            </QItemSection>
-
-            <QItemSection top side>
-              <QBtn
-                :icon="addIcon"
-                color="positive"
-                class="q-px-sm q-mb-sm"
-                @click="openCreateWorkoutResult"
-              />
             </QItemSection>
 
             <QItemSection top side>
@@ -105,15 +95,6 @@ const { openCreateWorkout, openCreateWorkoutResult, openCreateExercise, openCrea
             <QItemSection top>
               <QItemLabel class="text-body1">Results</QItemLabel>
               <QItemLabel caption>{{ recordCount(111) }}</QItemLabel>
-            </QItemSection>
-
-            <QItemSection top side>
-              <QBtn
-                :icon="addIcon"
-                color="positive"
-                class="q-px-sm q-mb-sm"
-                @click="openCreateExerciseResult"
-              />
             </QItemSection>
 
             <QItemSection top side>

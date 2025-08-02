@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { DialogConfirm } from '#components'
-import { closeIcon, createIcon, refreshIcon, saveIcon } from '#shared/constants'
+import { closeIcon, createIcon, saveIcon } from '#shared/constants'
 import useLogger from '@/composables/useLogger'
-import { extend, useDialogPluginComponent, useQuasar } from 'quasar'
-import { computed, onUnmounted, ref } from 'vue'
-import { useLocalRecordStore } from '~/stores/local-record'
+import { useDialogPluginComponent, useQuasar } from 'quasar'
+import { ref } from 'vue'
 
 const props = defineProps<{
   label: string
-  record: Record<string, any>
   subComponents: Array<{ component: string; props: Record<string, any> }>
-  onSubmitHandler: (record: Record<string, any>) => Promise<void>
+  onSubmitHandler: () => Promise<Record<string, any> | null>
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -18,33 +16,8 @@ const { dialogRef, onDialogHide, onDialogCancel, onDialogOK } = useDialogPluginC
 
 const $q = useQuasar()
 const logger = useLogger()
-const localRecordStore = useLocalRecordStore()
-
-localRecordStore.setInitialRecords(props.record)
 
 const isFormValid = ref(true)
-const showResetBtn = computed(() => {
-  return JSON.stringify(localRecordStore.initialRecord) !== JSON.stringify(localRecordStore.record)
-})
-
-onUnmounted(() => {
-  localRecordStore.$reset()
-})
-
-function onReset() {
-  $q.dialog({
-    component: DialogConfirm,
-    componentProps: {
-      title: `Reset ${props.label}`,
-      message: `Are you sure you want to reset this ${props.label} to the initial values?`,
-      color: 'warning',
-      icon: refreshIcon,
-      requiresUnlock: false,
-    },
-  }).onOk(() => {
-    localRecordStore.resetRecord()
-  })
-}
 
 async function onSubmit() {
   $q.dialog({
@@ -59,9 +32,10 @@ async function onSubmit() {
   }).onOk(async () => {
     try {
       $q.loading.show()
-      const recordDeepCopy = extend(true, {}, localRecordStore.record) as Record<string, any>
-      await props.onSubmitHandler(recordDeepCopy)
-      logger.info(`${props.label} created`, recordDeepCopy)
+
+      const record = await props.onSubmitHandler()
+
+      logger.info(`${props.label} created`, record)
     } catch (error) {
       logger.error(`Error creating ${props.label}`, error as Error)
     } finally {
@@ -83,7 +57,6 @@ async function onSubmit() {
     <QToolbar class="bg-primary text-white fullscreen-toolbar-height q-pr-xs">
       <QIcon :name="createIcon" size="sm" />
       <QToolbarTitle>Create {{ label }}</QToolbarTitle>
-      <QBtn v-show="showResetBtn" flat round color="yellow" :icon="refreshIcon" @click="onReset" />
       <QBtn flat round :icon="closeIcon" @click="onDialogCancel" />
     </QToolbar>
 

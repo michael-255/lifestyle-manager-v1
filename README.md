@@ -4,28 +4,30 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
+### TODO - Dialogs
+
 Consider using `tanstack/vue-query` soon!
 
 ```sh
 npm i @tanstack/vue-query
 ```
 
-### TODO - Dialogs
-
-#### Create/Edit Workout Components
+#### Create/Edit Workout
 
 - [@] `item-created-date.vue`
 - [@] `item-name.vue`
 - [@] `item-description.vue`
-- [ ] `item-schedule.vue` (WIP)
+- [@] `item-schedule.vue`
 - [ ] `item-workout-exercises.vue` (adding/removing exercises from workout)
+  - [ ] Create an RPC function to handle adding/removing exercises from a workout and updating the
+        workout record
 
-#### Create Workout Results
+#### ~~Create Workout Results~~
 
-- [ ] `item-parent-workout.vue`
-- [ ] `item-created-date.vue`
-- [ ] `item-finished-date.vue`
-- [@] `item-note.vue`
+- ~~[ ] `item-parent-workout.vue`~~
+- ~~[@] `item-created-date.vue`~~
+- ~~[ ] `item-finished-date.vue`~~
+- ~~[@] `item-note.vue`~~
 
 #### Edit Workout Results
 
@@ -33,8 +35,9 @@ npm i @tanstack/vue-query
 - [@] `item-created-date.vue`
 - [ ] `item-finished-date.vue`
 - [@] `item-note.vue`
+- ~~[ ] `item-workout-result-exercise-results.vue`~~
 
-#### Create Exercise Components
+#### Create Exercise
 
 - [@] `item-created-date.vue`
 - [@] `item-name.vue`
@@ -43,7 +46,7 @@ npm i @tanstack/vue-query
 - [ ] `item-default-sets.vue`
 - [ ] `item-rest-timer.vue`
 
-#### Edit Exercise Components
+#### Edit Exercise
 
 - [@] `item-created-date.vue`
 - [@] `item-name.vue`
@@ -52,12 +55,12 @@ npm i @tanstack/vue-query
 - [ ] `item-default-sets.vue`
 - [ ] `item-rest-timer.vue`
 
-#### Create Exercise Results
+#### ~~Create Exercise Results~~
 
-- [ ] `item-parent-exercise.vue`
-- [@] `item-created-date.vue`
-- [@] `item-note.vue`
-- [ ] `item-exercise-data.vue` (may break this up into multiple components)
+- ~~[ ] `item-parent-exercise.vue`~~
+- ~~[@] `item-created-date.vue`~~
+- ~~[@] `item-note.vue`~~
+- ~~[ ] `item-exercise-data.vue` (may break this up into multiple components)~~
 
 #### Edit Exercise Results
 

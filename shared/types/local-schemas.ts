@@ -23,7 +23,12 @@ export type SettingType = z.infer<typeof settingSchema>
 
 export const LogAutoIdSchema = z.number().optional() // Auto-incremented by Dexie
 export const logLabelSchema = z.string().trim()
-export const logDetailsSchema = z.record(z.any()).or(z.instanceof(Error)).optional()
+export const logDetailsSchema = z.union([
+  z.record(z.any()),
+  z.instanceof(Error),
+  z.undefined(),
+  z.null(),
+])
 export const logSchema = z.object({
   autoId: LogAutoIdSchema,
   created_at: timestampzSchema,

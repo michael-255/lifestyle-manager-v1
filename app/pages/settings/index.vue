@@ -93,7 +93,7 @@ function onImportBackup() {
     componentProps: {
       title: 'Import',
       message: 'Import backup local data from a JSON file into the local database?',
-      color: 'info',
+      color: 'primary',
       icon: importFileIcon,
       requiresUnlock: false,
     },
@@ -175,7 +175,7 @@ function onExportBackup() {
     componentProps: {
       title: 'Export',
       message: `Export local data into the backup file ${filename}?`,
-      color: 'info',
+      color: 'primary',
       icon: exportFileIcon,
       requiresUnlock: false,
     },

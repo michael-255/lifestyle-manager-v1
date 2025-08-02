@@ -6,6 +6,7 @@ import {
   DialogFormItemDescription,
   DialogFormItemName,
   DialogFormItemSchedule,
+  DialogFormItemWorkoutExercises,
   DialogInspect,
   DialogInspectItemBoolean,
   DialogInspectItemDate,
@@ -29,7 +30,6 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase.from('workouts').select('*').eq('id', id).single()
       if (error) throw error
 
@@ -79,22 +79,33 @@ export default function useFitnessDialogs() {
 
   function openCreateWorkout() {
     try {
+      localRecordStore.record = {
+        created_at: new Date().toISOString(),
+      } as Workout
+
       $q.dialog({
         component: DialogCreate,
         componentProps: {
           label: 'Workout',
-          record: {
-            created_at: new Date().toISOString(),
-          },
           subComponents: [
             { component: DialogFormItemName },
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
-            { component: DialogFormItemSchedule }, // TODO - WIP
-            // TODO - { component: DialogFormItemWorkoutExercises },
+            { component: DialogFormItemWorkoutExercises },
+            { component: DialogFormItemSchedule },
           ],
-          onSubmitHandler: () =>
-            supabase.from('workouts').insert([localRecordStore.record as Workout]),
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
+              .from('workouts')
+              .insert([localRecordStore.record as Workout])
+              .select()
+              .single()
+            if (error) throw error
+
+            localRecordStore.$reset()
+
+            return data
+          },
         },
       })
     } catch (error) {
@@ -106,27 +117,35 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase.from('workouts').select('*').eq('id', id).single()
       if (error) throw error
+
+      localRecordStore.record = data as Workout
 
       $q.dialog({
         component: DialogEdit,
         componentProps: {
           label: 'Workout',
-          record: data,
           subComponents: [
             { component: DialogFormItemName },
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
-            { component: DialogFormItemSchedule }, // TODO - WIP
-            // TODO - { component: DialogFormItemWorkoutExercises },
+            { component: DialogFormItemWorkoutExercises },
+            { component: DialogFormItemSchedule },
           ],
-          onSubmitHandler: () =>
-            supabase
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
               .from('workouts')
               .update(localRecordStore.record as Workout)
-              .eq('id', id),
+              .eq('id', id)
+              .select()
+              .single()
+            if (error) throw error
+
+            localRecordStore.$reset()
+
+            return data
+          },
         },
       })
     } catch (error) {
@@ -150,9 +169,16 @@ export default function useFitnessDialogs() {
       }).onOk(async () => {
         try {
           $q.loading.show()
-          const { error } = await supabase.from('workouts').delete().eq('id', id)
+
+          const { data, error } = await supabase
+            .from('workouts')
+            .delete()
+            .eq('id', id)
+            .select()
+            .single()
           if (error) throw error
-          logger.info('Workout deleted', { id })
+
+          logger.info('Workout deleted', data)
         } catch (error) {
           logger.error('Error deleting workout', error as Error)
         } finally {
@@ -172,7 +198,6 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase
         .from('workout_results')
         .select('*')
@@ -223,33 +248,10 @@ export default function useFitnessDialogs() {
     }
   }
 
-  function openCreateWorkoutResult() {
-    try {
-      $q.dialog({
-        component: DialogCreate,
-        componentProps: {
-          label: 'Workout Result',
-          record: {
-            created_at: new Date().toISOString(),
-          },
-          subComponents: [
-            { component: DialogFormItemCreatedDate },
-            // TODO
-          ],
-          onSubmitHandler: () =>
-            supabase.from('workout_results').insert([localRecordStore.record as WorkoutResult]),
-        },
-      })
-    } catch (error) {
-      logger.error('Error opening workout result create dialog', error as Error)
-    }
-  }
-
   async function openEditWorkoutResult(id: IdType) {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase
         .from('workout_results')
         .select('*')
@@ -257,20 +259,29 @@ export default function useFitnessDialogs() {
         .single()
       if (error) throw error
 
+      localRecordStore.record = data as WorkoutResult
+
       $q.dialog({
         component: DialogEdit,
         componentProps: {
           label: 'Workout Result',
-          record: data,
           subComponents: [
             { component: DialogFormItemCreatedDate },
             // TODO
           ],
-          onSubmitHandler: () =>
-            supabase
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
               .from('workout_results')
               .update(localRecordStore.record as WorkoutResult)
-              .eq('id', id),
+              .eq('id', id)
+              .select()
+              .single()
+            if (error) throw error
+
+            localRecordStore.$reset()
+
+            return data
+          },
         },
       })
     } catch (error) {
@@ -294,9 +305,16 @@ export default function useFitnessDialogs() {
       }).onOk(async () => {
         try {
           $q.loading.show()
-          const { error } = await supabase.from('workout_results').delete().eq('id', id)
+
+          const { data, error } = await supabase
+            .from('workout_results')
+            .delete()
+            .eq('id', id)
+            .select()
+            .single()
           if (error) throw error
-          logger.info('Workout result deleted', { id })
+
+          logger.info('Workout result deleted', data)
         } catch (error) {
           logger.error('Error deleting workout result', error as Error)
         } finally {
@@ -316,7 +334,6 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase.from('exercises').select('*').eq('id', id).single()
       if (error) throw error
 
@@ -358,21 +375,32 @@ export default function useFitnessDialogs() {
 
   function openCreateExercise() {
     try {
+      localRecordStore.record = {
+        created_at: new Date().toISOString(),
+      } as Exercise
+
       $q.dialog({
         component: DialogCreate,
         componentProps: {
           label: 'Exercise',
-          record: {
-            created_at: new Date().toISOString(),
-          },
           subComponents: [
             { component: DialogFormItemName },
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
             // TODO
           ],
-          onSubmitHandler: () =>
-            supabase.from('exercises').insert([localRecordStore.record as Exercise]),
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
+              .from('exercises')
+              .insert([localRecordStore.record as Exercise])
+              .select()
+              .single()
+            if (error) throw error
+
+            localRecordStore.$reset()
+
+            return data
+          },
         },
       })
     } catch (error) {
@@ -384,26 +412,34 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase.from('exercises').select('*').eq('id', id).single()
       if (error) throw error
+
+      localRecordStore.record = data as Exercise
 
       $q.dialog({
         component: DialogEdit,
         componentProps: {
           label: 'Exercise',
-          record: data,
           subComponents: [
             { component: DialogFormItemName },
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
             // TODO
           ],
-          onSubmitHandler: () =>
-            supabase
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
               .from('exercises')
               .update(localRecordStore.record as Exercise)
-              .eq('id', id),
+              .eq('id', id)
+              .select()
+              .single()
+            if (error) throw error
+
+            localRecordStore.$reset()
+
+            return data
+          },
         },
       })
     } catch (error) {
@@ -427,9 +463,16 @@ export default function useFitnessDialogs() {
       }).onOk(async () => {
         try {
           $q.loading.show()
-          const { error } = await supabase.from('exercises').delete().eq('id', id)
+
+          const { data, error } = await supabase
+            .from('exercises')
+            .delete()
+            .eq('id', id)
+            .select()
+            .single()
           if (error) throw error
-          logger.info('Exercise deleted', { id })
+
+          logger.info('Exercise deleted', data)
         } catch (error) {
           logger.error('Error deleting exercise', error as Error)
         } finally {
@@ -449,7 +492,6 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase
         .from('exercise_results')
         .select('*')
@@ -493,39 +535,18 @@ export default function useFitnessDialogs() {
     }
   }
 
-  function openCreateExerciseResult() {
-    try {
-      $q.dialog({
-        component: DialogCreate,
-        componentProps: {
-          label: 'Exercise Result',
-          record: {
-            created_at: new Date().toISOString(),
-          },
-          subComponents: [
-            { component: DialogFormItemCreatedDate },
-            // TODO
-          ],
-          onSubmitHandler: () =>
-            supabase.from('exercise_results').insert([localRecordStore.record as ExerciseResult]),
-        },
-      })
-    } catch (error) {
-      logger.error('Error opening exercise result create dialog', error as Error)
-    }
-  }
-
   async function openEditExerciseResult(id: IdType) {
     try {
       $q.loading.show()
 
-      // TODO
       const { data, error } = await supabase
         .from('exercise_results')
         .select('*')
         .eq('id', id)
         .single()
       if (error) throw error
+
+      localRecordStore.record = data as ExerciseResult
 
       $q.dialog({
         component: DialogEdit,
@@ -536,11 +557,19 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemCreatedDate },
             // TODO
           ],
-          onSubmitHandler: () =>
-            supabase
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
               .from('exercise_results')
               .update(localRecordStore.record as ExerciseResult)
-              .eq('id', id),
+              .eq('id', id)
+              .select()
+              .single()
+            if (error) throw error
+
+            localRecordStore.$reset()
+
+            return data
+          },
         },
       })
     } catch (error) {
@@ -564,9 +593,16 @@ export default function useFitnessDialogs() {
       }).onOk(async () => {
         try {
           $q.loading.show()
-          const { error } = await supabase.from('exercise_results').delete().eq('id', id)
+
+          const { data, error } = await supabase
+            .from('exercise_results')
+            .delete()
+            .eq('id', id)
+            .select()
+            .single()
           if (error) throw error
-          logger.info('Exercise result deleted', { id })
+
+          logger.info('Exercise result deleted', data)
         } catch (error) {
           logger.error('Error deleting exercise result', error as Error)
         } finally {
@@ -586,7 +622,6 @@ export default function useFitnessDialogs() {
     openDeleteWorkout,
     // Workout Results
     openInspectWorkoutResult,
-    openCreateWorkoutResult,
     openEditWorkoutResult,
     openDeleteWorkoutResult,
     // Exercises
@@ -596,7 +631,6 @@ export default function useFitnessDialogs() {
     openDeleteExercise,
     // Exercise Results
     openInspectExerciseResult,
-    openCreateExerciseResult,
     openEditExerciseResult,
     openDeleteExerciseResult,
   }
