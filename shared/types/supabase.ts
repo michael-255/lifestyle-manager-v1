@@ -289,6 +289,17 @@ export type Database = {
       }
     }
     Functions: {
+      edit_workout: {
+        Args: { w_id: string }
+        Returns: {
+          id: string
+          name: string
+          description: string
+          schedule: Database["public"]["Enums"]["workout_schedule_type"][]
+          is_locked: boolean
+          exercises: string[]
+        }[]
+      }
       inspect_workout: {
         Args: { w_id: string }
         Returns: Json
