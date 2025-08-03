@@ -15,6 +15,8 @@ export const timestampzSchema = z.string().refine(
   },
   { message: 'Invalid timestamp' },
 )
+export const textLabelSchema = z.string().min(1).max(limitRuleLookup.maxTextLabel)
+export const textAreaSchema = z.string().max(limitRuleLookup.maxTextArea).optional()
 
 //
 // Types
@@ -24,6 +26,8 @@ export type URLType = z.infer<typeof urlSchema>
 export type EmailType = z.infer<typeof emailSchema>
 export type IdType = z.infer<typeof idSchema>
 export type TimestampzType = z.infer<typeof timestampzSchema>
+export type TextLabelType = z.infer<typeof textLabelSchema>
+export type TextAreaType = z.infer<typeof textAreaSchema>
 export type DurationNameType = z.infer<typeof durationNames>
 
 //

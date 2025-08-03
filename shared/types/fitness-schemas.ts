@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { textAreaSchema, textLabelSchema } from './common-schemas'
 
 export type TodaysWorkout = Tables<'todays_workouts'>
 
@@ -10,31 +11,32 @@ export type ExerciseResult = Database['public']['Tables']['exercise_results']['R
 
 export type WorkoutSchedule = Database['public']['Enums']['workout_schedule_type']
 
+export const finishedAtSchema = timestampzSchema.optional()
 export const workoutScheduleSchema = z.enum(Constants.public.Enums.workout_schedule_type)
 
 export const inspectWorkoutSchema = z.object({
-  id: z.string().uuid(),
-  user_id: z.string().uuid(),
-  created_at: z.string(),
-  name: z.string(),
-  description: z.string().nullable(),
+  id: idSchema,
+  user_id: idSchema,
+  created_at: timestampzSchema,
+  name: textLabelSchema,
+  description: textAreaSchema.nullable(),
   schedule: z.array(workoutScheduleSchema).nullable(),
   is_locked: z.boolean(),
   exercises: z
     .array(
       z.object({
-        id: z.string().uuid(),
-        name: z.string(),
+        id: idSchema,
+        name: textLabelSchema,
       }),
     )
     .nullable(), // could be null if no exercises
   last_workout_result: z
     .object({
-      id: z.string().uuid(),
-      created_at: z.string(),
-      finished_at: z.string().nullable(),
+      id: idSchema,
+      created_at: timestampzSchema,
+      finished_at: finishedAtSchema.nullable(),
       duration_seconds: z.number().nullable(),
-      note: z.string().nullable(),
+      note: textAreaSchema.nullable(),
     })
     .nullable(), // could be null if no previous workout results
 })
