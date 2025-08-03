@@ -50,6 +50,13 @@ export type Database = {
             referencedRelation: "exercises"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "exercise_results_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "workout_exercise_options"
+            referencedColumns: ["value"]
+          },
         ]
       }
       exercises: {
@@ -111,6 +118,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "exercises"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "workout_exercise_options"
+            referencedColumns: ["value"]
           },
           {
             foreignKeyName: "workout_exercises_workout_id_fkey"
@@ -252,6 +266,24 @@ export type Database = {
           last_duration_seconds: number | null
           last_note: string | null
           name: string | null
+        }
+        Relationships: []
+      }
+      workout_exercise_options: {
+        Row: {
+          disable: boolean | null
+          label: string | null
+          value: string | null
+        }
+        Insert: {
+          disable?: boolean | null
+          label?: never
+          value?: string | null
+        }
+        Update: {
+          disable?: boolean | null
+          label?: never
+          value?: string | null
         }
         Relationships: []
       }
