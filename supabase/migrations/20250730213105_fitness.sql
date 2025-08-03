@@ -146,7 +146,7 @@ COMMENT ON COLUMN public.workout_result_exercise_results.position IS 'Position o
 -- Views
 --
 
-CREATE VIEW public.todays_workouts
+CREATE OR REPLACE VIEW public.todays_workouts
 WITH (security_invoker=on)
 AS
 SELECT
@@ -182,6 +182,16 @@ WHERE
   );
 
 COMMENT ON VIEW public.todays_workouts IS 'View for the today''s workouts page.';
+
+CREATE OR REPLACE VIEW public.workout_exercise_options AS
+SELECT
+  id AS value,
+  name || ' (' || LEFT(id::text, 4) || '*' || ')' AS label,
+  is_locked AS disable
+FROM public.exercises
+WHERE user_id = auth.uid();
+
+COMMENT ON VIEW public.workout_exercise_options IS 'View for workout exercise options used in forms.';
 
 --
 -- RLS Policies

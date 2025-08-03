@@ -42,3 +42,11 @@ export const inspectWorkoutSchema = z.object({
 })
 
 export type InspectWorkout = z.infer<typeof inspectWorkoutSchema>
+
+export const workoutExerciseOptionSchema = z.object({
+  value: idSchema,
+  label: z.string(),
+  disable: z.boolean(),
+})
+
+export type WorkoutExerciseOption = z.infer<typeof workoutExerciseOptionSchema>

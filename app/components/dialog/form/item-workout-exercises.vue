@@ -1,31 +1,30 @@
 <script setup lang="ts">
-// TODO:
-/**
- * Make a view to return exercises the following way:
- * @example
- * { value: 'exercise-id', label: 'Exercise Name (id*)', disable: false (if locked) }[]
- */
+import { onMounted, ref } from 'vue'
+import type { WorkoutExerciseOption } from '~~/shared/types/fitness-schemas'
 
-// const localRecordStore = useLocalRecordStore()
+const logger = useLogger()
+const supabase = useSupabaseClient<Database>()
+const localRecordStore = useLocalRecordStore()
 
-// const options: Ref<{ value: string; label: string; disable: boolean }[]> = ref([])
+const options: Ref<WorkoutExerciseOption[]> = ref([])
 
-// onMounted(async () => {
-//   try {
-//     actionStore.record.exerciseIds = actionStore.record.exerciseIds ?? []
-//     options.value = await DB.getExerciseIdOptions()
-//   } catch (error) {
-//     log.error('Error with exercise ids field', error)
-//   }
-// })
+onMounted(async () => {
+  try {
+    const { data, error } = await supabase.from('workout_exercise_options').select('*')
+    if (error) throw error
+
+    options.value = data ?? []
+  } catch (error) {
+    logger.error('Failed to fetch workout exercise options:', error as Error)
+  }
+})
 </script>
 
 <template>
   <DialogFormItem label="Exercises">
     <QItemLabel>
-      <!-- <QSelect
-        v-model="actionStore.record.exerciseIds"
-        :rules="[(val: string[]) => exerciseIdsSchema.safeParse(val).success || 'Required']"
+      <QSelect
+        v-model="localRecordStore.record.exercises"
         :options="options"
         lazy-rules
         multiple
@@ -36,7 +35,7 @@
         dense
         outlined
         color="primary"
-      /> -->
+      />
     </QItemLabel>
   </DialogFormItem>
 </template>
