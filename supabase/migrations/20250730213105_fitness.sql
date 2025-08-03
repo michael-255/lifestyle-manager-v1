@@ -411,3 +411,34 @@ END;
 $$;
 
 COMMENT ON FUNCTION public.inspect_workout(w_id UUID) IS 'Function for inspect workout dialogs.';
+
+CREATE OR REPLACE FUNCTION public.edit_workout(w_id UUID)
+RETURNS TABLE (
+  id UUID,
+  name TEXT,
+  description TEXT,
+  schedule public.workout_schedule_type[],
+  is_locked BOOLEAN,
+  exercises UUID[]
+)
+LANGUAGE sql
+SET search_path = ''
+AS $$
+  SELECT
+    w.id,
+    w.name,
+    w.description,
+    w.schedule,
+    w.is_locked,
+    ARRAY(
+      SELECT we.exercise_id
+      FROM public.workout_exercises we
+      WHERE we.workout_id = w.id
+      ORDER BY we.position
+    ) AS exercises
+  FROM public.workouts w
+  WHERE w.id = w_id
+  AND w.user_id = auth.uid();
+$$;
+
+COMMENT ON FUNCTION public.edit_workout(w_id UUID) IS 'Function for edit workout dialogs.';

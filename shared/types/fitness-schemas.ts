@@ -43,10 +43,21 @@ export const inspectWorkoutSchema = z.object({
 
 export type InspectWorkout = z.infer<typeof inspectWorkoutSchema>
 
+export const editWorkoutSchema = z.object({
+  id: idSchema,
+  name: textLabelSchema,
+  description: textAreaSchema.nullable(),
+  schedule: z.array(workoutScheduleSchema).nullable(),
+  is_locked: z.boolean(),
+  exercises: z.array(idSchema).nullable(),
+})
+
+export type EditWorkout = z.infer<typeof editWorkoutSchema>
+
 export const workoutExerciseOptionSchema = z.object({
-  value: idSchema,
-  label: z.string(),
-  disable: z.boolean(),
+  value: idSchema.nullable(),
+  label: z.string().nullable(),
+  disable: z.boolean().nullable(),
 })
 
 export type WorkoutExerciseOption = z.infer<typeof workoutExerciseOptionSchema>
