@@ -15,6 +15,7 @@ import {
   symRoundedEdit,
   symRoundedError,
   symRoundedEventAvailable,
+  symRoundedEventBusy,
   symRoundedExitToApp,
   symRoundedFeatureSearch,
   symRoundedFitnessCenter,
@@ -141,6 +142,7 @@ export const inspectIcon = symRoundedManageSearch
 export const databaseIcon = symRoundedDatabase
 export const calendarIcon = symRoundedCalendarToday
 export const calendarCheckIcon = symRoundedEventAvailable
+export const calendarClearIcon = symRoundedEventBusy
 export const calendarScheduleIcon = symRoundedCalendarMonth
 export const scheduleTimeIcon = symRoundedSchedule
 export const verticalDotMenuIcon = symRoundedMoreVert

@@ -4,7 +4,9 @@ import {
   DialogEdit,
   DialogFormItemCreatedDate,
   DialogFormItemDescription,
+  DialogFormItemFinishedDate,
   DialogFormItemName,
+  DialogFormItemNote,
   DialogFormItemSchedule,
   DialogFormItemWorkoutExercises,
   DialogInspect,
@@ -306,7 +308,8 @@ export default function useFitnessDialogs() {
           label: 'Workout Result',
           subComponents: [
             { component: DialogFormItemCreatedDate },
-            // TODO
+            { component: DialogFormItemFinishedDate },
+            { component: DialogFormItemNote },
           ],
           onSubmitHandler: async () => {
             const { data, error } = await supabase

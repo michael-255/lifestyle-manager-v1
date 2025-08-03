@@ -18,22 +18,21 @@ npm i @tanstack/vue-query
 - [@] `item-name.vue`
 - [@] `item-description.vue`
 - [@] `item-schedule.vue`
-- [ ] `item-workout-exercises.vue` (adding/removing exercises from workout)
-  - [ ] Create an RPC function to handle adding/removing exercises from a workout and updating the
-        workout record
+- [@] `item-workout-exercises.vue`
 
 #### ~~Create Workout Results~~
 
 - ~~[ ] `item-parent-workout.vue`~~
 - ~~[@] `item-created-date.vue`~~
 - ~~[ ] `item-finished-date.vue`~~
+- ~~[ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)~~
 - ~~[@] `item-note.vue`~~
 
 #### Edit Workout Results
 
 - ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
 - [@] `item-created-date.vue`
-- [ ] `item-finished-date.vue`
+- [@] `item-finished-date.vue`
 - [@] `item-note.vue`
 - ~~[ ] `item-workout-result-exercise-results.vue`~~
 
@@ -43,6 +42,7 @@ npm i @tanstack/vue-query
 - [@] `item-name.vue`
 - [@] `item-description.vue`
 - [ ] `item-exercise-type.vue`
+- [ ] `item-checklist-labels.vue`
 - [ ] `item-default-sets.vue`
 - [ ] `item-rest-timer.vue`
 
@@ -52,6 +52,7 @@ npm i @tanstack/vue-query
 - [@] `item-name.vue`
 - [@] `item-description.vue`
 - ~~`item-exercise-type.vue`~~ (cant't edit type once created)
+- ~~`item-checklist-labels.vue`~~
 - [ ] `item-default-sets.vue`
 - [ ] `item-rest-timer.vue`
 
@@ -68,6 +69,11 @@ npm i @tanstack/vue-query
 - [@] `item-created-date.vue`
 - [@] `item-note.vue`
 - [ ] `item-exercise-data.vue` (may break this up into multiple components)
+  - [ ] `item-exercise-data-checklist.vue`
+  - [ ] `item-exercise-data-cardio.vue`
+  - [ ] `item-exercise-data-weightlifting.vue`
+  - [ ] `item-exercise-data-sided-weightlifting.vue`
+  - [ ] `item-exercise-data-climbing.vue`
 
 ### TODO - Data Tables
 
