@@ -39,6 +39,7 @@ CREATE TABLE public.exercises (
     name TEXT NOT NULL,
     description TEXT,
     type public.exercise_type NOT NULL,
+    checklist_labels TEXT[],
     default_sets INTEGER DEFAULT 1,
     rest_timer INTEGER,
     is_locked BOOLEAN DEFAULT FALSE
@@ -51,6 +52,7 @@ COMMENT ON COLUMN public.exercises.created_at IS 'Timestamp when the exercise wa
 COMMENT ON COLUMN public.exercises.name IS 'Name of the exercise.';
 COMMENT ON COLUMN public.exercises.description IS 'Description of the exercise.';
 COMMENT ON COLUMN public.exercises.type IS 'Type of the exercise.';
+COMMENT ON COLUMN public.exercises.checklist_labels IS 'Labels for checklist exercises, used to define the items in the checklist.';
 COMMENT ON COLUMN public.exercises.default_sets IS 'Default number of sets for the exercise (if any).';
 COMMENT ON COLUMN public.exercises.rest_timer IS 'Rest timer duration in seconds (if any).';
 COMMENT ON COLUMN public.exercises.is_locked IS 'Indicates if the exercise is locked for editing.';
