@@ -1,9 +1,8 @@
 --
--- SELECT public.seed_workouts_for_user('USER_UUID');
+-- SELECT private.seed_data_for_user('USER_UUID');
 --
-CREATE FUNCTION public.seed_workouts_for_user(p_user_id UUID)
+CREATE FUNCTION private.seed_data_for_user(p_user_id UUID)
 RETURNS void
-SECURITY DEFINER
 SET search_path = '' -- Should always include so you must use fully qualified schema names
 AS $$
 DECLARE
