@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { WorkoutExerciseOption } from '#shared/types/fitness-schemas'
 import { onMounted, ref } from 'vue'
-import type { WorkoutExerciseOption } from '~~/shared/types/fitness-schemas'
 
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
@@ -35,7 +35,23 @@ onMounted(async () => {
         dense
         outlined
         color="primary"
-      />
+      >
+        <template #option="scope">
+          <QItem v-bind="scope.itemProps">
+            <QItemSection>
+              <template
+                v-if="
+                  localRecordStore.record.exercises &&
+                  localRecordStore.record.exercises.includes(scope.opt.value)
+                "
+              >
+                {{ localRecordStore.record.exercises.indexOf(scope.opt.value) + 1 + '. ' }}
+              </template>
+              {{ scope.opt.label }}
+            </QItemSection>
+          </QItem>
+        </template>
+      </QSelect>
     </QItemLabel>
   </DialogFormItem>
 </template>

@@ -97,7 +97,7 @@ export default function useFitnessDialogs() {
     try {
       localRecordStore.record = {
         created_at: new Date().toISOString(),
-      } as Workout
+      }
 
       $q.dialog({
         component: DialogCreate,
@@ -111,14 +111,27 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemSchedule },
           ],
           onSubmitHandler: async () => {
+            const workout = localRecordStore.getWorkout
+            const workoutExercises = localRecordStore.getWorkoutExercises
+
             const { data, error } = await supabase
               .from('workouts')
-              .insert([localRecordStore.record as Workout])
+              .insert(workout)
               .select()
               .single()
             if (error) throw error
 
-            localRecordStore.$reset()
+            if (workoutExercises.length > 0) {
+              const workoutExercisesData = workoutExercises.map((id: string, i: number) => ({
+                workout_id: data.id,
+                exercise_id: id,
+                position: i,
+              }))
+              const { error: exercisesError } = await supabase
+                .from('workout_exercises')
+                .insert(workoutExercisesData)
+              if (exercisesError) throw exercisesError
+            }
 
             return data
           },
@@ -133,10 +146,10 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      const { data, error } = await supabase.from('workouts').select('*').eq('id', id).single()
+      const { data, error } = await supabase.rpc('edit_workout', { w_id: id }).single()
       if (error) throw error
 
-      localRecordStore.record = data as Workout
+      localRecordStore.record = data
 
       $q.dialog({
         component: DialogEdit,
@@ -150,15 +163,25 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemSchedule },
           ],
           onSubmitHandler: async () => {
+            const workout = localRecordStore.getWorkout
+            const workoutExercises = localRecordStore.getWorkoutExercises
+
             const { data, error } = await supabase
               .from('workouts')
-              .update(localRecordStore.record as Workout)
-              .eq('id', id)
+              .insert(workout)
               .select()
               .single()
             if (error) throw error
 
-            localRecordStore.$reset()
+            const workoutExercisesData = workoutExercises.map((id: string, i: number) => ({
+              workout_id: data.id,
+              exercise_id: id,
+              position: i,
+            }))
+            const { error: exercisesError } = await supabase
+              .from('workout_exercises')
+              .insert(workoutExercisesData)
+            if (exercisesError) throw exercisesError
 
             return data
           },
@@ -293,9 +316,6 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-
-            localRecordStore.$reset()
-
             return data
           },
         },
@@ -412,9 +432,6 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-
-            localRecordStore.$reset()
-
             return data
           },
         },
@@ -451,9 +468,6 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-
-            localRecordStore.$reset()
-
             return data
           },
         },
@@ -581,9 +595,6 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-
-            localRecordStore.$reset()
-
             return data
           },
         },
