@@ -61,6 +61,7 @@ export type Database = {
       }
       exercises: {
         Row: {
+          checklist_labels: string[] | null
           created_at: string
           default_sets: number | null
           description: string | null
@@ -72,6 +73,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          checklist_labels?: string[] | null
           created_at?: string
           default_sets?: number | null
           description?: string | null
@@ -83,6 +85,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          checklist_labels?: string[] | null
           created_at?: string
           default_sets?: number | null
           description?: string | null
@@ -303,10 +306,6 @@ export type Database = {
       inspect_workout: {
         Args: { w_id: string }
         Returns: Json
-      }
-      seed_workouts_for_user: {
-        Args: { p_user_id: string }
-        Returns: undefined
       }
     }
     Enums: {
