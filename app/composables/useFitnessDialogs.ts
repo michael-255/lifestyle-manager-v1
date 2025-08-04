@@ -4,11 +4,12 @@ import {
   DialogEdit,
   DialogFormItemCreatedDate,
   DialogFormItemDescription,
+  DialogFormItemExerciseType,
   DialogFormItemFinishedDate,
   DialogFormItemName,
   DialogFormItemNote,
-  DialogFormItemSchedule,
   DialogFormItemWorkoutExercises,
+  DialogFormItemWorkoutSchedule,
   DialogInspect,
   DialogInspectItemBoolean,
   DialogInspectItemDate,
@@ -110,7 +111,7 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
             { component: DialogFormItemWorkoutExercises },
-            { component: DialogFormItemSchedule },
+            { component: DialogFormItemWorkoutSchedule },
           ],
           onSubmitHandler: async () => {
             const workout = localRecordStore.getWorkout
@@ -162,7 +163,7 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
             { component: DialogFormItemWorkoutExercises },
-            { component: DialogFormItemSchedule },
+            { component: DialogFormItemWorkoutSchedule },
           ],
           onSubmitHandler: async () => {
             const workout = localRecordStore.getWorkout
@@ -426,6 +427,7 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemName },
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
+            { component: DialogFormItemExerciseType },
             // TODO
           ],
           onSubmitHandler: async () => {

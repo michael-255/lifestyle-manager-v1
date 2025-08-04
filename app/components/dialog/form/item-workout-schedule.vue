@@ -8,7 +8,6 @@ const scheduleOptions = Constants.public.Enums.workout_schedule_type
 const weekDayOptions = scheduleOptions.filter((opt) => opt.includes('day'))
 const specialOptions = scheduleOptions.filter((opt) => !opt.includes('day'))
 
-// Ensure schedule is always an array
 const schedule = computed({
   get: () => localRecordStore.record.schedule || [],
   set: (val) => (localRecordStore.record.schedule = val),

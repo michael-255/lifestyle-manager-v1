@@ -41,7 +41,7 @@ npm i @tanstack/vue-query
 - [@] `item-created-date.vue`
 - [@] `item-name.vue`
 - [@] `item-description.vue`
-- [ ] `item-exercise-type.vue`
+- [@] `item-exercise-type.vue`
 - [ ] `item-checklist-labels.vue`
 - [ ] `item-default-sets.vue`
 - [ ] `item-rest-timer.vue`
@@ -88,7 +88,8 @@ The following options should be on the data tables:
 
 ### TODO - Active Workout
 
-- WIP
+- Use a route param with the id of the active workout
+- If the workout is not locked, or does not exist, then redirect to the Todays Plan page
 
 ### TODO - Charts
 
