@@ -4,13 +4,18 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
-### TODO - Dialogs
+### TODO - General
 
-Consider using `tanstack/vue-query` soon!
+- Get Supabase local environment working (local dev server and seeding)
+
+### TODO - New Packages
 
 ```sh
 npm i @tanstack/vue-query
+npm i @observablehq/plot
 ```
+
+### TODO - Dialogs
 
 #### Create/Edit Workout
 
@@ -90,14 +95,6 @@ The following options should be on the data tables:
 
 - Use a route param with the id of the active workout
 - If the workout is not locked, or does not exist, then redirect to the Todays Plan page
-
-### TODO - Charts
-
-Try Observable Plot for Charts:
-
-```sh
-npm i @observablehq/plot
-```
 
 ## Budget TODO
 
