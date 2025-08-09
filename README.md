@@ -6,7 +6,7 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ### TODO - General
 
-- Get Supabase local environment working (local dev server and seeding?)
+- Seed the database with a User and Data
 - Use a view to get the counts for reminder notifications on apps
 
 ### TODO - New Packages
