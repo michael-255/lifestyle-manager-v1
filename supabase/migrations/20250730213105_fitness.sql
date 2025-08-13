@@ -186,6 +186,7 @@ WHERE
 COMMENT ON VIEW public.todays_workouts IS 'View for the today''s workouts page.';
 
 CREATE OR REPLACE VIEW public.workout_exercise_options AS
+WITH (security_invoker=on)
 SELECT
   id AS value,
   name || ' (' || LEFT(id::text, 4) || '*' || ')' AS label,
