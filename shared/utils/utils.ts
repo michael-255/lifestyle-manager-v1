@@ -70,7 +70,9 @@ export function tableColumn(
     | 'ISO-DATE'
     | 'LIST-COUNT'
     | 'LIST-PRINT'
-    | 'SETTING',
+    | 'SETTING'
+    | 'NUMBER'
+    | 'TIME',
 ): QTableColumn {
   // Initial column properties
   const tableColumn: QTableColumn = {
@@ -124,6 +126,14 @@ export function tableColumn(
           return `${val}`
         }
       }
+      return tableColumn
+    case 'NUMBER':
+      // Prints the value as a number or zero if undefined
+      tableColumn.format = (val: number | undefined) => `${val ?? 0}`
+      return tableColumn
+    case 'TIME':
+      // Converts a duration in seconds to a human-readable string
+      tableColumn.format = (val: number) => timeFromDuration(val)
       return tableColumn
     default:
       // STRING: Default just converts the result to a string with no length limit
@@ -199,6 +209,29 @@ export function localPickerDate(utcDate: string): string {
   if (!utcDate) return 'No Date'
   const localDate = new Date(utcDate).toLocaleString()
   return date.formatDate(localDate, localPickerDateFormat)
+}
+
+/**
+ * Converts a duration in seconds to a human-readable string.
+ * @param duration Duration in seconds
+ * @returns
+ */
+export function timeFromDuration(duration: number): string {
+  if (!duration) {
+    return ''
+  }
+
+  const seconds = Math.floor(duration % 60)
+  const minutes = Math.floor((duration / 60) % 60)
+  const hours = Math.floor((duration / 3600) % 24)
+  const days = Math.floor(duration / 86400)
+
+  const daysStr = days > 0 ? `${days}d ` : ''
+  const hoursStr = hours > 0 ? `${hours}h ` : ''
+  const minutesStr = minutes > 0 ? `${minutes}m ` : ''
+  const secondsStr = seconds > 0 ? `${seconds}s` : ''
+
+  return `${daysStr}${hoursStr}${minutesStr}${secondsStr}`.trim()
 }
 
 // TODO - likely need to correct this for date conversions to local?

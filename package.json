@@ -10,7 +10,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "supabase:env": "npx tsx scripts/prepare-local-env.ts"
+    "supabase:env": "npx tsx scripts/prepare-local-env.ts",
+    "supabase:typegen": "npx tsx scripts/supabase-typegen.ts"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.4.1",

@@ -8,8 +8,38 @@ definePageMeta({
   layout: 'fitness',
 })
 
+const $q = useQuasar()
+const logger = useLogger()
 const router = useRouter()
+const supabase = useSupabaseClient<Database>()
 const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
+
+const tableCounts = ref({
+  workouts: 0,
+  exercises: 0,
+  workoutResults: 0,
+  exerciseResults: 0,
+})
+
+onMounted(async () => {
+  try {
+    $q.loading.show()
+
+    const { data, error } = await supabase.from('table_counts').select().single()
+    if (error) throw error
+
+    tableCounts.value = {
+      workouts: data.workouts ?? 0,
+      exercises: data.exercises ?? 0,
+      workoutResults: data.workout_results ?? 0,
+      exerciseResults: data.exercise_results ?? 0,
+    }
+  } catch (error) {
+    logger.error(`Error fetching table counts`, error as Error)
+  } finally {
+    $q.loading.hide()
+  }
+})
 </script>
 
 <template>
@@ -22,7 +52,7 @@ const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
           <QItem class="q-mt-sm">
             <QItemSection top>
               <QItemLabel class="text-body1">Workouts</QItemLabel>
-              <QItemLabel caption>{{ recordCount(11) }}</QItemLabel>
+              <QItemLabel caption>{{ recordCount(tableCounts.workouts) }}</QItemLabel>
             </QItemSection>
 
             <QItemSection top side>
@@ -47,7 +77,7 @@ const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
           <QItem>
             <QItemSection top>
               <QItemLabel class="text-body1">Results</QItemLabel>
-              <QItemLabel caption>{{ recordCount(111) }}</QItemLabel>
+              <QItemLabel caption>{{ recordCount(tableCounts.workoutResults) }}</QItemLabel>
             </QItemSection>
 
             <QItemSection top side>
@@ -69,7 +99,7 @@ const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
           <QItem class="q-mt-sm">
             <QItemSection top>
               <QItemLabel class="text-body1">Exercises</QItemLabel>
-              <QItemLabel caption>{{ recordCount(11) }}</QItemLabel>
+              <QItemLabel caption>{{ recordCount(tableCounts.exercises) }}</QItemLabel>
             </QItemSection>
 
             <QItemSection top side>
@@ -94,7 +124,7 @@ const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
           <QItem>
             <QItemSection top>
               <QItemLabel class="text-body1">Results</QItemLabel>
-              <QItemLabel caption>{{ recordCount(111) }}</QItemLabel>
+              <QItemLabel caption>{{ recordCount(tableCounts.exerciseResults) }}</QItemLabel>
             </QItemSection>
 
             <QItemSection top side>

@@ -1,4 +1,21 @@
 --
+-- Realtime
+--
+
+-- TODO
+BEGIN;
+-- remove the supabase_realtime publication
+DROP publication if exists supabase_realtime;
+-- re-create the supabase_realtime publication with no tables
+CREATE publication supabase_realtime;
+COMMIT;
+-- update this to match your tables
+ALTER publication supabase_realtime ADD TABLE workouts;
+ALTER publication supabase_realtime ADD TABLE exercises;
+ALTER publication supabase_realtime ADD TABLE workout_results;
+ALTER publication supabase_realtime ADD TABLE exercise_results;
+
+--
 -- ENUMS
 --
 
@@ -185,6 +202,17 @@ WHERE
 
 COMMENT ON VIEW public.todays_workouts IS 'View for the today''s workouts page.';
 
+CREATE OR REPLACE VIEW public.table_counts
+WITH (security_invoker=on)
+AS
+SELECT
+  (SELECT COUNT(*) FROM public.workouts WHERE user_id = auth.uid()) AS workouts,
+  (SELECT COUNT(*) FROM public.exercises WHERE user_id = auth.uid()) AS exercises,
+  (SELECT COUNT(*) FROM public.workout_results WHERE user_id = auth.uid()) AS workout_results,
+  (SELECT COUNT(*) FROM public.exercise_results WHERE user_id = auth.uid()) AS exercise_results;
+
+COMMENT ON VIEW public.table_counts IS 'View for user-specific table counts.';
+
 CREATE OR REPLACE VIEW public.workout_exercise_options
 WITH (security_invoker=on)
 AS
@@ -196,6 +224,76 @@ FROM public.exercises
 WHERE user_id = auth.uid();
 
 COMMENT ON VIEW public.workout_exercise_options IS 'View for workout exercise options used in forms.';
+
+CREATE OR REPLACE VIEW public.workouts_table
+WITH (security_invoker=on)
+AS
+SELECT
+  w.id,
+  w.created_at,
+  w.name,
+  w.description,
+  w.schedule,
+  w.is_locked,
+  (SELECT COUNT(*) FROM public.workout_exercises we WHERE we.workout_id = w.id) AS exercise_count,
+  (SELECT COUNT(*) FROM public.workout_results wr WHERE wr.workout_id = w.id) AS workout_result_count
+FROM public.workouts w
+WHERE w.user_id = auth.uid();
+
+COMMENT ON VIEW public.workouts_table IS 'View for workouts table, providing workout details and counts of exercises and results.';
+
+CREATE OR REPLACE VIEW public.exercises_table
+WITH (security_invoker=on)
+AS
+SELECT
+  e.id,
+  e.created_at,
+  e.name,
+  e.description,
+  e.type,
+  e.rest_timer,
+  e.is_locked,
+  (SELECT COUNT(*) FROM public.workout_exercises we WHERE we.exercise_id = e.id) AS workout_count,
+  (SELECT COUNT(*) FROM public.exercise_results er WHERE er.exercise_id = e.id) AS exercise_result_count
+FROM public.exercises e
+WHERE e.user_id = auth.uid();
+
+COMMENT ON VIEW public.exercises_table IS 'View for exercises table, providing exercise details and counts of workouts and results.';
+
+CREATE OR REPLACE VIEW public.workout_results_table
+WITH (security_invoker=on)
+AS
+SELECT
+  wr.id,
+  wr.created_at,
+  wr.finished_at,
+  wr.note,
+  wr.is_locked,
+  w.id AS workout_id,
+  w.name AS workout_name,
+  EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at)) AS duration_seconds
+FROM public.workout_results wr
+JOIN public.workouts w ON w.id = wr.workout_id
+WHERE wr.user_id = auth.uid();
+
+COMMENT ON VIEW public.workout_results_table IS 'View for workout results table, providing workout result details and counts of exercise results.';
+
+CREATE OR REPLACE VIEW public.exercise_results_table
+WITH (security_invoker=on)
+AS
+SELECT
+  er.id,
+  er.created_at,
+  er.note,
+  er.is_locked,
+  e.id AS exercise_id,
+  e.name AS exercise_name,
+  e.type AS exercise_type
+FROM public.exercise_results er
+JOIN public.exercises e ON e.id = er.exercise_id
+WHERE er.user_id = auth.uid();
+
+COMMENT ON VIEW public.exercise_results_table IS 'View for exercise results table, providing exercise result details and counts of workout results.';
 
 --
 -- RLS Policies
@@ -392,7 +490,7 @@ BEGIN
   AND w.user_id = auth.uid();
 
   -- exercises
-  SELECT jsonb_agg(jsonb_build_object('id', e.id, 'name', e.name) ORDER BY we.position)
+  SELECT COALESCE(jsonb_agg(jsonb_build_object('id', e.id, 'name', e.name) ORDER BY we.position), '[]'::jsonb)
   INTO exercises
   FROM public.workout_exercises we
   JOIN public.exercises e
@@ -466,7 +564,19 @@ RETURNS void
 LANGUAGE plpgsql
 SET search_path = ''
 AS $$
+DECLARE
+  is_locked BOOLEAN;
 BEGIN
+  -- Check if workout is locked
+  SELECT w.is_locked INTO is_locked
+  FROM public.workouts w
+  WHERE w.id = w_id
+  AND w.user_id = auth.uid();
+
+  IF is_locked THEN
+    RAISE EXCEPTION 'Workout is locked and cannot be edited';
+  END IF;
+
   -- Update workout
   UPDATE public.workouts
   SET name = w_name,
@@ -491,7 +601,46 @@ $$;
 
 COMMENT ON FUNCTION public.edit_workout(w_id UUID, w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Function updates a workout and replaces its workout exercises.';
 
--- inspect_exercise
+-- Fetches all needed data for exercise inspection dialog and the edit dialog
+CREATE OR REPLACE FUNCTION public.inspect_exercise(e_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  exercise JSONB;
+  total_results JSONB;
+  workouts_used JSONB;
+BEGIN
+  -- exercise
+  SELECT to_jsonb(e)
+  INTO exercise
+  FROM public.exercises e
+  WHERE e.id = e_id
+  AND e.user_id = auth.uid();
+
+  -- Count of exercise results
+  SELECT jsonb_build_object('total_results', COUNT(*))
+  INTO total_results
+  FROM public.exercise_results er
+  WHERE er.exercise_id = e_id
+  AND er.user_id = auth.uid();
+
+  -- List of workouts that use this exercise
+  SELECT COALESCE(jsonb_agg(jsonb_build_object('id', w.id, 'name', w.name)), '[]'::jsonb)
+  INTO workouts_used
+  FROM public.workout_exercises we
+  JOIN public.workouts w ON w.id = we.workout_id
+  WHERE we.exercise_id = e_id
+  AND w.user_id = auth.uid();
+
+  RETURN jsonb_build_object(
+    'exercise', exercise,
+    'total_results', total_results,
+    'workouts_used', workouts_used
+  );
+END;
+$$;
 
 -- create_exercise
 

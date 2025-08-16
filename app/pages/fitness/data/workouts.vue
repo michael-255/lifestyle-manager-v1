@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { useRouting } from '#imports'
-import { appTitle, closeIcon, columnsIcon, searchIcon } from '#shared/constants'
+import {
+  appTitle,
+  chartsIcon,
+  closeIcon,
+  columnsIcon,
+  deleteIcon,
+  editIcon,
+  inspectIcon,
+  searchIcon,
+} from '#shared/constants'
 import {
   columnOptionsFromTableColumns,
   hiddenTableColumn,
@@ -13,6 +22,11 @@ import { ref, type Ref } from 'vue'
 
 useMeta({ title: `${appTitle} | Workout Data` })
 
+const $q = useQuasar()
+const logger = useLogger()
+const supabase = useSupabaseClient<Database>()
+const { openChartWorkout, openInspectWorkout, openEditWorkout, openDeleteWorkout } =
+  useFitnessDialogs()
 const { goBack } = useRouting()
 
 const labelSingular = 'Workout'
@@ -21,19 +35,33 @@ const searchFilter: Ref<string> = ref('')
 const tableColumns = [
   hiddenTableColumn('id'),
   tableColumn('id', 'Id', 'UUID'),
+  tableColumn('name', 'Name', 'TEXT'),
+  tableColumn('description', 'Description', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
+  tableColumn('schedule', 'Schedule', 'LIST-PRINT'),
+  tableColumn('exercise_count', 'Exercises Used', 'NUMBER'),
+  tableColumn('workout_result_count', 'Results Recorded', 'NUMBER'),
+  tableColumn('is_locked', 'Locked', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))
 
 const records: Ref<any[]> = ref([])
 
-/**
- * Opens the Inspect Log dialog using the data from the clicked row.
- */
-function onInspect(record: Record<string, any>) {
-  console.log('Inspecting record:', record)
-}
+onMounted(async () => {
+  try {
+    $q.loading.show()
+
+    const { data, error } = await supabase.from('workouts_table').select()
+    if (error) throw error
+
+    records.value = data || []
+  } catch (error) {
+    logger.error(`Error fetching workouts table`, error as Error)
+  } finally {
+    $q.loading.hide()
+  }
+})
 </script>
 
 <template>
@@ -57,13 +85,55 @@ function onInspect(record: Record<string, any>) {
         >
           {{ col.label }}
         </QTh>
+        <QTh auto-width class="text-left">Actions</QTh>
       </QTr>
     </template>
 
     <template #body="props">
-      <QTr :props="props" class="cursor-pointer" @click="onInspect(props.row)">
+      <QTr :props="props">
         <QTd v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.value }}
+        </QTd>
+        <QTd auto-width>
+          <QBtn
+            :disable="!props.row.workout_result_count"
+            flat
+            round
+            dense
+            class="q-ml-xs"
+            :color="!props.row.workout_result_count ? 'grey' : 'cyan'"
+            :icon="chartsIcon"
+            @click="openChartWorkout(props.row.id)"
+          />
+          <QBtn
+            flat
+            round
+            dense
+            class="q-ml-xs"
+            color="primary"
+            :icon="inspectIcon"
+            @click="openInspectWorkout(props.row.id)"
+          />
+          <QBtn
+            :disable="props.row.is_locked"
+            flat
+            round
+            dense
+            class="q-ml-xs"
+            :icon="editIcon"
+            :color="props.row.is_locked ? 'grey' : 'amber'"
+            @click="openEditWorkout(props.row.id)"
+          />
+          <QBtn
+            :disable="props.row.is_locked"
+            flat
+            round
+            dense
+            class="q-ml-xs"
+            :color="props.row.is_locked ? 'grey' : 'negative'"
+            :icon="deleteIcon"
+            @click="openDeleteWorkout(props.row.id)"
+          />
         </QTd>
       </QTr>
     </template>

@@ -30,7 +30,7 @@ const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent()
       <QCardSection>
         <div class="row justify-center">
           <div class="page-width-limit">
-            <QList padding> Charts... </QList>
+            <QList padding> WIP Charts... </QList>
             <div class="q-mt-xl" />
           </div>
         </div>

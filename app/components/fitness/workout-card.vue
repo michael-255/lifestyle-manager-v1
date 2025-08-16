@@ -54,9 +54,12 @@ function onStart() {
                 transition-hide="flip-left"
               >
                 <QList>
-                  <QItem clickable @click="onCharts">
+                  <QItem clickable :disable="!todaysWorkout.last_created_at" @click="onCharts">
                     <QItemSection avatar>
-                      <QIcon color="cyan" :name="chartsIcon" />
+                      <QIcon
+                        :color="!todaysWorkout.last_created_at ? 'grey' : 'cyan'"
+                        :name="chartsIcon"
+                      />
                     </QItemSection>
 
                     <QItemSection>Charts</QItemSection>

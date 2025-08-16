@@ -26,7 +26,6 @@ onMounted(async () => {
       <QSelect
         v-model="localRecordStore.record.exercises"
         :options="options"
-        lazy-rules
         multiple
         counter
         emit-value

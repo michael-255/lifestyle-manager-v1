@@ -1,4 +1,5 @@
 import {
+  DialogCharts,
   DialogConfirm,
   DialogCreate,
   DialogEdit,
@@ -35,6 +36,26 @@ export default function useFitnessDialogs() {
   //
   // Workouts
   //
+
+  async function openChartWorkout(id: IdType) {
+    try {
+      $q.loading.show()
+
+      console.log('Opening workout charts dialog for id:', id)
+
+      $q.dialog({
+        component: DialogCharts,
+        componentProps: {
+          label: 'Workout Charts',
+          subComponents: [],
+        },
+      })
+    } catch (error) {
+      logger.error('Error opening workout chart dialog', error as Error)
+    } finally {
+      $q.loading.hide()
+    }
+  }
 
   async function openInspectWorkout(id: IdType) {
     try {
@@ -278,6 +299,35 @@ export default function useFitnessDialogs() {
     }
   }
 
+  async function openCreateWorkoutResult() {
+    try {
+      localRecordStore.record = {
+        created_at: new Date().toISOString(),
+        finished_at: new Date().toISOString(),
+      } as WorkoutResult
+
+      $q.dialog({
+        component: DialogCreate,
+        componentProps: {
+          label: 'Workout Result',
+          subComponents: [],
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
+              .from('workout_results')
+              .insert([localRecordStore.record as WorkoutResult])
+              .select()
+              .single()
+            if (error) throw error
+
+            logger.info('Workout result created', data)
+          },
+        },
+      })
+    } catch (error) {
+      logger.error('Error opening workout result create dialog', error as Error)
+    }
+  }
+
   async function openEditWorkoutResult(id: IdType) {
     try {
       $q.loading.show()
@@ -358,6 +408,26 @@ export default function useFitnessDialogs() {
   //
   // Exercises
   //
+
+  async function openChartExercise(id: IdType) {
+    try {
+      $q.loading.show()
+
+      console.log('Opening exercise charts dialog for id:', id)
+
+      $q.dialog({
+        component: DialogCharts,
+        componentProps: {
+          label: 'Exercise Charts',
+          subComponents: [],
+        },
+      })
+    } catch (error) {
+      logger.error('Error opening exercise chart dialog', error as Error)
+    } finally {
+      $q.loading.hide()
+    }
+  }
 
   async function openInspectExercise(id: IdType) {
     try {
@@ -561,6 +631,38 @@ export default function useFitnessDialogs() {
     }
   }
 
+  async function openCreateExerciseResult() {
+    try {
+      localRecordStore.record = {
+        created_at: new Date().toISOString(),
+      } as ExerciseResult
+
+      $q.dialog({
+        component: DialogCreate,
+        componentProps: {
+          label: 'Exercise Result',
+          subComponents: [
+            { component: DialogFormItemCreatedDate },
+            { component: DialogFormItemNote },
+            // TODO
+          ],
+          onSubmitHandler: async () => {
+            const { data, error } = await supabase
+              .from('exercise_results')
+              .insert([localRecordStore.record as ExerciseResult])
+              .select()
+              .single()
+            if (error) throw error
+
+            logger.info('Exercise result created', data)
+          },
+        },
+      })
+    } catch (error) {
+      logger.error('Error opening exercise result create dialog', error as Error)
+    }
+  }
+
   async function openEditExerciseResult(id: IdType) {
     try {
       $q.loading.show()
@@ -640,21 +742,25 @@ export default function useFitnessDialogs() {
 
   return {
     // Workouts
+    openChartWorkout,
     openInspectWorkout,
     openCreateWorkout,
     openEditWorkout,
     openDeleteWorkout,
     // Workout Results
     openInspectWorkoutResult,
+    openCreateWorkoutResult,
     openEditWorkoutResult,
     openDeleteWorkoutResult,
     // Exercises
+    openChartExercise,
     openInspectExercise,
     openCreateExercise,
     openEditExercise,
     openDeleteExercise,
     // Exercise Results
     openInspectExerciseResult,
+    openCreateExerciseResult,
     openEditExerciseResult,
     openDeleteExerciseResult,
   }

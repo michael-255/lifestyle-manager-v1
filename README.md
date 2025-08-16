@@ -4,9 +4,17 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
-### Ideas
+### Work in Progress
+
+Need data tables working first before working on the dialogs and other features.
 
 RPC functions?
+
+- [@] `table_counts`
+- [ ] `workouts_table`
+- [ ] `exercises_table`
+- [ ] `workout_results_table`
+- [ ] `exercise_results_table`
 
 - [@] `inspect_workout`
 - [@] `create_workout`
@@ -71,29 +79,13 @@ npm i @observablehq/plot
 
 ### TODO - Dialogs
 
-#### Create/Edit Workout
+#### `inspect_exercise`
 
-- [@] `item-created-date.vue`
-- [@] `item-name.vue`
-- [@] `item-description.vue`
-- [@] `item-schedule.vue`
-- [@] `item-workout-exercises.vue`
-
-#### Create Workout Result
-
-- [ ] `item-parent-workout.vue`
-- [@] `item-created-date.vue`
-- [ ] `item-finished-date.vue`
-- [ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)
-- [@] `item-note.vue`
-
-#### Edit Workout Result
-
-- ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
-- [@] `item-created-date.vue`
-- [@] `item-finished-date.vue`
-- [@] `item-note.vue`
-- ~~[ ] `item-workout-result-exercise-results.vue`~~ (Can't edit associated exercises once created)
+- All exercise rows
+- `total_results` (count of exercise results)
+- `workouts_used` (list of workouts that use this exercise)
+  - `id`
+  - `name`
 
 #### Create Exercise
 
@@ -114,6 +106,22 @@ npm i @observablehq/plot
 - ~~`item-checklist-labels.vue`~~
 - [ ] `item-default-sets.vue`
 - [ ] `item-rest-timer.vue`
+
+#### Create Workout Result
+
+- [ ] `item-parent-workout.vue`
+- [@] `item-created-date.vue`
+- [ ] `item-finished-date.vue`
+- [ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)
+- [@] `item-note.vue`
+
+#### Edit Workout Result
+
+- ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
+- [@] `item-created-date.vue`
+- [@] `item-finished-date.vue`
+- [@] `item-note.vue`
+- ~~[ ] `item-workout-result-exercise-results.vue`~~ (Can't edit associated exercises once created)
 
 #### Create Exercise Result
 
