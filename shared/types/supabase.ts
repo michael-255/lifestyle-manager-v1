@@ -294,11 +294,11 @@ export type Database = {
     Functions: {
       create_workout: {
         Args: {
-          w_created_at: string
-          w_description: string
-          w_exercise_ids: string[]
+          w_created_at?: string
+          w_description?: string
+          w_exercise_ids?: string[]
           w_name: string
-          w_schedule: Database["public"]["Enums"]["workout_schedule_type"][]
+          w_schedule?: Database["public"]["Enums"]["workout_schedule_type"][]
         }
         Returns: {
           exercises: Json
@@ -306,15 +306,17 @@ export type Database = {
         }[]
       }
       edit_workout: {
-        Args: { w_id: string }
-        Returns: {
-          description: string
-          exercises: string[]
-          id: string
-          is_locked: boolean
-          name: string
-          schedule: Database["public"]["Enums"]["workout_schedule_type"][]
-        }[]
+        Args:
+          | {
+              w_created_at?: string
+              w_description?: string
+              w_exercise_ids?: string[]
+              w_id: string
+              w_name: string
+              w_schedule?: Database["public"]["Enums"]["workout_schedule_type"][]
+            }
+          | { w_id: string }
+        Returns: undefined
       }
       inspect_workout: {
         Args: { w_id: string }
