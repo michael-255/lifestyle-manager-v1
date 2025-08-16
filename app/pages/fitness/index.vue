@@ -16,6 +16,7 @@ const supabase = useSupabaseClient<Database>()
 const todaysWorkouts = ref<TodaysWorkout[]>([])
 const finishedLoading = ref(false)
 
+// TODO: Need a better setup for realtime data updates
 const channel = supabase
   .channel('public.workouts')
   .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts' }, async (payload) => {
@@ -41,7 +42,6 @@ onMounted(async () => {
 
     if (error) throw error
 
-    logger.info("Successfully fetched today's workouts", { count: data.length })
     todaysWorkouts.value = data
   } catch (error) {
     logger.error(`Error fetching today's workouts`, error as Error)

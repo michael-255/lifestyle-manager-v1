@@ -1,21 +1,4 @@
 --
--- Realtime
---
-
--- TODO
-BEGIN;
--- remove the supabase_realtime publication
-DROP publication if exists supabase_realtime;
--- re-create the supabase_realtime publication with no tables
-CREATE publication supabase_realtime;
-COMMIT;
--- update this to match your tables
-ALTER publication supabase_realtime ADD TABLE workouts;
-ALTER publication supabase_realtime ADD TABLE exercises;
-ALTER publication supabase_realtime ADD TABLE workout_results;
-ALTER publication supabase_realtime ADD TABLE exercise_results;
-
---
 -- ENUMS
 --
 
@@ -56,8 +39,7 @@ CREATE TABLE public.exercises (
     name TEXT NOT NULL,
     description TEXT,
     type public.exercise_type NOT NULL,
-    checklist_labels TEXT[],
-    default_sets INTEGER DEFAULT 1,
+    type_data JSONB, -- For all potential type-specific data (checklist_labels, default_sets, etc.)
     rest_timer INTEGER,
     is_locked BOOLEAN DEFAULT FALSE
 );
@@ -69,8 +51,7 @@ COMMENT ON COLUMN public.exercises.created_at IS 'Timestamp when the exercise wa
 COMMENT ON COLUMN public.exercises.name IS 'Name of the exercise.';
 COMMENT ON COLUMN public.exercises.description IS 'Description of the exercise.';
 COMMENT ON COLUMN public.exercises.type IS 'Type of the exercise.';
-COMMENT ON COLUMN public.exercises.checklist_labels IS 'Labels for checklist exercises, used to define the items in the checklist.';
-COMMENT ON COLUMN public.exercises.default_sets IS 'Default number of sets for the exercise (if any).';
+COMMENT ON COLUMN public.exercises.type_data IS 'JSONB data containing all potential type-specific data for the exercise.';
 COMMENT ON COLUMN public.exercises.rest_timer IS 'Rest timer duration in seconds (if any).';
 COMMENT ON COLUMN public.exercises.is_locked IS 'Indicates if the exercise is locked for editing.';
 
@@ -99,7 +80,7 @@ CREATE TABLE public.exercise_results (
     exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     note TEXT,
-    data JSONB, -- For all potential exercise data
+    result_data JSONB, -- For all potential exercise result data (sets, reps, weight, etc.)
     is_locked BOOLEAN DEFAULT FALSE
 );
 
@@ -109,7 +90,7 @@ COMMENT ON COLUMN public.exercise_results.user_id IS 'ID of the user who owns th
 COMMENT ON COLUMN public.exercise_results.exercise_id IS 'ID of the exercise for which the result is recorded.';
 COMMENT ON COLUMN public.exercise_results.created_at IS 'Timestamp when the exercise result was created.';
 COMMENT ON COLUMN public.exercise_results.note IS 'Optional note for the exercise result.';
-COMMENT ON COLUMN public.exercise_results.data IS 'JSONB data containing all potential exercise data.';
+COMMENT ON COLUMN public.exercise_results.result_data IS 'JSONB data containing all potential exercise data.';
 COMMENT ON COLUMN public.exercise_results.is_locked IS 'Indicates if the exercise result is locked for editing.';
 
 CREATE TABLE public.workout_results (
@@ -294,6 +275,23 @@ JOIN public.exercises e ON e.id = er.exercise_id
 WHERE er.user_id = auth.uid();
 
 COMMENT ON VIEW public.exercise_results_table IS 'View for exercise results table, providing exercise result details and counts of workout results.';
+
+--
+-- Realtime
+--
+
+-- TODO
+BEGIN;
+-- remove the supabase_realtime publication
+DROP publication if exists supabase_realtime;
+-- re-create the supabase_realtime publication with no tables
+CREATE publication supabase_realtime;
+COMMIT;
+-- update this to match your tables
+ALTER publication supabase_realtime ADD TABLE workouts;
+ALTER publication supabase_realtime ADD TABLE exercises;
+ALTER publication supabase_realtime ADD TABLE workout_results;
+ALTER publication supabase_realtime ADD TABLE exercise_results;
 
 --
 -- RLS Policies
@@ -620,7 +618,7 @@ BEGIN
   AND e.user_id = auth.uid();
 
   -- Count of exercise results
-  SELECT jsonb_build_object('total_results', COUNT(*))
+  SELECT COUNT(*)
   INTO total_results
   FROM public.exercise_results er
   WHERE er.exercise_id = e_id

@@ -9,6 +9,7 @@ import {
   DialogFormItemFinishedDate,
   DialogFormItemName,
   DialogFormItemNote,
+  DialogFormItemRestTimer,
   DialogFormItemWorkoutExercises,
   DialogFormItemWorkoutSchedule,
   DialogInspect,
@@ -21,8 +22,10 @@ import {
 } from '#components'
 import { deleteIcon } from '#shared/constants'
 import {
+  inspectExerciseSchema,
   inspectWorkoutSchema,
   type Exercise,
+  type InspectExercise,
   type InspectWorkout,
   type WorkoutResult,
 } from '#shared/types/fitness-schemas'
@@ -37,6 +40,7 @@ export default function useFitnessDialogs() {
   // Workouts
   //
 
+  // TODO
   async function openChartWorkout(id: IdType) {
     try {
       $q.loading.show()
@@ -96,16 +100,16 @@ export default function useFitnessDialogs() {
               props: { label: 'Schedule', value: inspect.workout.schedule },
             },
             {
-              component: DialogInspectItemBoolean,
-              props: { label: 'Locked', value: inspect.workout.is_locked },
-            },
-            {
               component: DialogInspectItemObject,
               props: { label: 'Last Workout', value: inspect.last_workout_result },
             },
             {
               component: DialogInspectItemObjectList,
               props: { label: 'Exercises', value: inspect.exercises },
+            },
+            {
+              component: DialogInspectItemBoolean,
+              props: { label: 'Locked', value: inspect.workout.is_locked },
             },
           ],
         },
@@ -409,6 +413,7 @@ export default function useFitnessDialogs() {
   // Exercises
   //
 
+  // TODO
   async function openChartExercise(id: IdType) {
     try {
       $q.loading.show()
@@ -433,8 +438,12 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      const { data, error } = await supabase.from('exercises').select('*').eq('id', id).single()
+      const { data, error } = await supabase.rpc('inspect_exercise', { e_id: id })
       if (error) throw error
+
+      console.log('Inspect exercise data:', data)
+
+      const inspect: InspectExercise = inspectExerciseSchema.parse(data)
 
       $q.dialog({
         component: DialogInspect,
@@ -443,25 +452,44 @@ export default function useFitnessDialogs() {
           subComponents: [
             {
               component: DialogInspectItemText,
-              props: { label: 'Id', value: data.id },
+              props: { label: 'Id', value: inspect.exercise.id },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'User Id', value: data.user_id },
+              props: { label: 'User Id', value: inspect.exercise.user_id },
             },
             {
               component: DialogInspectItemDate,
-              props: { label: 'Created At', value: data.created_at },
+              props: { label: 'Created At', value: inspect.exercise.created_at },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'Name', value: data.name },
+              props: { label: 'Name', value: inspect.exercise.name },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'Description', value: data.description },
+              props: { label: 'Description', value: inspect.exercise.description },
             },
-            // TODO
+            {
+              component: DialogInspectItemText,
+              props: { label: 'Type', value: inspect.exercise.type },
+            },
+            {
+              component: DialogInspectItemObject,
+              props: { label: 'Type Data', value: inspect.exercise.type_data },
+            },
+            {
+              component: DialogInspectItemText,
+              props: { label: 'Total Results', value: inspect.total_results },
+            },
+            {
+              component: DialogInspectItemObjectList,
+              props: { label: 'Workouts Used', value: inspect.workouts_used },
+            },
+            {
+              component: DialogInspectItemBoolean,
+              props: { label: 'Locked', value: inspect.exercise.is_locked },
+            },
           ],
         },
       })
@@ -486,6 +514,7 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemName },
             { component: DialogFormItemDescription },
             { component: DialogFormItemCreatedDate },
+            { component: DialogFormItemRestTimer },
             { component: DialogFormItemExerciseType },
             // TODO
           ],

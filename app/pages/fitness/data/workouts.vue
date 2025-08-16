@@ -40,7 +40,7 @@ const tableColumns = [
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('schedule', 'Schedule', 'LIST-PRINT'),
   tableColumn('exercise_count', 'Exercises Used', 'NUMBER'),
-  tableColumn('workout_result_count', 'Results Recorded', 'NUMBER'),
+  tableColumn('workout_result_count', 'Total Results', 'NUMBER'),
   tableColumn('is_locked', 'Locked', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))

@@ -37,29 +37,29 @@ export type Database = {
       exercise_results: {
         Row: {
           created_at: string
-          data: Json | null
           exercise_id: string
           id: string
           is_locked: boolean | null
           note: string | null
+          result_data: Json | null
           user_id: string
         }
         Insert: {
           created_at?: string
-          data?: Json | null
           exercise_id: string
           id?: string
           is_locked?: boolean | null
           note?: string | null
+          result_data?: Json | null
           user_id?: string
         }
         Update: {
           created_at?: string
-          data?: Json | null
           exercise_id?: string
           id?: string
           is_locked?: boolean | null
           note?: string | null
+          result_data?: Json | null
           user_id?: string
         }
         Relationships: [
@@ -95,39 +95,36 @@ export type Database = {
       }
       exercises: {
         Row: {
-          checklist_labels: string[] | null
           created_at: string
-          default_sets: number | null
           description: string | null
           id: string
           is_locked: boolean | null
           name: string
           rest_timer: number | null
           type: Database["public"]["Enums"]["exercise_type"]
+          type_data: Json | null
           user_id: string
         }
         Insert: {
-          checklist_labels?: string[] | null
           created_at?: string
-          default_sets?: number | null
           description?: string | null
           id?: string
           is_locked?: boolean | null
           name: string
           rest_timer?: number | null
           type: Database["public"]["Enums"]["exercise_type"]
+          type_data?: Json | null
           user_id?: string
         }
         Update: {
-          checklist_labels?: string[] | null
           created_at?: string
-          default_sets?: number | null
           description?: string | null
           id?: string
           is_locked?: boolean | null
           name?: string
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"]
+          type_data?: Json | null
           user_id?: string
         }
         Relationships: []
@@ -365,9 +362,7 @@ export type Database = {
       }
       exercises_table: {
         Row: {
-          checklist_labels: string[] | null
           created_at: string | null
-          default_sets: number | null
           description: string | null
           exercise_result_count: number | null
           id: string | null
@@ -378,9 +373,7 @@ export type Database = {
           workout_count: number | null
         }
         Insert: {
-          checklist_labels?: string[] | null
           created_at?: string | null
-          default_sets?: number | null
           description?: string | null
           exercise_result_count?: never
           id?: string | null
@@ -391,9 +384,7 @@ export type Database = {
           workout_count?: never
         }
         Update: {
-          checklist_labels?: string[] | null
           created_at?: string | null
-          default_sets?: number | null
           description?: string | null
           exercise_result_count?: never
           id?: string | null

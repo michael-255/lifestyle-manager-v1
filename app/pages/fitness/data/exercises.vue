@@ -39,9 +39,9 @@ const tableColumns = [
   tableColumn('description', 'Description', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('type', 'Type', 'TEXT'),
-  tableColumn('rest_timer', 'Rest Timer', 'NUMBER'),
+  tableColumn('rest_timer', 'Rest Timer', 'TIME'),
   tableColumn('workout_count', 'Workouts Used', 'NUMBER'),
-  tableColumn('exercise_result_count', 'Results Recorded', 'NUMBER'),
+  tableColumn('exercise_result_count', 'Total Results', 'NUMBER'),
   tableColumn('is_locked', 'Locked', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))

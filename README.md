@@ -4,23 +4,21 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
-### Work in Progress
+### TODO - General
 
-Need data tables working first before working on the dialogs and other features.
-
-RPC functions?
+- RPC functions:
 
 - [@] `table_counts`
-- [ ] `workouts_table`
-- [ ] `exercises_table`
-- [ ] `workout_results_table`
-- [ ] `exercise_results_table`
+- [@] `workouts_table`
+- [@] `exercises_table`
+- [@] `workout_results_table`
+- [@] `exercise_results_table`
 
 - [@] `inspect_workout`
 - [@] `create_workout`
 - [@] `edit_workout`
 
-- [ ] `inspect_exercise`
+- [@] `inspect_exercise`
 - [ ] `create_exercise`
 - [ ] `edit_exercise`
 
@@ -49,28 +47,9 @@ RPC functions?
   - Unlocks the workout_result
   - Unlocks the exercise_results
 
-### TODO - General
-
 - Seed the database with a User and Data
 - Use a view to get the counts for reminder notifications on apps
-- Create RPC functions for some DB interactions
-- Implement real-time updates for tables
-
-```sql
-begin;
--- remove the supabase_realtime publication
-drop
-  publication if exists supabase_realtime;
--- re-create the supabase_realtime publication with no tables
-create publication supabase_realtime;
-commit;
--- add a table called 'messages' to the publication
--- (update this to match your tables)
-alter
-  publication supabase_realtime add table workouts;
-```
-
-### TODO - New Packages
+- Use new packages:
 
 ```sh
 npm i @tanstack/vue-query
@@ -79,23 +58,15 @@ npm i @observablehq/plot
 
 ### TODO - Dialogs
 
-#### `inspect_exercise`
-
-- All exercise rows
-- `total_results` (count of exercise results)
-- `workouts_used` (list of workouts that use this exercise)
-  - `id`
-  - `name`
-
 #### Create Exercise
 
 - [@] `item-created-date.vue`
 - [@] `item-name.vue`
 - [@] `item-description.vue`
+- [ ] `item-rest-timer.vue`
 - [@] `item-exercise-type.vue`
 - [ ] `item-checklist-labels.vue`
 - [ ] `item-default-sets.vue`
-- [ ] `item-rest-timer.vue`
 
 #### Edit Exercise
 
