@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -292,15 +292,28 @@ export type Database = {
       }
     }
     Functions: {
+      create_workout: {
+        Args: {
+          w_created_at: string
+          w_description: string
+          w_exercise_ids: string[]
+          w_name: string
+          w_schedule: Database["public"]["Enums"]["workout_schedule_type"][]
+        }
+        Returns: {
+          exercises: Json
+          workout: Json
+        }[]
+      }
       edit_workout: {
         Args: { w_id: string }
         Returns: {
-          id: string
-          name: string
           description: string
-          schedule: Database["public"]["Enums"]["workout_schedule_type"][]
-          is_locked: boolean
           exercises: string[]
+          id: string
+          is_locked: boolean
+          name: string
+          schedule: Database["public"]["Enums"]["workout_schedule_type"][]
         }[]
       }
       inspect_workout: {
