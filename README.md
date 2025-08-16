@@ -8,7 +8,7 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 - Seed the database with a User and Data
 - Use a view to get the counts for reminder notifications on apps
-- Create RPC functions for all DB interactions
+- Create RPC functions for some DB interactions
 - Fix Edit workout creating a new workout
 - Implement real-time updates for tables
 

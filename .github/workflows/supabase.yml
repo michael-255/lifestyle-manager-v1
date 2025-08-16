@@ -22,9 +22,6 @@ jobs:
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
     steps:
-      - name: Disabled Notice
-        run: echo "Supabase deploy action is currently disabled."
-
       - uses: actions/checkout@v4
 
       - uses: supabase/setup-cli@v1

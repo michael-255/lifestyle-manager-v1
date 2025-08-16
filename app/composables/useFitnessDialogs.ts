@@ -117,37 +117,16 @@ export default function useFitnessDialogs() {
             const workout = localRecordStore.getWorkout
             const workoutExercises = localRecordStore.getWorkoutExercises
 
-            const { data, error } = await supabase
-              .rpc('create_workout', {
-                w_name: workout.name,
-                w_description: workout.description,
-                w_created_at: workout.created_at,
-                w_schedule: workout.schedule,
-                w_exercise_ids: workoutExercises.map((exercise: Exercise) => exercise.id),
-              })
-              .single()
+            const { error } = await supabase.rpc('create_workout', {
+              w_name: workout.name,
+              w_description: workout.description,
+              w_created_at: workout.created_at,
+              w_schedule: workout.schedule,
+              w_exercise_ids: workoutExercises.map((id: string) => id),
+            })
             if (error) throw error
 
-            // const { data, error } = await supabase
-            //   .from('workouts')
-            //   .insert(workout)
-            //   .select()
-            //   .single()
-            // if (error) throw error
-
-            // if (workoutExercises.length > 0) {
-            //   const workoutExercisesData = workoutExercises.map((id: string, i: number) => ({
-            //     workout_id: data.id,
-            //     exercise_id: id,
-            //     position: i,
-            //   }))
-            //   const { error: exercisesError } = await supabase
-            //     .from('workout_exercises')
-            //     .insert(workoutExercisesData)
-            //   if (exercisesError) throw exercisesError
-            // }
-
-            logger.info('Workout created', data)
+            logger.info('Workout created', { ...workout, exercises: workoutExercises })
           },
         },
       })
@@ -180,25 +159,16 @@ export default function useFitnessDialogs() {
             const workout = localRecordStore.getWorkout
             const workoutExercises = localRecordStore.getWorkoutExercises
 
-            const { data, error } = await supabase
-              .from('workouts')
-              .insert(workout)
-              .select()
-              .single()
+            const { error } = await supabase.rpc('edit_workout', {
+              w_name: workout.name,
+              w_description: workout.description,
+              w_created_at: workout.created_at,
+              w_schedule: workout.schedule,
+              w_exercise_ids: workoutExercises.map((id: string) => id),
+            })
             if (error) throw error
 
-            const workoutExercisesData = workoutExercises.map((id: string, i: number) => ({
-              workout_id: data.id,
-              exercise_id: id,
-              position: i,
-            }))
-
-            const { error: exercisesError } = await supabase
-              .from('workout_exercises')
-              .insert(workoutExercisesData)
-            if (exercisesError) throw exercisesError
-
-            logger.info('Workout updated', data)
+            logger.info('Workout updated', { ...workout, exercises: workoutExercises })
           },
         },
       })

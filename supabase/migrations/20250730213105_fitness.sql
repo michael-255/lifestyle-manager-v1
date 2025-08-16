@@ -416,18 +416,14 @@ $$;
 
 COMMENT ON FUNCTION public.inspect_workout(w_id UUID) IS 'Function for inspect workout dialogs.';
 
--- Create Workout RPC
 CREATE OR REPLACE FUNCTION public.create_workout(
   w_name TEXT,
-  w_description TEXT,
-  w_created_at TIMESTAMPTZ,
-  w_schedule public.workout_schedule_type[],
-  w_exercise_ids UUID[]
+  w_description TEXT DEFAULT NULL,
+  w_created_at TIMESTAMPTZ DEFAULT (NOW() AT TIME ZONE 'utc'),
+  w_schedule public.workout_schedule_type[] DEFAULT ARRAY[]::workout_schedule_type[],
+  w_exercise_ids UUID[] DEFAULT ARRAY[]::UUID[]
 )
-RETURNS TABLE (
-  workout JSONB,
-  exercises JSONB
-)
+RETURNS void
 LANGUAGE plpgsql
 SET search_path = ''
 AS $$
@@ -446,55 +442,43 @@ BEGIN
       VALUES (new_workout_id, w_exercise_ids[i], i - 1);
     END LOOP;
   END IF;
-
-  -- Return the created workout and exercises
-  RETURN QUERY
-    SELECT
-      to_jsonb(w),
-      (
-        SELECT jsonb_agg(we)
-        FROM (
-          SELECT we.*
-          FROM public.workout_exercises we
-          WHERE we.workout_id = w.id
-          ORDER BY we.position
-        ) we
-      )
-    FROM public.workouts w
-    WHERE w.id = new_workout_id;
 END;
 $$;
 
 COMMENT ON FUNCTION public.create_workout(w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Creates a workout and its associated exercises.';
 
--- TODO: Has to update the workout_exercises table as well
-CREATE OR REPLACE FUNCTION public.edit_workout(w_id UUID)
-RETURNS TABLE (
-  id UUID,
-  name TEXT,
-  description TEXT,
-  schedule public.workout_schedule_type[],
-  is_locked BOOLEAN,
-  exercises UUID[]
+CREATE OR REPLACE FUNCTION public.edit_workout(
+  w_id UUID,
+  w_name TEXT,
+  w_description TEXT DEFAULT NULL,
+  w_created_at TIMESTAMPTZ DEFAULT (NOW() AT TIME ZONE 'utc'),
+  w_schedule public.workout_schedule_type[] DEFAULT ARRAY[]::workout_schedule_type[],
+  w_exercise_ids UUID[] DEFAULT ARRAY[]::UUID[]
 )
-LANGUAGE sql
+RETURNS void
+LANGUAGE plpgsql
 SET search_path = ''
 AS $$
-  SELECT
-    w.id,
-    w.name,
-    w.description,
-    w.schedule,
-    w.is_locked,
-    ARRAY(
-      SELECT we.exercise_id
-      FROM public.workout_exercises we
-      WHERE we.workout_id = w.id
-      ORDER BY we.position
-    ) AS exercises
-  FROM public.workouts w
-  WHERE w.id = w_id
-  AND w.user_id = auth.uid();
+BEGIN
+  -- Update workout
+  UPDATE public.workouts
+  SET name = w_name,
+      description = w_description,
+      created_at = w_created_at,
+      schedule = w_schedule
+  WHERE id = w_id AND user_id = auth.uid();
+
+  -- Remove existing workout_exercises
+  DELETE FROM public.workout_exercises WHERE workout_id = w_id;
+
+  -- Insert new workout_exercises
+  IF array_length(w_exercise_ids, 1) > 0 THEN
+    FOR i IN 1..array_length(w_exercise_ids, 1) LOOP
+      INSERT INTO public.workout_exercises (workout_id, exercise_id, position)
+      VALUES (w_id, w_exercise_ids[i], i - 1);
+    END LOOP;
+  END IF;
+END;
 $$;
 
-COMMENT ON FUNCTION public.edit_workout(w_id UUID) IS 'Function for edit workout dialogs.';
+COMMENT ON FUNCTION public.edit_workout(w_id UUID, w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Updates a workout and replaces its exercises.';
