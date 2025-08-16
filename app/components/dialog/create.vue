@@ -8,7 +8,7 @@ import { ref } from 'vue'
 const props = defineProps<{
   label: string
   subComponents: Array<{ component: string; props: Record<string, any> }>
-  onSubmitHandler: () => Promise<Record<string, any> | null>
+  onSubmitHandler: () => Promise<void>
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -32,10 +32,7 @@ async function onSubmit() {
   }).onOk(async () => {
     try {
       $q.loading.show()
-
-      const record = await props.onSubmitHandler()
-
-      logger.info(`${props.label} created`, record)
+      await props.onSubmitHandler()
     } catch (error) {
       logger.error(`Error creating ${props.label}`, error as Error)
     } finally {

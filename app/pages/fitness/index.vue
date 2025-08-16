@@ -16,6 +16,20 @@ const supabase = useSupabaseClient<Database>()
 const todaysWorkouts = ref<TodaysWorkout[]>([])
 const finishedLoading = ref(false)
 
+const channel = supabase
+  .channel('public.workouts')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts' }, async (payload) => {
+    logger.info('Received real-time update for todays_workouts', payload)
+    const { data, error } = await supabase
+      .from('todays_workouts')
+      .select('*')
+      .order('name', { ascending: true })
+    if (error) throw error
+
+    todaysWorkouts.value = data
+  })
+  .subscribe()
+
 onMounted(async () => {
   try {
     $q.loading.show()
@@ -34,6 +48,12 @@ onMounted(async () => {
   } finally {
     finishedLoading.value = true
     $q.loading.hide()
+  }
+})
+
+onUnmounted(() => {
+  if (channel) {
+    supabase.removeChannel(channel)
   }
 })
 </script>

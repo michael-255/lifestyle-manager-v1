@@ -118,25 +118,36 @@ export default function useFitnessDialogs() {
             const workoutExercises = localRecordStore.getWorkoutExercises
 
             const { data, error } = await supabase
-              .from('workouts')
-              .insert(workout)
-              .select()
+              .rpc('create_workout', {
+                w_name: workout.name,
+                w_description: workout.description,
+                w_created_at: workout.created_at,
+                w_schedule: workout.schedule,
+                w_exercise_ids: workoutExercises.map((exercise: Exercise) => exercise.id),
+              })
               .single()
             if (error) throw error
 
-            if (workoutExercises.length > 0) {
-              const workoutExercisesData = workoutExercises.map((id: string, i: number) => ({
-                workout_id: data.id,
-                exercise_id: id,
-                position: i,
-              }))
-              const { error: exercisesError } = await supabase
-                .from('workout_exercises')
-                .insert(workoutExercisesData)
-              if (exercisesError) throw exercisesError
-            }
+            // const { data, error } = await supabase
+            //   .from('workouts')
+            //   .insert(workout)
+            //   .select()
+            //   .single()
+            // if (error) throw error
 
-            return data
+            // if (workoutExercises.length > 0) {
+            //   const workoutExercisesData = workoutExercises.map((id: string, i: number) => ({
+            //     workout_id: data.id,
+            //     exercise_id: id,
+            //     position: i,
+            //   }))
+            //   const { error: exercisesError } = await supabase
+            //     .from('workout_exercises')
+            //     .insert(workoutExercisesData)
+            //   if (exercisesError) throw exercisesError
+            // }
+
+            logger.info('Workout created', data)
           },
         },
       })
@@ -181,12 +192,13 @@ export default function useFitnessDialogs() {
               exercise_id: id,
               position: i,
             }))
+
             const { error: exercisesError } = await supabase
               .from('workout_exercises')
               .insert(workoutExercisesData)
             if (exercisesError) throw exercisesError
 
-            return data
+            logger.info('Workout updated', data)
           },
         },
       })
@@ -320,7 +332,8 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-            return data
+
+            logger.info('Workout result updated', data)
           },
         },
       })
@@ -437,7 +450,8 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-            return data
+
+            logger.info('Exercise created', data)
           },
         },
       })
@@ -473,7 +487,8 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-            return data
+
+            logger.info('Exercise updated', data)
           },
         },
       })
@@ -600,7 +615,8 @@ export default function useFitnessDialogs() {
               .select()
               .single()
             if (error) throw error
-            return data
+
+            logger.info('Exercise result updated', data)
           },
         },
       })

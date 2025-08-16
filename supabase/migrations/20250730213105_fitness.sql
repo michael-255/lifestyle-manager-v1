@@ -416,6 +416,58 @@ $$;
 
 COMMENT ON FUNCTION public.inspect_workout(w_id UUID) IS 'Function for inspect workout dialogs.';
 
+-- Create Workout RPC
+CREATE OR REPLACE FUNCTION public.create_workout(
+  w_name TEXT,
+  w_description TEXT,
+  w_created_at TIMESTAMPTZ,
+  w_schedule public.workout_schedule_type[],
+  w_exercise_ids UUID[]
+)
+RETURNS TABLE (
+  workout JSONB,
+  exercises JSONB
+)
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  new_workout_id UUID;
+BEGIN
+  -- Insert workout
+  INSERT INTO public.workouts (name, description, created_at, schedule, user_id)
+  VALUES (w_name, w_description, w_created_at, w_schedule, auth.uid())
+  RETURNING id INTO new_workout_id;
+
+  -- Insert workout_exercises
+  IF array_length(w_exercise_ids, 1) > 0 THEN
+    FOR i IN 1..array_length(w_exercise_ids, 1) LOOP
+      INSERT INTO public.workout_exercises (workout_id, exercise_id, position)
+      VALUES (new_workout_id, w_exercise_ids[i], i - 1);
+    END LOOP;
+  END IF;
+
+  -- Return the created workout and exercises
+  RETURN QUERY
+    SELECT
+      to_jsonb(w),
+      (
+        SELECT jsonb_agg(we)
+        FROM (
+          SELECT we.*
+          FROM public.workout_exercises we
+          WHERE we.workout_id = w.id
+          ORDER BY we.position
+        ) we
+      )
+    FROM public.workouts w
+    WHERE w.id = new_workout_id;
+END;
+$$;
+
+COMMENT ON FUNCTION public.create_workout(w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Creates a workout and its associated exercises.';
+
+-- TODO: Has to update the workout_exercises table as well
 CREATE OR REPLACE FUNCTION public.edit_workout(w_id UUID)
 RETURNS TABLE (
   id UUID,
