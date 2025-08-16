@@ -320,6 +320,18 @@ export type Database = {
         Args: { w_id: string }
         Returns: Json
       }
+      select_workout_for_edit: {
+        Args: { w_id: string }
+        Returns: {
+          created_at: string
+          description: string
+          exercises: string[]
+          id: string
+          is_locked: boolean
+          name: string
+          schedule: Database["public"]["Enums"]["workout_schedule_type"][]
+        }[]
+      }
     }
     Enums: {
       exercise_type:
