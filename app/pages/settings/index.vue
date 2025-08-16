@@ -31,7 +31,7 @@ const $q = useQuasar()
 const router = useRouter()
 const logger = useLogger()
 const { goBack } = useRouting()
-const supabase = useSupabaseClient()
+const supabase = useSupabaseClient<Database>()
 const user = useSupabaseUser()
 const settingsStore = useSettingsStore()
 

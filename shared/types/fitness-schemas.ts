@@ -19,13 +19,15 @@ export const finishedAtSchema = timestampzSchema.optional()
 export const workoutScheduleSchema = z.enum(Constants.public.Enums.workout_schedule_type)
 
 export const inspectWorkoutSchema = z.object({
-  id: idSchema,
-  user_id: idSchema,
-  created_at: timestampzSchema,
-  name: textLabelSchema,
-  description: textAreaSchema.nullable(),
-  schedule: z.array(workoutScheduleSchema).nullable(),
-  is_locked: z.boolean(),
+  workout: z.object({
+    id: idSchema,
+    user_id: idSchema,
+    created_at: timestampzSchema,
+    name: textLabelSchema,
+    description: textAreaSchema.nullable(),
+    schedule: z.array(workoutScheduleSchema).nullable(),
+    is_locked: z.boolean(),
+  }),
   exercises: z
     .array(
       z.object({

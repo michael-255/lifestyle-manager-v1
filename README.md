@@ -4,6 +4,43 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
+### Ideas
+
+RPC functions?
+
+- [@] `inspect_workout`
+- [@] `create_workout`
+- [@] `edit_workout`
+
+- [ ] `inspect_exercise`
+- [ ] `create_exercise`
+- [ ] `edit_exercise`
+
+- [ ] `inspect_workout_result`
+- [ ] `create_workout_result`
+- [ ] `edit_workout_result`
+
+- [ ] `inspect_exercise_result`
+- [ ] `create_exercise_result`
+- [ ] `edit_exercise_result`
+
+- [ ] `start_workout`
+  - Gets the workout
+  - Gets all assoicated exercises (full data)
+  - Gets the last workout results (previous duration and notes)
+  - Gets all last exercise results for the exercises (previous values and notes)
+  - Locks the workout
+  - locks all associated exercises
+  - Creates placeholder workout_result (locked?)
+  - Creates placeholder exercise_results for each exercise (locked?)
+- [ ] `finish_workout`
+  - Saves the workout_result
+  - Saves the exercise_results
+  - Unlocks the workout
+  - Unlocks the exercises
+  - Unlocks the workout_result
+  - Unlocks the exercise_results
+
 ### TODO - General
 
 - Seed the database with a User and Data
@@ -42,21 +79,21 @@ npm i @observablehq/plot
 - [@] `item-schedule.vue`
 - [@] `item-workout-exercises.vue`
 
-#### ~~Create Workout Results~~
+#### Create Workout Result
 
-- ~~[ ] `item-parent-workout.vue`~~
-- ~~[@] `item-created-date.vue`~~
-- ~~[ ] `item-finished-date.vue`~~
-- ~~[ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)~~
-- ~~[@] `item-note.vue`~~
+- [ ] `item-parent-workout.vue`
+- [@] `item-created-date.vue`
+- [ ] `item-finished-date.vue`
+- [ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)
+- [@] `item-note.vue`
 
-#### Edit Workout Results
+#### Edit Workout Result
 
 - ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
 - [@] `item-created-date.vue`
 - [@] `item-finished-date.vue`
 - [@] `item-note.vue`
-- ~~[ ] `item-workout-result-exercise-results.vue`~~
+- ~~[ ] `item-workout-result-exercise-results.vue`~~ (Can't edit associated exercises once created)
 
 #### Create Exercise
 
@@ -78,14 +115,19 @@ npm i @observablehq/plot
 - [ ] `item-default-sets.vue`
 - [ ] `item-rest-timer.vue`
 
-#### ~~Create Exercise Results~~
+#### Create Exercise Result
 
-- ~~[ ] `item-parent-exercise.vue`~~
-- ~~[@] `item-created-date.vue`~~
-- ~~[@] `item-note.vue`~~
-- ~~[ ] `item-exercise-data.vue` (may break this up into multiple components)~~
+- [ ] `item-parent-exercise.vue`
+- [@] `item-created-date.vue`
+- [@] `item-note.vue`
+- [ ] `item-exercise-data.vue` (may break this up into multiple components)
+  - [ ] `item-exercise-data-checklist.vue`
+  - [ ] `item-exercise-data-cardio.vue`
+  - [ ] `item-exercise-data-weightlifting.vue`
+  - [ ] `item-exercise-data-sided-weightlifting.vue`
+  - [ ] `item-exercise-data-climbing.vue`
 
-#### Edit Exercise Results
+#### Edit Exercise Result
 
 - ~~`item-parent-exercise.vue`~~ (cant't edit parent once created)
 - [@] `item-created-date.vue`

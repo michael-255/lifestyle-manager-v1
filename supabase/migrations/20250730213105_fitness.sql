@@ -373,48 +373,55 @@ USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id
 -- Functions
 --
 
+-- Fetches all needed data for workout inspection dialog and the edit dialog
 CREATE OR REPLACE FUNCTION public.inspect_workout(w_id UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
 SET search_path = ''
 AS $$
 DECLARE
-  inspect_workout JSONB;
+  workout JSONB;
+  exercises JSONB;
+  last_workout_result JSONB;
 BEGIN
+  -- workout
   SELECT to_jsonb(w)
-    || jsonb_build_object(
-      'exercises',
-        (
-          SELECT jsonb_agg(jsonb_build_object('id', e.id, 'name', e.name) ORDER BY we.position)
-          FROM public.workout_exercises we
-          JOIN public.exercises e ON e.id = we.exercise_id
-          WHERE we.workout_id = w.id
-        ),
-      'last_workout_result',
-        (
-          SELECT jsonb_build_object(
-            'id', wr.id,
-            'created_at', wr.created_at,
-            'finished_at', wr.finished_at,
-            'duration_seconds', EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at)),
-            'note', wr.note
-          )
-          FROM public.workout_results wr
-          WHERE wr.workout_id = w.id
-          ORDER BY wr.created_at DESC
-          LIMIT 1
-        )
-    )
-  INTO inspect_workout
+  INTO workout
   FROM public.workouts w
   WHERE w.id = w_id
   AND w.user_id = auth.uid();
 
-  RETURN inspect_workout;
+  -- exercises
+  SELECT jsonb_agg(jsonb_build_object('id', e.id, 'name', e.name) ORDER BY we.position)
+  INTO exercises
+  FROM public.workout_exercises we
+  JOIN public.exercises e
+  ON e.id = we.exercise_id
+  WHERE we.workout_id = w_id;
+
+  -- last_workout_result
+  SELECT jsonb_build_object(
+    'id', wr.id,
+    'created_at', wr.created_at,
+    'finished_at', wr.finished_at,
+    'duration_seconds', EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at)),
+    'note', wr.note
+  )
+  INTO last_workout_result
+  FROM public.workout_results wr
+  WHERE wr.workout_id = w_id
+  ORDER BY wr.created_at DESC
+  LIMIT 1;
+
+  RETURN jsonb_build_object(
+    'workout', workout,
+    'exercises', exercises,
+    'last_workout_result', last_workout_result
+  );
 END;
 $$;
 
-COMMENT ON FUNCTION public.inspect_workout(w_id UUID) IS 'Function for inspect workout dialogs.';
+COMMENT ON FUNCTION public.inspect_workout(w_id UUID) IS 'Function for inspect workout dialogs. Provides selection of all relevant data for a workout, including exercises and last workout result.';
 
 CREATE OR REPLACE FUNCTION public.create_workout(
   w_name TEXT,
@@ -445,40 +452,7 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.create_workout(w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Creates a workout and its associated exercises.';
-
-CREATE OR REPLACE FUNCTION public.select_workout_for_edit(w_id UUID)
-RETURNS TABLE (
-  id UUID,
-  name TEXT,
-  description TEXT,
-  created_at TIMESTAMPTZ,
-  schedule public.workout_schedule_type[],
-  is_locked BOOLEAN,
-  exercises UUID[]
-)
-LANGUAGE sql
-SET search_path = ''
-AS $$
-  SELECT
-    w.id,
-    w.name,
-    w.description,
-    W.created_at,
-    w.schedule,
-    w.is_locked,
-    ARRAY(
-      SELECT we.exercise_id
-      FROM public.workout_exercises we
-      WHERE we.workout_id = w.id
-      ORDER BY we.position
-    ) AS exercises
-  FROM public.workouts w
-  WHERE w.id = w_id
-  AND w.user_id = auth.uid();
-$$;
-
-COMMENT ON FUNCTION public.select_workout_for_edit(w_id UUID) IS 'Function to select edit workout dialogs.';
+COMMENT ON FUNCTION public.create_workout(w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Function creates a workout and its associated workout exercises.';
 
 CREATE OR REPLACE FUNCTION public.edit_workout(
   w_id UUID,
@@ -499,7 +473,8 @@ BEGIN
       description = w_description,
       created_at = w_created_at,
       schedule = w_schedule
-  WHERE id = w_id AND user_id = auth.uid();
+  WHERE id = w_id
+  AND user_id = auth.uid();
 
   -- Remove existing workout_exercises
   DELETE FROM public.workout_exercises WHERE workout_id = w_id;
@@ -514,4 +489,26 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION public.edit_workout(w_id UUID, w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Updates a workout and replaces its exercises.';
+COMMENT ON FUNCTION public.edit_workout(w_id UUID, w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Function updates a workout and replaces its workout exercises.';
+
+-- inspect_exercise
+
+-- create_exercise
+
+-- edit_exercise
+
+-- inspect_workout_result
+
+-- create_workout_result
+
+-- edit_workout_result
+
+-- inspect_exercise_result
+
+-- create_exercise_result
+
+-- edit_exercise_result
+
+-- start_workout
+
+-- finish_workout

@@ -43,7 +43,7 @@ export default function useFitnessDialogs() {
       const { data, error } = await supabase.rpc('inspect_workout', { w_id: id })
       if (error) throw error
 
-      const inspectWorkout: InspectWorkout = inspectWorkoutSchema.parse(data)
+      const inspect: InspectWorkout = inspectWorkoutSchema.parse(data)
 
       $q.dialog({
         component: DialogInspect,
@@ -52,39 +52,39 @@ export default function useFitnessDialogs() {
           subComponents: [
             {
               component: DialogInspectItemText,
-              props: { label: 'Id', value: inspectWorkout.id },
+              props: { label: 'Id', value: inspect.workout.id },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'User Id', value: inspectWorkout.user_id },
+              props: { label: 'User Id', value: inspect.workout.user_id },
             },
             {
               component: DialogInspectItemDate,
-              props: { label: 'Created At', value: inspectWorkout.created_at },
+              props: { label: 'Created At', value: inspect.workout.created_at },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'Name', value: inspectWorkout.name },
+              props: { label: 'Name', value: inspect.workout.name },
             },
             {
               component: DialogInspectItemText,
-              props: { label: 'Description', value: inspectWorkout.description },
+              props: { label: 'Description', value: inspect.workout.description },
             },
             {
               component: DialogInspectItemList,
-              props: { label: 'Schedule', value: inspectWorkout.schedule },
+              props: { label: 'Schedule', value: inspect.workout.schedule },
             },
             {
               component: DialogInspectItemBoolean,
-              props: { label: 'Locked', value: inspectWorkout.is_locked },
+              props: { label: 'Locked', value: inspect.workout.is_locked },
             },
             {
               component: DialogInspectItemObject,
-              props: { label: 'Last Workout', value: inspectWorkout.last_workout_result },
+              props: { label: 'Last Workout', value: inspect.last_workout_result },
             },
             {
               component: DialogInspectItemObjectList,
-              props: { label: 'Exercises', value: inspectWorkout.exercises },
+              props: { label: 'Exercises', value: inspect.exercises },
             },
           ],
         },
@@ -139,10 +139,15 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      const { data, error } = await supabase.rpc('select_workout_for_edit', { w_id: id }).single()
+      const { data, error } = await supabase.rpc('inspect_workout', { w_id: id })
       if (error) throw error
 
-      localRecordStore.record = data
+      const inspect: InspectWorkout = inspectWorkoutSchema.parse(data)
+
+      localRecordStore.record = {
+        ...inspect.workout,
+        exercises: inspect.exercises?.map((e) => e.id) || [],
+      }
 
       $q.dialog({
         component: DialogEdit,
