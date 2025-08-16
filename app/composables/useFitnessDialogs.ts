@@ -139,7 +139,7 @@ export default function useFitnessDialogs() {
     try {
       $q.loading.show()
 
-      const { data, error } = await supabase.rpc('edit_workout', { w_id: id }).single()
+      const { data, error } = await supabase.rpc('select_workout_for_edit', { w_id: id }).single()
       if (error) throw error
 
       localRecordStore.record = data
@@ -160,6 +160,7 @@ export default function useFitnessDialogs() {
             const workoutExercises = localRecordStore.getWorkoutExercises
 
             const { error } = await supabase.rpc('edit_workout', {
+              w_id: id,
               w_name: workout.name,
               w_description: workout.description,
               w_created_at: workout.created_at,

@@ -447,6 +447,39 @@ $$;
 
 COMMENT ON FUNCTION public.create_workout(w_name TEXT, w_description TEXT, w_created_at TIMESTAMPTZ, w_schedule public.workout_schedule_type[], w_exercise_ids UUID[]) IS 'Creates a workout and its associated exercises.';
 
+CREATE OR REPLACE FUNCTION public.select_workout_for_edit(w_id UUID)
+RETURNS TABLE (
+  id UUID,
+  name TEXT,
+  description TEXT,
+  created_at TIMESTAMPTZ,
+  schedule public.workout_schedule_type[],
+  is_locked BOOLEAN,
+  exercises UUID[]
+)
+LANGUAGE sql
+SET search_path = ''
+AS $$
+  SELECT
+    w.id,
+    w.name,
+    w.description,
+    W.created_at,
+    w.schedule,
+    w.is_locked,
+    ARRAY(
+      SELECT we.exercise_id
+      FROM public.workout_exercises we
+      WHERE we.workout_id = w.id
+      ORDER BY we.position
+    ) AS exercises
+  FROM public.workouts w
+  WHERE w.id = w_id
+  AND w.user_id = auth.uid();
+$$;
+
+COMMENT ON FUNCTION public.select_workout_for_edit(w_id UUID) IS 'Function to select edit workout dialogs.';
+
 CREATE OR REPLACE FUNCTION public.edit_workout(
   w_id UUID,
   w_name TEXT,
