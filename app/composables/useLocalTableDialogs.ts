@@ -1,9 +1,4 @@
-import {
-  DialogInspect,
-  DialogInspectItemDate,
-  DialogInspectItemObject,
-  DialogInspectItemText,
-} from '#components'
+import { DialogInspect, DialogInspectSharedLog, DialogInspectSharedSetting } from '#components'
 
 export default function useLocalTableDialogs() {
   const $q = useQuasar()
@@ -13,22 +8,7 @@ export default function useLocalTableDialogs() {
       component: DialogInspect,
       componentProps: {
         label: 'Log',
-        subComponents: [
-          { component: DialogInspectItemText, props: { label: 'Auto Id', value: log.autoId } },
-          {
-            component: DialogInspectItemDate,
-            props: { label: 'Created Date', value: log.created_at },
-          },
-          {
-            component: DialogInspectItemText,
-            props: { label: 'Log Level', value: log.log_level },
-          },
-          { component: DialogInspectItemText, props: { label: 'Label', value: log.label } },
-          {
-            component: DialogInspectItemObject,
-            props: { label: 'Details', value: log.details },
-          },
-        ],
+        inspectComponent: { component: DialogInspectSharedLog, props: { log } },
       },
     })
   }
@@ -38,16 +18,7 @@ export default function useLocalTableDialogs() {
       component: DialogInspect,
       componentProps: {
         label: 'Setting',
-        subComponents: [
-          {
-            component: DialogInspectItemText,
-            props: { label: 'Key', value: setting.key },
-          },
-          {
-            component: DialogInspectItemText,
-            props: { label: 'Value', value: setting.value },
-          },
-        ],
+        inspectComponent: { component: DialogInspectSharedSetting, props: { setting } },
       },
     })
   }
