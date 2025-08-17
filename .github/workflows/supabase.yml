@@ -31,20 +31,20 @@ jobs:
       - name: Link to Supabase project
         run: supabase link --project-ref $SUPABASE_PROJECT_ID
 
-      - name: Push database migrations
-        run: supabase db push
+      # - name: Push database migrations
+      #   run: supabase db push
 
-      - name: Deploy Edge Functions
-        run: |
-          if [ -d supabase/functions ] && [ "$(ls -A supabase/functions)" ]; then
-            supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
-          else
-            echo "No Edge Functions to deploy."
-          fi
+      # - name: Deploy Edge Functions
+      #   run: |
+      #     if [ -d supabase/functions ] && [ "$(ls -A supabase/functions)" ]; then
+      #       supabase functions deploy --project-ref $SUPABASE_PROJECT_ID
+      #     else
+      #       echo "No Edge Functions to deploy."
+      #     fi
 
-      - name: Generate Supabase types
-        run: |
-          supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" > shared/types/supabase.ts
+      # - name: Generate Supabase types
+      #   run: |
+      #     supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" > shared/types/supabase.ts
 
       - name: Commit File Changes
         uses: stefanzweifel/git-auto-commit-action@v6
