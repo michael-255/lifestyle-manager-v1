@@ -545,6 +545,17 @@ export type Database = {
       }
     }
     Functions: {
+      create_exercise: {
+        Args: {
+          e_checklist_labels: string[]
+          e_description: string
+          e_initial_sets: number
+          e_name: string
+          e_rest_timer: number
+          e_type: Database["public"]["Enums"]["exercise_type"]
+        }
+        Returns: undefined
+      }
       create_workout: {
         Args: {
           w_created_at?: string
@@ -552,6 +563,16 @@ export type Database = {
           w_exercise_ids?: string[]
           w_name: string
           w_schedule?: Database["public"]["Enums"]["workout_schedule_type"][]
+        }
+        Returns: undefined
+      }
+      edit_exercise: {
+        Args: {
+          e_description: string
+          e_id: string
+          e_initial_sets: number
+          e_name: string
+          e_rest_timer: number
         }
         Returns: undefined
       }

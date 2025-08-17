@@ -8,22 +8,4 @@ export const useLocalRecordStore = defineStore('local-record', {
     record: {} as Record<string, any>,
     action: null as 'create' | 'edit' | null,
   }),
-
-  getters: {
-    /**
-     * Returns only the editable fields of the Workout.
-     */
-    getWorkout: (state) => {
-      return {
-        created_at: state.record?.created_at,
-        name: state.record?.name,
-        description: state.record?.description,
-        schedule: state.record?.schedule,
-      }
-    },
-
-    getWorkoutExercises: (state) => {
-      return state.record?.exercises || []
-    },
-  },
 })

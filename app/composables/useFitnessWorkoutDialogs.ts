@@ -79,19 +79,16 @@ export default function useFitnessWorkoutDialogs() {
           label: 'Workout',
           formComponent: { component: DialogFormFitnessWorkout },
           onSubmitHandler: async () => {
-            const workout = localRecordStore.getWorkout
-            const workoutExercises = localRecordStore.getWorkoutExercises
-
             const { error } = await supabase.rpc('create_workout', {
-              w_name: workout.name,
-              w_description: workout.description,
-              w_created_at: workout.created_at,
-              w_schedule: workout.schedule,
-              w_exercise_ids: workoutExercises.map((id: string) => id),
+              w_name: localRecordStore.record.name,
+              w_description: localRecordStore.record.description,
+              w_created_at: localRecordStore.record.created_at,
+              w_schedule: localRecordStore.record.schedule,
+              w_exercise_ids: localRecordStore.record.exercises.map((id: string) => id),
             })
             if (error) throw error
 
-            logger.info('Workout created', { ...workout, exercises: workoutExercises })
+            logger.info('Workout created', { name: localRecordStore.record.name })
           },
         },
       })
@@ -120,20 +117,17 @@ export default function useFitnessWorkoutDialogs() {
           label: 'Workout',
           formComponent: { component: DialogFormFitnessWorkout },
           onSubmitHandler: async () => {
-            const workout = localRecordStore.getWorkout
-            const workoutExercises = localRecordStore.getWorkoutExercises
-
             const { error } = await supabase.rpc('edit_workout', {
               w_id: id,
-              w_name: workout.name,
-              w_description: workout.description,
-              w_created_at: workout.created_at,
-              w_schedule: workout.schedule,
-              w_exercise_ids: workoutExercises.map((id: string) => id),
+              w_name: localRecordStore.record.workout.name,
+              w_description: localRecordStore.record.workout.description,
+              w_created_at: localRecordStore.record.workout.created_at,
+              w_schedule: localRecordStore.record.workout.schedule,
+              w_exercise_ids: localRecordStore.record.exercises.map((id: string) => id),
             })
             if (error) throw error
 
-            logger.info('Workout updated', { ...workout, exercises: workoutExercises })
+            logger.info('Workout updated', { id: localRecordStore.record.id })
           },
         },
       })

@@ -83,15 +83,17 @@ export default function useFitnessExerciseDialogs() {
           label: 'Exercise',
           formComponent: { component: DialogFormFitnessExercise },
           onSubmitHandler: async () => {
-            // TODO: create_exercise RPC
-            const { data, error } = await supabase
-              .from('exercises')
-              .insert([localRecordStore.record as Exercise])
-              .select()
-              .single()
+            const { error } = await supabase.rpc('create_exercise', {
+              e_name: localRecordStore.record.name,
+              e_description: localRecordStore.record.description,
+              e_rest_timer: localRecordStore.record.rest_timer,
+              e_type: localRecordStore.record.type,
+              e_checklist_labels: localRecordStore.record.checklist_labels,
+              e_initial_sets: localRecordStore.record.initial_sets,
+            })
             if (error) throw error
 
-            logger.info('Exercise created', data)
+            logger.info('Exercise created', { name: localRecordStore.record.name })
           },
         },
       })
@@ -117,16 +119,16 @@ export default function useFitnessExerciseDialogs() {
           label: 'Exercise',
           formComponent: { component: DialogFormFitnessExercise },
           onSubmitHandler: async () => {
-            // TODO: edit_exercise RPC
-            const { data, error } = await supabase
-              .from('exercises')
-              .update(localRecordStore.record as Exercise)
-              .eq('id', id)
-              .select()
-              .single()
+            const { error } = await supabase.rpc('edit_exercise', {
+              e_id: id,
+              e_name: localRecordStore.record.name,
+              e_description: localRecordStore.record.description,
+              e_rest_timer: localRecordStore.record.rest_timer,
+              e_initial_sets: localRecordStore.record.initial_sets,
+            })
             if (error) throw error
 
-            logger.info('Exercise updated', data)
+            logger.info('Exercise updated', { id: localRecordStore.record.id })
           },
         },
       })

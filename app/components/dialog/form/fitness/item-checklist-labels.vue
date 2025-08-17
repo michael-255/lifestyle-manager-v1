@@ -27,13 +27,21 @@ function removeChecklistLabel(idx: number) {
     label="Checklist Labels"
   >
     <QItemLabel v-if="localRecordStore.action === 'edit'">
-      <span
-        v-for="(label, idx) in localRecordStore.record.checklist_labels"
-        :key="idx"
-        class="text-body2"
+      <ul
+        v-if="
+          localRecordStore.record.checklist_labels &&
+          localRecordStore.record.checklist_labels?.length > 0
+        "
+        class="q-pl-sm q-my-none"
       >
-        {{ label }}<span v-if="idx < localRecordStore.record.checklist_labels.length - 1">, </span>
-      </span>
+        <li
+          v-for="label in localRecordStore.record.checklist_labels"
+          :key="label"
+          class="q-ml-sm q-mb-xs"
+        >
+          {{ label }}
+        </li>
+      </ul>
     </QItemLabel>
 
     <QItemLabel v-else>

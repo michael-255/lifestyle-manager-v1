@@ -620,9 +620,65 @@ BEGIN
 END;
 $$;
 
--- create_exercise
+COMMENT ON FUNCTION public.inspect_exercise(e_id UUID) IS 'Function for inspect exercise dialogs. Provides selection of all relevant data for an exercise, including count of results and workouts that use the exercise.';
 
--- edit_exercise
+CREATE OR REPLACE FUNCTION public.create_exercise(
+  e_name TEXT,
+  e_description TEXT,
+  e_rest_timer INTEGER,
+  e_type public.exercise_type,
+  e_checklist_labels TEXT[],
+  e_initial_sets INTEGER
+)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  -- Insert exercise
+  INSERT INTO public.exercises (name, description, rest_timer, type, checklist_labels, initial_sets, user_id)
+  VALUES (e_name, e_description, e_rest_timer, e_type, e_checklist_labels, e_initial_sets, auth.uid());
+END;
+$$;
+
+COMMENT ON FUNCTION public.create_exercise(e_name TEXT, e_description TEXT, e_rest_timer INTEGER, e_type public.exercise_type, e_checklist_labels TEXT[], e_initial_sets INTEGER) IS 'Function creates an exercise with the provided details.';
+
+CREATE OR REPLACE FUNCTION public.edit_exercise(
+  e_id UUID,
+  e_name TEXT,
+  e_description TEXT,
+  e_rest_timer INTEGER,
+  e_initial_sets INTEGER
+)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  is_locked BOOLEAN;
+BEGIN
+  -- Check if exercise is locked
+  SELECT e.is_locked INTO is_locked
+  FROM public.exercises e
+  WHERE e.id = e_id
+  AND e.user_id = auth.uid();
+
+  IF is_locked THEN
+    RAISE EXCEPTION 'Exercise is locked and cannot be edited';
+  END IF;
+
+  -- Update exercise
+  UPDATE public.exercises
+  SET name = e_name,
+      description = e_description,
+      rest_timer = e_rest_timer,
+      initial_sets = e_initial_sets
+  WHERE id = e_id
+  AND user_id = auth.uid();
+END;
+$$;
+
+COMMENT ON FUNCTION public.edit_exercise(e_id UUID, e_name TEXT, e_description TEXT, e_rest_timer INTEGER, e_initial_sets INTEGER) IS 'Function updates an exercise with the provided details.';
 
 -- inspect_workout_result
 
