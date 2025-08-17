@@ -87,56 +87,51 @@ export function tableColumn(
 
   switch (format) {
     case 'UUID':
-      // Truncates so it won't overflow the table cell
-      tableColumn.format = (val: string) => truncateText(val, 8, '*')
+      tableColumn.format = (val: string) =>
+        val === null || val === undefined ? '' : truncateText(val, 8, '*')
       return tableColumn
     case 'TEXT':
-      // Truncates so it won't overflow the table cell
-      tableColumn.format = (val: string) => truncateText(val, 40, '...')
+      tableColumn.format = (val: string) =>
+        val === null || val === undefined ? '' : truncateText(val, 40, '...')
       return tableColumn
     case 'BOOL':
-      // Converts output to a Yes or No string
-      tableColumn.format = (val: boolean) => (val ? 'Yes' : 'No')
+      tableColumn.format = (val: boolean) =>
+        val === null || val === undefined ? '' : val ? 'Yes' : 'No'
       return tableColumn
     case 'OBJECT':
-      // Converts to JSON and truncates so it won't overflow the table cell
       tableColumn.format = (val: Record<string, string>) =>
-        truncateText(JSON.stringify(val), 40, '...')
+        val === null || val === undefined ? '' : truncateText(JSON.stringify(val), 40, '...')
       return tableColumn
     case 'ISO-DATE':
-      // Converts to a compact date string
-      tableColumn.format = (val: string) => localDisplayDate(val)
+      tableColumn.format = (val: string) =>
+        val === null || val === undefined ? '' : localDisplayDate(val)
       return tableColumn
     case 'LIST-COUNT':
-      // Converts list to a count of the number of items
-      tableColumn.format = (val: any[]) => `${val?.length ? val.length : 0}`
+      tableColumn.format = (val: any[]) =>
+        val === null || val === undefined ? '' : `${val.length ?? 0}`
       return tableColumn
     case 'LIST-PRINT':
-      // Prints the list as a truncated string
-      tableColumn.format = (val: any[]) => truncateText(val.join(', '), 40, '...')
+      tableColumn.format = (val: any[]) =>
+        val === null || val === undefined ? '' : truncateText(val.join(', '), 40, '...')
       return tableColumn
     case 'SETTING':
-      // Formats the setting value based on the setting type
       tableColumn.format = (val: SettingValueType) => {
-        if (val === true) {
-          return 'Yes'
-        } else if (val === false) {
-          return 'No'
-        } else {
-          return `${val}`
-        }
+        if (val === null || val === undefined) return ''
+        if (val === true) return 'Yes'
+        if (val === false) return 'No'
+        return `${val}`
       }
       return tableColumn
     case 'NUMBER':
-      // Prints the value as a number or zero if undefined
-      tableColumn.format = (val: number | undefined) => `${val ?? 0}`
+      tableColumn.format = (val: number | undefined) =>
+        val === null || val === undefined ? '' : `${val}`
       return tableColumn
     case 'TIME':
-      // Converts a duration in seconds to a human-readable string
-      tableColumn.format = (val: number) => timeFromDuration(val)
+      tableColumn.format = (val: number) =>
+        val === null || val === undefined ? '' : timeFromDuration(val)
       return tableColumn
     default:
-      // STRING: Default just converts the result to a string with no length limit
+      tableColumn.format = (val: any) => (val === null || val === undefined ? '' : `${val}`)
       return tableColumn
   }
 }

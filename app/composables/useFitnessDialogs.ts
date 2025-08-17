@@ -442,8 +442,6 @@ export default function useFitnessDialogs() {
       const { data, error } = await supabase.rpc('inspect_exercise', { e_id: id })
       if (error) throw error
 
-      console.log('Inspect exercise data:', data)
-
       const inspect: InspectExercise = inspectExerciseSchema.parse(data)
 
       $q.dialog({

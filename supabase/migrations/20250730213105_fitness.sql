@@ -4,7 +4,6 @@
 
 CREATE TYPE public.exercise_type AS ENUM (
     'Checklist',
-    'Cardio',
     'Weightlifting',
     'Sided Weightlifting'
 );
@@ -28,9 +27,10 @@ CREATE TYPE public.workout_schedule_type AS ENUM (
 COMMENT ON TYPE public.workout_schedule_type IS 'Schedule type for workouts, used to determine when the workout should be performed.';
 
 --
--- Main Tables
+-- Tables
 --
 
+-- EXERCISES
 CREATE TABLE public.exercises (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -39,13 +39,41 @@ CREATE TABLE public.exercises (
     description TEXT,
     rest_timer INTEGER DEFAULT 0, -- Seconds
     type public.exercise_type NOT NULL,
-    checklist_labels TEXT[], -- Checklist exercise type only
-    initial_sets INTEGER, -- Weightlifting and Sided Weightlifting exercise types only
+    checklist_labels TEXT[], -- Checklist: Ordered list of labels
+    initial_sets INTEGER, -- Weightlifting and Sided Weightlifting
     is_locked BOOLEAN DEFAULT FALSE
 );
 
 COMMENT ON TABLE public.exercises IS 'Stores exercises with rows for each exercise type data.';
 
+CREATE TABLE public.exercise_results (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
+    exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    note TEXT,
+    is_locked BOOLEAN DEFAULT FALSE
+    -- exercise_result_items
+);
+
+COMMENT ON TABLE public.exercise_results IS 'Stores individual exercise results with rows for each exercise type data.';
+
+CREATE TABLE public.exercise_result_item (
+    exercise_result_id UUID NOT NULL REFERENCES public.exercise_results(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    is_checked BOOLEAN,         -- Checklist
+    reps INTEGER,               -- Weightlifting
+    weight NUMERIC,             -- Weightlifting
+    left_reps INTEGER,          -- Sided Weightlifting
+    left_weight NUMERIC,        -- Sided Weightlifting
+    right_reps INTEGER,         -- Sided Weightlifting
+    right_weight NUMERIC,       -- Sided Weightlifting
+    PRIMARY KEY (exercise_result_id, position)
+);
+
+COMMENT ON TABLE public.exercise_result_item IS 'Stores individual items for exercise results, supporting all exercise types.';
+
+-- WORKOUTS
 CREATE TABLE public.workouts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -54,40 +82,10 @@ CREATE TABLE public.workouts (
     description TEXT,
     schedule public.workout_schedule_type[],
     is_locked BOOLEAN DEFAULT FALSE
+    -- workout_exercises
 );
 
 COMMENT ON TABLE public.workouts IS 'Stores workouts with their schedule.';
-
-CREATE TABLE public.exercise_results (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
-    exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-    note TEXT,
-    checklist BOOLEAN[], -- Checklist exercise type only
-    cardio JSONB, -- Cardio exercise type only
-    sets JSONB, -- Weightlifting exercise types only
-    sided_sets JSONB, -- Sided Weightlifting exercise types only
-    is_locked BOOLEAN DEFAULT FALSE
-);
-
-COMMENT ON TABLE public.exercise_results IS 'Stores individual exercise results with rows for each exercise type data.';
-
-CREATE TABLE public.workout_results (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
-    workout_id UUID NOT NULL REFERENCES public.workouts(id) ON DELETE CASCADE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
-    finished_at TIMESTAMPTZ,
-    note TEXT,
-    is_locked BOOLEAN DEFAULT FALSE
-);
-
-COMMENT ON TABLE public.workout_results IS 'Stores individual workout results with the finished date.';
-
---
--- Join Tables
---
 
 CREATE TABLE public.workout_exercises (
     workout_id UUID NOT NULL REFERENCES public.workouts(id) ON DELETE CASCADE,
@@ -98,6 +96,19 @@ CREATE TABLE public.workout_exercises (
 );
 
 COMMENT ON TABLE public.workout_exercises IS 'Join table linking workouts and exercises, defining the order of exercises in a workout.';
+
+CREATE TABLE public.workout_results (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
+    workout_id UUID NOT NULL REFERENCES public.workouts(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    finished_at TIMESTAMPTZ,
+    note TEXT,
+    is_locked BOOLEAN DEFAULT FALSE
+    -- workout_result_exercise_results
+);
+
+COMMENT ON TABLE public.workout_results IS 'Stores individual workout results with the finished date.';
 
 CREATE TABLE public.workout_result_exercise_results (
     workout_result_id UUID NOT NULL REFERENCES public.workout_results(id) ON DELETE CASCADE,
