@@ -13,7 +13,9 @@ const logger = useLogger()
 const router = useRouter()
 const supabase = useSupabaseClient<Database>()
 const { openCreateWorkout } = useFitnessWorkoutDialogs()
+const { openCreateWorkoutResult } = useFitnessWorkoutResultDialogs()
 const { openCreateExercise } = useFitnessExerciseDialogs()
+const { openCreateExerciseResult } = useFitnessExerciseResultDialogs()
 
 const tableCounts = ref({
   workouts: 0,
@@ -77,8 +79,17 @@ onMounted(async () => {
 
           <QItem>
             <QItemSection top>
-              <QItemLabel class="text-body1">Results</QItemLabel>
+              <QItemLabel class="text-body1">Workout Results</QItemLabel>
               <QItemLabel caption>{{ recordCount(tableCounts.workoutResults) }}</QItemLabel>
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn
+                :icon="addIcon"
+                color="info"
+                class="q-px-sm q-mb-sm"
+                @click="openCreateWorkoutResult"
+              />
             </QItemSection>
 
             <QItemSection top side>
@@ -124,8 +135,17 @@ onMounted(async () => {
 
           <QItem>
             <QItemSection top>
-              <QItemLabel class="text-body1">Results</QItemLabel>
+              <QItemLabel class="text-body1">Exercise Results</QItemLabel>
               <QItemLabel caption>{{ recordCount(tableCounts.exerciseResults) }}</QItemLabel>
+            </QItemSection>
+
+            <QItemSection top side>
+              <QBtn
+                :icon="addIcon"
+                color="info"
+                class="q-px-sm q-mb-sm"
+                @click="openCreateExerciseResult"
+              />
             </QItemSection>
 
             <QItemSection top side>
