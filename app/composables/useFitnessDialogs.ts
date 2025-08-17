@@ -3,6 +3,7 @@ import {
   DialogConfirm,
   DialogCreate,
   DialogEdit,
+  DialogFormItemChecklistLabels,
   DialogFormItemCreatedDate,
   DialogFormItemDescription,
   DialogFormItemExerciseType,
@@ -475,8 +476,12 @@ export default function useFitnessDialogs() {
               props: { label: 'Type', value: inspect.exercise.type },
             },
             {
-              component: DialogInspectItemObject,
-              props: { label: 'Type Data', value: inspect.exercise.type_data },
+              component: DialogInspectItemList,
+              props: { label: 'Checklist Labels', value: inspect.exercise.checklist_labels },
+            },
+            {
+              component: DialogInspectItemText,
+              props: { label: 'Initial Sets', value: inspect.exercise.initial_sets },
             },
             {
               component: DialogInspectItemText,
@@ -516,6 +521,7 @@ export default function useFitnessDialogs() {
             { component: DialogFormItemCreatedDate },
             { component: DialogFormItemRestTimer },
             { component: DialogFormItemExerciseType },
+            { component: DialogFormItemChecklistLabels },
             // TODO
           ],
           onSubmitHandler: async () => {

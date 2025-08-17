@@ -66,12 +66,8 @@ export const inspectExerciseSchema = z.object({
     description: textAreaSchema.nullable(),
     rest_timer: z.number().nullable(),
     type: exerciseTypeSchema,
-    type_data: z
-      .object({
-        checklist_labels: z.array(textLabelSchema).nullable(),
-        default_sets: z.number().nullable(),
-      })
-      .nullable(),
+    checklist_labels: z.array(z.string()).nullable(),
+    initial_sets: z.number().nullable(),
     is_locked: z.boolean(),
   }),
   total_results: z.number().nullable(),

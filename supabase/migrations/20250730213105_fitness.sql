@@ -6,8 +6,7 @@ CREATE TYPE public.exercise_type AS ENUM (
     'Checklist',
     'Cardio',
     'Weightlifting',
-    'Sided Weightlifting',
-    'Climbing'
+    'Sided Weightlifting'
 );
 
 COMMENT ON TYPE public.exercise_type IS 'Type of exercise, used to determine what the user can record.';
@@ -38,22 +37,14 @@ CREATE TABLE public.exercises (
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     name TEXT NOT NULL,
     description TEXT,
+    rest_timer INTEGER DEFAULT 0, -- Seconds
     type public.exercise_type NOT NULL,
-    type_data JSONB, -- For all potential type-specific data (checklist_labels, default_sets, etc.)
-    rest_timer INTEGER,
+    checklist_labels TEXT[], -- Checklist exercise type only
+    initial_sets INTEGER, -- Weightlifting and Sided Weightlifting exercise types only
     is_locked BOOLEAN DEFAULT FALSE
 );
 
-COMMENT ON TABLE public.exercises IS 'Stores exercises, including their type and data.';
-COMMENT ON COLUMN public.exercises.id IS 'Unique identifier for the exercise.';
-COMMENT ON COLUMN public.exercises.user_id IS 'ID of the user who owns the exercise.';
-COMMENT ON COLUMN public.exercises.created_at IS 'Timestamp when the exercise was created.';
-COMMENT ON COLUMN public.exercises.name IS 'Name of the exercise.';
-COMMENT ON COLUMN public.exercises.description IS 'Description of the exercise.';
-COMMENT ON COLUMN public.exercises.type IS 'Type of the exercise.';
-COMMENT ON COLUMN public.exercises.type_data IS 'JSONB data containing all potential type-specific data for the exercise.';
-COMMENT ON COLUMN public.exercises.rest_timer IS 'Rest timer duration in seconds (if any).';
-COMMENT ON COLUMN public.exercises.is_locked IS 'Indicates if the exercise is locked for editing.';
+COMMENT ON TABLE public.exercises IS 'Stores exercises with rows for each exercise type data.';
 
 CREATE TABLE public.workouts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -65,14 +56,7 @@ CREATE TABLE public.workouts (
     is_locked BOOLEAN DEFAULT FALSE
 );
 
-COMMENT ON TABLE public.workouts IS 'Stores workouts, including their schedule.';
-COMMENT ON COLUMN public.workouts.id IS 'Unique identifier for the workout.';
-COMMENT ON COLUMN public.workouts.user_id IS 'ID of the user who owns the workout.';
-COMMENT ON COLUMN public.workouts.created_at IS 'Timestamp when the workout was created.';
-COMMENT ON COLUMN public.workouts.name IS 'Name of the workout.';
-COMMENT ON COLUMN public.workouts.description IS 'Description of the workout.';
-COMMENT ON COLUMN public.workouts.schedule IS 'Schedule for the workout, indicating when it should be performed.';
-COMMENT ON COLUMN public.workouts.is_locked IS 'Indicates if the workout is locked for editing.';
+COMMENT ON TABLE public.workouts IS 'Stores workouts with their schedule.';
 
 CREATE TABLE public.exercise_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -80,18 +64,14 @@ CREATE TABLE public.exercise_results (
     exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     note TEXT,
-    result_data JSONB, -- For all potential exercise result data (sets, reps, weight, etc.)
+    checklist BOOLEAN[], -- Checklist exercise type only
+    cardio JSONB, -- Cardio exercise type only
+    sets JSONB, -- Weightlifting exercise types only
+    sided_sets JSONB, -- Sided Weightlifting exercise types only
     is_locked BOOLEAN DEFAULT FALSE
 );
 
-COMMENT ON TABLE public.exercise_results IS 'Stores individual exercise results.';
-COMMENT ON COLUMN public.exercise_results.id IS 'Unique identifier for the exercise result.';
-COMMENT ON COLUMN public.exercise_results.user_id IS 'ID of the user who owns the exercise result.';
-COMMENT ON COLUMN public.exercise_results.exercise_id IS 'ID of the exercise for which the result is recorded.';
-COMMENT ON COLUMN public.exercise_results.created_at IS 'Timestamp when the exercise result was created.';
-COMMENT ON COLUMN public.exercise_results.note IS 'Optional note for the exercise result.';
-COMMENT ON COLUMN public.exercise_results.result_data IS 'JSONB data containing all potential exercise data.';
-COMMENT ON COLUMN public.exercise_results.is_locked IS 'Indicates if the exercise result is locked for editing.';
+COMMENT ON TABLE public.exercise_results IS 'Stores individual exercise results with rows for each exercise type data.';
 
 CREATE TABLE public.workout_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -103,14 +83,7 @@ CREATE TABLE public.workout_results (
     is_locked BOOLEAN DEFAULT FALSE
 );
 
-COMMENT ON TABLE public.workout_results IS 'Stores individual workout results.';
-COMMENT ON COLUMN public.workout_results.id IS 'Unique identifier for the workout result.';
-COMMENT ON COLUMN public.workout_results.user_id IS 'ID of the user who owns the workout result.';
-COMMENT ON COLUMN public.workout_results.workout_id IS 'ID of the workout for which the result is recorded.';
-COMMENT ON COLUMN public.workout_results.created_at IS 'Timestamp when the workout result was created.';
-COMMENT ON COLUMN public.workout_results.finished_at IS 'Timestamp when the workout was finished (if applicable).';
-COMMENT ON COLUMN public.workout_results.note IS 'Optional note for the workout result.';
-COMMENT ON COLUMN public.workout_results.is_locked IS 'Indicates if the workout result is locked for editing.';
+COMMENT ON TABLE public.workout_results IS 'Stores individual workout results with the finished date.';
 
 --
 -- Join Tables
@@ -125,9 +98,6 @@ CREATE TABLE public.workout_exercises (
 );
 
 COMMENT ON TABLE public.workout_exercises IS 'Join table linking workouts and exercises, defining the order of exercises in a workout.';
-COMMENT ON COLUMN public.workout_exercises.workout_id IS 'ID of the workout to which the exercise belongs.';
-COMMENT ON COLUMN public.workout_exercises.exercise_id IS 'ID of the exercise in the workout.';
-COMMENT ON COLUMN public.workout_exercises.position IS 'Position of the exercise in the workout, used for ordering.';
 
 CREATE TABLE public.workout_result_exercise_results (
     workout_result_id UUID NOT NULL REFERENCES public.workout_results(id) ON DELETE CASCADE,
@@ -138,9 +108,6 @@ CREATE TABLE public.workout_result_exercise_results (
 );
 
 COMMENT ON TABLE public.workout_result_exercise_results IS 'Join table linking workout results and exercise results, defining the order of exercise results in a workout result.';
-COMMENT ON COLUMN public.workout_result_exercise_results.workout_result_id IS 'ID of the workout result to which the exercise result belongs.';
-COMMENT ON COLUMN public.workout_result_exercise_results.exercise_result_id IS 'ID of the exercise result in the workout result.';
-COMMENT ON COLUMN public.workout_result_exercise_results.position IS 'Position of the exercise result in the workout result, used for ordering.';
 
 --
 -- Views
@@ -231,8 +198,10 @@ SELECT
   e.created_at,
   e.name,
   e.description,
-  e.type,
   e.rest_timer,
+  e.type,
+  e.checklist_labels,
+  e.initial_sets,
   e.is_locked,
   (SELECT COUNT(*) FROM public.workout_exercises we WHERE we.exercise_id = e.id) AS workout_count,
   (SELECT COUNT(*) FROM public.exercise_results er WHERE er.exercise_id = e.id) AS exercise_result_count

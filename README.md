@@ -63,7 +63,7 @@ npm i @observablehq/plot
 - [@] `item-created-date.vue`
 - [@] `item-name.vue`
 - [@] `item-description.vue`
-- [ ] `item-rest-timer.vue`
+- [@] `item-rest-timer.vue`
 - [@] `item-exercise-type.vue`
 - [ ] `item-checklist-labels.vue`
 - [ ] `item-default-sets.vue`

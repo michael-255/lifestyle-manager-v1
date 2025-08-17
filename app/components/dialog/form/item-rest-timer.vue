@@ -1,24 +1,38 @@
 <script setup lang="ts">
 const localRecordStore = useLocalRecordStore()
-// TODO: Change this to a select box that defaults to "Off"
+
+if (
+  localRecordStore.record.rest_timer === null ||
+  localRecordStore.record.rest_timer === undefined
+) {
+  localRecordStore.record.rest_timer = 0
+}
+
+const options = [
+  { label: 'None', value: 0 },
+  { label: '30 seconds', value: 30 },
+  { label: '60 seconds', value: 60 },
+  { label: '90 seconds', value: 90 },
+  { label: '2 minutes', value: 120 },
+  { label: '3 minutes', value: 180 },
+  { label: '4 minutes', value: 240 },
+  { label: '5 minutes', value: 300 },
+]
 </script>
 
 <template>
-  <DialogFormItem label="Rest Timer">
+  <DialogFormItem label="Rest Timer" class="q-mb-md">
     <QItemLabel>
-      <QSlider
+      <QSelect
         v-model="localRecordStore.record.rest_timer"
-        :min="0"
-        :max="300"
-        :step="30"
-        :label-value="timeFromDuration(localRecordStore.record.rest_timer)"
-        markers
-        track-size="0.5rem"
-        thumb-size="1.25rem"
-        label-always
-        switch-label-side
+        :options="options"
+        lazy-rules
+        emit-value
+        map-options
+        options-dense
+        dense
+        outlined
         color="primary"
-        class="q-mb-md"
       />
     </QItemLabel>
   </DialogFormItem>
