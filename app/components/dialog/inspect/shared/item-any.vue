@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { DialogInspectItem } from '#components'
-
 defineProps<{
   label: string
   value: any
@@ -8,7 +6,7 @@ defineProps<{
 </script>
 
 <template>
-  <DialogInspectItem :label="label">
+  <DialogInspectSharedItem :label="label">
     {{ value }}
-  </DialogInspectItem>
+  </DialogInspectSharedItem>
 </template>

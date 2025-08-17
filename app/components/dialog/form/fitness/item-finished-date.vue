@@ -27,7 +27,7 @@ function onClear() {
 </script>
 
 <template>
-  <DialogFormItem label="Finished Date" class="q-mb-md">
+  <DialogFormSharedItem label="Finished Date" class="q-mb-md">
     <QItemLabel class="q-pt-xs text-body2">{{ displayDate }}</QItemLabel>
 
     <QItemLabel class="q-gutter-sm">
@@ -49,5 +49,5 @@ function onClear() {
 
       <QBtn :icon="calendarClearIcon" size="sm" color="negative" @click="onClear" />
     </QItemLabel>
-  </DialogFormItem>
+  </DialogFormSharedItem>
 </template>

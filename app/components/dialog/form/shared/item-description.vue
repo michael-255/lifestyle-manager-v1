@@ -6,7 +6,7 @@ const localRecordStore = useLocalRecordStore()
 </script>
 
 <template>
-  <DialogFormItem label="Description">
+  <DialogFormSharedItem label="Description">
     <QItemLabel>
       <QInput
         v-model="localRecordStore.record.description"
@@ -36,5 +36,5 @@ const localRecordStore = useLocalRecordStore()
         </template>
       </QInput>
     </QItemLabel>
-  </DialogFormItem>
+  </DialogFormSharedItem>
 </template>

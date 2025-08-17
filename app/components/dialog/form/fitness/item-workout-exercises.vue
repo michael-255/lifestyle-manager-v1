@@ -21,7 +21,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <DialogFormItem label="Exercises">
+  <DialogFormSharedItem label="Exercises">
     <QItemLabel>
       <QSelect
         v-model="localRecordStore.record.exercises"
@@ -52,5 +52,5 @@ onMounted(async () => {
         </template>
       </QSelect>
     </QItemLabel>
-  </DialogFormItem>
+  </DialogFormSharedItem>
 </template>

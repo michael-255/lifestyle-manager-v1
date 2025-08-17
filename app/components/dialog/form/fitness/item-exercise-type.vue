@@ -7,8 +7,14 @@ const options = Constants.public.Enums.exercise_type
 </script>
 
 <template>
-  <DialogFormItem label="Exercise Type">
-    <QItemLabel>
+  <DialogFormSharedItem label="Exercise Type">
+    <QItemLabel v-if="localRecordStore.action === 'edit'">
+      <span class="text-body2">
+        {{ localRecordStore.record.type }}
+      </span>
+    </QItemLabel>
+
+    <QItemLabel v-else>
       <QSelect
         v-model="localRecordStore.record.type"
         :options="options"
@@ -22,5 +28,5 @@ const options = Constants.public.Enums.exercise_type
         color="primary"
       />
     </QItemLabel>
-  </DialogFormItem>
+  </DialogFormSharedItem>
 </template>

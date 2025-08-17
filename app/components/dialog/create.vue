@@ -7,7 +7,7 @@ import { ref } from 'vue'
 
 const props = defineProps<{
   label: string
-  subComponents: Array<{ component: string; props: Record<string, any> }>
+  formComponent: { component: string; props: Record<string, any> }
   onSubmitHandler: () => Promise<void>
 }>()
 
@@ -16,8 +16,25 @@ const { dialogRef, onDialogHide, onDialogCancel, onDialogOK } = useDialogPluginC
 
 const $q = useQuasar()
 const logger = useLogger()
+const localRecordStore = useLocalRecordStore()
+
+localRecordStore.action = 'create'
 
 const isFormValid = ref(true)
+
+function resetStore() {
+  localRecordStore.$reset()
+}
+
+function handleDialogHide() {
+  resetStore()
+  onDialogHide()
+}
+
+function handleDialogCancel() {
+  resetStore()
+  onDialogCancel()
+}
 
 async function onSubmit() {
   $q.dialog({
@@ -37,6 +54,7 @@ async function onSubmit() {
       logger.error(`Error creating ${props.label}`, error as Error)
     } finally {
       $q.loading.hide()
+      resetStore()
       onDialogOK()
     }
   })
@@ -49,12 +67,13 @@ async function onSubmit() {
     transition-show="slide-up"
     transition-hide="slide-down"
     maximized
-    @hide="onDialogHide"
+    @hide="handleDialogHide"
+    @before-hide="resetStore"
   >
     <QToolbar class="bg-primary text-white fullscreen-toolbar-height q-pr-xs">
       <QIcon :name="createIcon" size="sm" />
       <QToolbarTitle>Create {{ label }}</QToolbarTitle>
-      <QBtn flat round :icon="closeIcon" @click="onDialogCancel" />
+      <QBtn flat round :icon="closeIcon" @click="handleDialogCancel" />
     </QToolbar>
 
     <QCard class="q-dialog-plugin">
@@ -68,12 +87,7 @@ async function onSubmit() {
               @validation-success="isFormValid = true"
             >
               <QList padding>
-                <component
-                  :is="subComponent.component"
-                  v-for="(subComponent, index) in subComponents"
-                  :key="index"
-                  v-bind="subComponent.props"
-                />
+                <component :is="formComponent.component" v-bind="formComponent.props" />
 
                 <QItem>
                   <QItemSection>

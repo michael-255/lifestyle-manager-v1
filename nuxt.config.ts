@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase',
     '@pinia/nuxt',
     'nuxt-quasar-ui',
+    'json-editor-vue/nuxt',
   ],
   css: ['@/assets/css/main.css'],
   app: { baseURL: '/lifestyle-manager-v1/' },

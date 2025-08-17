@@ -14,7 +14,7 @@ defineProps<{
   todaysWorkout: TodaysWorkout
 }>()
 
-const { openInspectWorkout, openEditWorkout, openDeleteWorkout } = useFitnessDialogs()
+const { openInspectWorkout, openEditWorkout, openDeleteWorkout } = useFitnessWorkoutDialogs()
 
 function onCharts() {
   console.log('Charts clicked')

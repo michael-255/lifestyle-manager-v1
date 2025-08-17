@@ -5,7 +5,7 @@ import { useDialogPluginComponent } from 'quasar'
 defineProps<{
   label: string
   record: Record<string, any>
-  subComponents: Array<{ component: string; props: Record<string, any> }>
+  chartComponent: { component: string; props: Record<string, any> }
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -30,7 +30,9 @@ const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent()
       <QCardSection>
         <div class="row justify-center">
           <div class="page-width-limit">
-            <QList padding> WIP Charts... </QList>
+            <QList padding>
+              <component :is="chartComponent.component" v-bind="chartComponent.props" />
+            </QList>
             <div class="q-mt-xl" />
           </div>
         </div>

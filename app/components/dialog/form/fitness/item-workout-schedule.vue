@@ -15,7 +15,7 @@ const schedule = computed({
 </script>
 
 <template>
-  <DialogFormItem label="Schedule">
+  <DialogFormSharedItem label="Schedule">
     <QItemLabel>
       <div class="row">
         <div class="col column">
@@ -41,5 +41,5 @@ const schedule = computed({
         </div>
       </div>
     </QItemLabel>
-  </DialogFormItem>
+  </DialogFormSharedItem>
 </template>

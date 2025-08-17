@@ -29,7 +29,7 @@ function onNow() {
 </script>
 
 <template>
-  <DialogFormItem label="Created Date" class="q-mb-md">
+  <DialogFormSharedItem label="Created Date" class="q-mb-md">
     <QItemLabel class="q-pt-xs text-body2">{{ displayDate }}</QItemLabel>
 
     <QItemLabel class="q-gutter-sm">
@@ -51,5 +51,5 @@ function onNow() {
 
       <QBtn :icon="calendarCheckIcon" size="sm" label="Now" color="positive" @click="onNow" />
     </QItemLabel>
-  </DialogFormItem>
+  </DialogFormSharedItem>
 </template>

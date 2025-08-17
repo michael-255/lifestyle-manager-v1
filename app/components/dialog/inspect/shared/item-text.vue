@@ -15,7 +15,7 @@ const computedValue = computed(() => {
 </script>
 
 <template>
-  <DialogInspectItem :label="label">
+  <DialogInspectSharedItem :label="label">
     <div v-if="value === true">Yes</div>
     <div v-else-if="value === false">No</div>
     <div v-else-if="Array.isArray(computedValue)">
@@ -23,5 +23,5 @@ const computedValue = computed(() => {
     </div>
     <div v-else-if="value">{{ value }}</div>
     <div v-else class="text-italic text-secondary">empty</div>
-  </DialogInspectItem>
+  </DialogInspectSharedItem>
 </template>

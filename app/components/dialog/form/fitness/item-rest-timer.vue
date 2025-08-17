@@ -21,7 +21,7 @@ const options = [
 </script>
 
 <template>
-  <DialogFormItem label="Rest Timer" class="q-mb-md">
+  <DialogFormSharedItem label="Rest Timer" class="q-mb-md">
     <QItemLabel>
       <QSelect
         v-model="localRecordStore.record.rest_timer"
@@ -35,5 +35,5 @@ const options = [
         color="primary"
       />
     </QItemLabel>
-  </DialogFormItem>
+  </DialogFormSharedItem>
 </template>

@@ -33,6 +33,7 @@ import {
   symRoundedPlayArrow,
   symRoundedPublish,
   symRoundedRefresh,
+  symRoundedRemove,
   symRoundedSave,
   symRoundedSchedule,
   symRoundedSearch,
@@ -113,6 +114,7 @@ export const chartsIcon = symRoundedMonitoring
 // Actions
 export const saveIcon = symRoundedSave
 export const addIcon = symRoundedAdd2
+export const removeIcon = symRoundedRemove
 export const createIcon = symRoundedAddCircle
 export const editIcon = symRoundedEdit
 export const closeIcon = symRoundedClose

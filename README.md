@@ -58,42 +58,6 @@ npm i @observablehq/plot
 
 ### TODO - Dialogs
 
-#### Create Exercise
-
-- [@] `item-created-date.vue`
-- [@] `item-name.vue`
-- [@] `item-description.vue`
-- [@] `item-rest-timer.vue`
-- [@] `item-exercise-type.vue`
-- [ ] `item-checklist-labels.vue`
-- [ ] `item-default-sets.vue`
-
-#### Edit Exercise
-
-- [@] `item-created-date.vue`
-- [@] `item-name.vue`
-- [@] `item-description.vue`
-- ~~`item-exercise-type.vue`~~ (cant't edit type once created)
-- ~~`item-checklist-labels.vue`~~
-- [ ] `item-default-sets.vue`
-- [ ] `item-rest-timer.vue`
-
-#### Create Workout Result
-
-- [ ] `item-parent-workout.vue`
-- [@] `item-created-date.vue`
-- [ ] `item-finished-date.vue`
-- [ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)
-- [@] `item-note.vue`
-
-#### Edit Workout Result
-
-- ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
-- [@] `item-created-date.vue`
-- [@] `item-finished-date.vue`
-- [@] `item-note.vue`
-- ~~[ ] `item-workout-result-exercise-results.vue`~~ (Can't edit associated exercises once created)
-
 #### Create Exercise Result
 
 - [ ] `item-parent-exercise.vue`
@@ -117,6 +81,22 @@ npm i @observablehq/plot
   - [ ] `item-exercise-data-weightlifting.vue`
   - [ ] `item-exercise-data-sided-weightlifting.vue`
   - [ ] `item-exercise-data-climbing.vue`
+
+#### Create Workout Result
+
+- [ ] `item-parent-workout.vue`
+- [@] `item-created-date.vue`
+- [ ] `item-finished-date.vue`
+- [ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)
+- [@] `item-note.vue`
+
+#### Edit Workout Result
+
+- ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
+- [@] `item-created-date.vue`
+- [@] `item-finished-date.vue`
+- [@] `item-note.vue`
+- ~~[ ] `item-workout-result-exercise-results.vue`~~ (Can't edit associated exercises once created)
 
 ### TODO - Data Tables
 

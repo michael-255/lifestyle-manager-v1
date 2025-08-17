@@ -4,7 +4,7 @@ import { useDialogPluginComponent } from 'quasar'
 
 defineProps<{
   label: string
-  subComponents: Array<{ component: string; props: Record<string, any> }>
+  inspectComponent: { component: string; props: Record<string, any> }
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -30,12 +30,7 @@ const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent()
         <div class="row justify-center">
           <div class="page-width-limit">
             <QList padding>
-              <component
-                :is="subComponent.component"
-                v-for="(subComponent, index) in subComponents"
-                :key="index"
-                v-bind="subComponent.props"
-              />
+              <component :is="inspectComponent.component" v-bind="inspectComponent.props" />
             </QList>
             <div class="q-mt-xl" />
           </div>

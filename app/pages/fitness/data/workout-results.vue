@@ -25,12 +25,9 @@ useMeta({ title: `${appTitle} | Workout Result Data` })
 const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
-const {
-  openChartWorkout,
-  openInspectWorkoutResult,
-  openEditWorkoutResult,
-  openDeleteWorkoutResult,
-} = useFitnessDialogs()
+const { openInspectWorkoutResult, openEditWorkoutResult, openDeleteWorkoutResult } =
+  useFitnessWorkoutResultDialogs()
+const { openChartWorkout } = useFitnessWorkoutDialogs()
 const { goBack } = useRouting()
 
 const labelSingular = 'Workout Result'

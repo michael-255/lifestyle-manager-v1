@@ -26,7 +26,7 @@ const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 const { openChartExercise, openInspectExercise, openEditExercise, openDeleteExercise } =
-  useFitnessDialogs()
+  useFitnessExerciseDialogs()
 const { goBack } = useRouting()
 
 const labelSingular = 'Exercise'
@@ -41,7 +41,7 @@ const tableColumns = [
   tableColumn('rest_timer', 'Rest Timer', 'TIME'),
   tableColumn('type', 'Type', 'TEXT'),
   tableColumn('checklist_labels', 'Checklist Labels', 'LIST-PRINT'),
-  tableColumn('intitial_sets', 'Initial Sets', 'TEXT'),
+  tableColumn('initial_sets', 'Initial Sets', 'NUMBER'),
   tableColumn('workout_count', 'Workouts Used', 'NUMBER'),
   tableColumn('exercise_result_count', 'Total Results', 'NUMBER'),
   tableColumn('is_locked', 'Locked', 'BOOL'),
@@ -57,6 +57,8 @@ onMounted(async () => {
 
     const { data, error } = await supabase.from('exercises_table').select()
     if (error) throw error
+
+    console.log(`Fetched exercises table`, data)
 
     records.value = data || []
   } catch (error) {
