@@ -12,10 +12,8 @@ const $q = useQuasar()
 const logger = useLogger()
 const router = useRouter()
 const supabase = useSupabaseClient<Database>()
-const { openCreateWorkout } = useFitnessWorkoutDialogs()
-const { openCreateWorkoutResult } = useFitnessWorkoutResultDialogs()
-const { openCreateExercise } = useFitnessExerciseDialogs()
-const { openCreateExerciseResult } = useFitnessExerciseResultDialogs()
+const { openCreateWorkout, openCreateWorkoutResult, openCreateExercise, openCreateExerciseResult } =
+  useFitnessDialogs()
 
 const tableCounts = ref({
   workouts: 0,

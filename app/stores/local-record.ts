@@ -6,6 +6,6 @@ import { defineStore } from 'pinia'
 export const useLocalRecordStore = defineStore('local-record', {
   state: () => ({
     record: {} as Record<string, any>,
-    action: null as 'create' | 'edit' | null,
+    action: null as 'CREATE' | 'EDIT' | null | undefined,
   }),
 })

@@ -4,7 +4,7 @@ import { useDialogPluginComponent } from 'quasar'
 
 defineProps<{
   label: string
-  inspectComponent: { component: string; props: Record<string, any> }
+  isLoading: boolean
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -29,8 +29,8 @@ const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent()
       <QCardSection>
         <div class="row justify-center">
           <div class="page-width-limit">
-            <QList padding>
-              <component :is="inspectComponent.component" v-bind="inspectComponent.props" />
+            <QList v-if="!isLoading" padding>
+              <slot />
             </QList>
             <div class="q-mt-xl" />
           </div>

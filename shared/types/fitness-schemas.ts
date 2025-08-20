@@ -18,7 +18,7 @@ export const exerciseTypeSchema = z.enum(Constants.public.Enums.exercise_type)
 export const finishedAtSchema = timestampzSchema.optional()
 export const workoutScheduleSchema = z.enum(Constants.public.Enums.workout_schedule_type)
 
-export const inspectWorkoutSchema = z.object({
+export const inspectWorkoutResponseSchema = z.object({
   workout: z.object({
     id: idSchema,
     user_id: idSchema,
@@ -47,7 +47,7 @@ export const inspectWorkoutSchema = z.object({
     .nullable(), // could be null if no previous workout results
 })
 
-export type InspectWorkout = z.infer<typeof inspectWorkoutSchema>
+export type InspectWorkoutResponse = z.infer<typeof inspectWorkoutResponseSchema>
 
 export const workoutExerciseOptionSchema = z.object({
   value: idSchema.nullable(),
@@ -57,7 +57,7 @@ export const workoutExerciseOptionSchema = z.object({
 
 export type WorkoutExerciseOption = z.infer<typeof workoutExerciseOptionSchema>
 
-export const inspectExerciseSchema = z.object({
+export const inspectExerciseResponseSchema = z.object({
   exercise: z.object({
     id: idSchema,
     user_id: idSchema,
@@ -81,4 +81,4 @@ export const inspectExerciseSchema = z.object({
     .nullable(), // could be null if no workouts used
 })
 
-export type InspectExercise = z.infer<typeof inspectExerciseSchema>
+export type InspectExerciseResponse = z.infer<typeof inspectExerciseResponseSchema>

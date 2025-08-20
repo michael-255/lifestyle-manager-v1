@@ -26,7 +26,7 @@ const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 const { openChartWorkout, openInspectWorkout, openEditWorkout, openDeleteWorkout } =
-  useFitnessWorkoutDialogs()
+  useFitnessDialogs()
 const { goBack } = useRouting()
 
 const labelSingular = 'Workout'

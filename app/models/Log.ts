@@ -11,7 +11,7 @@ export class Log {
   label: LogLabelType
   details?: LogDetailsType
 
-  constructor(logLevel: LogLevelType, label: LogLabelType, details: LogDetailsType) {
+  constructor(logLevel: LogLevelType, label: LogLabelType, details?: LogDetailsType) {
     this.created_at = new Date().toISOString()
     this.log_level = logLevel
     this.label = label

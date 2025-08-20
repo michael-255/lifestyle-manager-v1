@@ -7,8 +7,8 @@ import { ref } from 'vue'
 
 const props = defineProps<{
   label: string
-  formComponent: { component: string; props: Record<string, any> }
   onSubmitHandler: () => Promise<void>
+  isLoading: boolean
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -18,7 +18,7 @@ const $q = useQuasar()
 const logger = useLogger()
 const localRecordStore = useLocalRecordStore()
 
-localRecordStore.action = 'create'
+localRecordStore.action = 'CREATE'
 
 const isFormValid = ref(true)
 
@@ -86,8 +86,8 @@ async function onSubmit() {
               @validation-error="isFormValid = false"
               @validation-success="isFormValid = true"
             >
-              <QList padding>
-                <component :is="formComponent.component" v-bind="formComponent.props" />
+              <QList v-if="!isLoading" padding>
+                <slot />
 
                 <QItem>
                   <QItemSection>

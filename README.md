@@ -19,10 +19,8 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 - [@] `item-note.vue`
 - [ ] `item-exercise-data.vue` (may break this up into multiple components)
   - [ ] `item-exercise-data-checklist.vue`
-  - [ ] `item-exercise-data-cardio.vue`
   - [ ] `item-exercise-data-weightlifting.vue`
   - [ ] `item-exercise-data-sided-weightlifting.vue`
-  - [ ] `item-exercise-data-climbing.vue`
 
 `EDIT`
 
@@ -31,10 +29,8 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 - [@] `item-note.vue`
 - [ ] `item-exercise-data.vue` (may break this up into multiple components)
   - [ ] `item-exercise-data-checklist.vue`
-  - [ ] `item-exercise-data-cardio.vue`
   - [ ] `item-exercise-data-weightlifting.vue`
   - [ ] `item-exercise-data-sided-weightlifting.vue`
-  - [ ] `item-exercise-data-climbing.vue`
 
 #### RPC Functions
 
