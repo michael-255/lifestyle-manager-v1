@@ -625,6 +625,7 @@ COMMENT ON FUNCTION public.inspect_exercise(e_id UUID) IS 'Function for inspect 
 CREATE OR REPLACE FUNCTION public.create_exercise(
   e_name TEXT,
   e_description TEXT,
+  e_created_at TIMESTAMPTZ,
   e_rest_timer INTEGER,
   e_type public.exercise_type,
   e_checklist_labels TEXT[],
@@ -636,12 +637,12 @@ SET search_path = ''
 AS $$
 BEGIN
   -- Insert exercise
-  INSERT INTO public.exercises (name, description, rest_timer, type, checklist_labels, initial_sets, user_id)
-  VALUES (e_name, e_description, e_rest_timer, e_type, e_checklist_labels, e_initial_sets, auth.uid());
+  INSERT INTO public.exercises (name, description, created_at, rest_timer, type, checklist_labels, initial_sets, user_id)
+  VALUES (e_name, e_description, e_created_at, e_rest_timer, e_type, e_checklist_labels, e_initial_sets, auth.uid());
 END;
 $$;
 
-COMMENT ON FUNCTION public.create_exercise(e_name TEXT, e_description TEXT, e_rest_timer INTEGER, e_type public.exercise_type, e_checklist_labels TEXT[], e_initial_sets INTEGER) IS 'Function creates an exercise with the provided details.';
+COMMENT ON FUNCTION public.create_exercise(e_name TEXT, e_description TEXT, e_created_at TIMESTAMPTZ, e_rest_timer INTEGER, e_type public.exercise_type, e_checklist_labels TEXT[], e_initial_sets INTEGER) IS 'Function creates an exercise with the provided details.';
 
 CREATE OR REPLACE FUNCTION public.edit_exercise(
   e_id UUID,

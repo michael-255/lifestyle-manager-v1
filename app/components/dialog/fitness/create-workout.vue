@@ -10,7 +10,7 @@ localRecordStore.record = {
   description: '',
   created_at: new Date().toISOString(),
   schedule: null,
-  exercises: [],
+  exercises: null,
 }
 
 async function onSubmit() {

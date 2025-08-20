@@ -548,6 +548,7 @@ export type Database = {
       create_exercise: {
         Args: {
           e_checklist_labels: string[]
+          e_created_at: string
           e_description: string
           e_initial_sets: number
           e_name: string

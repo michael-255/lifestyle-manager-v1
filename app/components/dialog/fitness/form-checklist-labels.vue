@@ -5,6 +5,8 @@ import { ref } from 'vue'
 const localRecordStore = useLocalRecordStore()
 
 const allowedTypes: ExerciseType[] = ['Checklist']
+
+const MAX_LABELS = 20
 const checklistLabels: Ref<string[]> = ref(localRecordStore.record.checklist_labels || [''])
 
 function updateChecklistLabels() {
@@ -76,7 +78,13 @@ function removeChecklistLabel(idx: number) {
         </template>
       </QInput>
 
-      <QBtn :icon="addIcon" color="primary" round @click="checklistLabels.push('')" />
+      <QBtn
+        :icon="addIcon"
+        color="primary"
+        round
+        :disable="checklistLabels.length >= MAX_LABELS"
+        @click="checklistLabels.length < MAX_LABELS && checklistLabels.push('')"
+      />
     </QItemLabel>
   </DialogSharedBaseItemForm>
 </template>

@@ -11,19 +11,27 @@ localRecordStore.record = {
   created_at: new Date().toISOString(),
   rest_timer: 0,
   type: null,
-  checklist_labels: [],
-  initial_sets: 1,
+  checklist_labels: null,
+  initial_sets: null,
 }
 
 async function onSubmit() {
+  const exerciseType: ExerciseType = localRecordStore.record.type
+  const checklistLabels =
+    exerciseType === 'Checklist' ? localRecordStore.record.checklist_labels : null
+  const initialSets =
+    exerciseType === 'Weightlifting' || exerciseType === 'Sided Weightlifting'
+      ? localRecordStore.record.initial_sets
+      : null
+
   const { error } = await supabase.rpc('create_exercise', {
-    // TODO: missing params?
     e_name: localRecordStore.record.name,
     e_description: localRecordStore.record.description,
+    e_created_at: localRecordStore.record.created_at,
     e_rest_timer: localRecordStore.record.rest_timer,
     e_type: localRecordStore.record.type,
-    e_checklist_labels: localRecordStore.record.checklist_labels,
-    e_initial_sets: localRecordStore.record.initial_sets,
+    e_checklist_labels: checklistLabels,
+    e_initial_sets: initialSets,
   })
   if (error) throw error
 

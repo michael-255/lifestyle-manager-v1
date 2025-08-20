@@ -3,12 +3,7 @@ const localRecordStore = useLocalRecordStore()
 
 const allowedTypes: ExerciseType[] = ['Weightlifting', 'Sided Weightlifting']
 
-if (
-  localRecordStore.record.initial_sets === null ||
-  localRecordStore.record.initial_sets === undefined
-) {
-  localRecordStore.record.initial_sets = 1
-}
+localRecordStore.record.initial_sets = localRecordStore.record.initial_sets || 1
 
 const options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 </script>
