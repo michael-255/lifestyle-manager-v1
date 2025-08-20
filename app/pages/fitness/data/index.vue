@@ -12,8 +12,7 @@ const $q = useQuasar()
 const logger = useLogger()
 const router = useRouter()
 const supabase = useSupabaseClient<Database>()
-const { openCreateWorkout, openCreateWorkoutResult, openCreateExercise, openCreateExerciseResult } =
-  useFitnessDialogs()
+const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
 
 const tableCounts = ref({
   workouts: 0,
@@ -83,15 +82,6 @@ onMounted(async () => {
 
             <QItemSection top side>
               <QBtn
-                :icon="addIcon"
-                color="info"
-                class="q-px-sm q-mb-sm"
-                @click="openCreateWorkoutResult"
-              />
-            </QItemSection>
-
-            <QItemSection top side>
-              <QBtn
                 :icon="databaseIcon"
                 color="primary"
                 class="q-px-sm q-mb-sm"
@@ -135,15 +125,6 @@ onMounted(async () => {
             <QItemSection top>
               <QItemLabel class="text-body1">Exercise Results</QItemLabel>
               <QItemLabel caption>{{ recordCount(tableCounts.exerciseResults) }}</QItemLabel>
-            </QItemSection>
-
-            <QItemSection top side>
-              <QBtn
-                :icon="addIcon"
-                color="info"
-                class="q-px-sm q-mb-sm"
-                @click="openCreateExerciseResult"
-              />
             </QItemSection>
 
             <QItemSection top side>

@@ -2,9 +2,7 @@ import {
   DialogCharts,
   DialogConfirm,
   DialogFitnessCreateExercise,
-  DialogFitnessCreateExerciseResult,
   DialogFitnessCreateWorkout,
-  DialogFitnessCreateWorkoutResult,
   DialogFitnessEditExercise,
   DialogFitnessEditExerciseResult,
   DialogFitnessEditWorkout,
@@ -113,14 +111,6 @@ export default function useFitnessDialogs() {
       })
     } catch (error) {
       logger.error('Error opening exercise result inspect dialog', error as Error)
-    }
-  }
-
-  async function openCreateExerciseResult() {
-    try {
-      $q.dialog({ component: DialogFitnessCreateExerciseResult })
-    } catch (error) {
-      logger.error('Error opening exercise result create dialog', error as Error)
     }
   }
 
@@ -265,14 +255,6 @@ export default function useFitnessDialogs() {
     }
   }
 
-  async function openCreateWorkoutResult() {
-    try {
-      $q.dialog({ component: DialogFitnessCreateWorkoutResult })
-    } catch (error) {
-      logger.error('Error opening workout result create dialog', error as Error)
-    }
-  }
-
   async function openEditWorkoutResult(id: IdType) {
     try {
       $q.dialog({
@@ -328,7 +310,6 @@ export default function useFitnessDialogs() {
     openDeleteExercise,
     // Exercise Results
     openInspectExerciseResult,
-    openCreateExerciseResult,
     openEditExerciseResult,
     openDeleteExerciseResult,
     // Workouts
@@ -339,7 +320,6 @@ export default function useFitnessDialogs() {
     openDeleteWorkout,
     // Workout Results
     openInspectWorkoutResult,
-    openCreateWorkoutResult,
     openEditWorkoutResult,
     openDeleteWorkoutResult,
   }

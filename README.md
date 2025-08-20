@@ -8,19 +8,26 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 - Use a view to get the counts for reminder notifications on apps
 
+- Use table view for editing?
+
+```vue
+<template v-if="col.name === 'name'">
+  {{ props.row.name }}
+  <QPopupEdit
+    v-slot="scope"
+    v-model="props.row.name"
+    title="Edit Name"
+    buttons
+    @save="test($event)"
+  >
+    <QInput v-model="scope.value" dense autofocus @keyup.enter="scope.set" />
+  </QPopupEdit>
+</template>
+```
+
 ### Exercise Result
 
 #### Dialog Components
-
-`CREATE`
-
-- [ ] `item-parent-exercise.vue`
-- [@] `item-created-date.vue`
-- [@] `item-note.vue`
-- [ ] `item-exercise-data.vue` (may break this up into multiple components)
-  - [ ] `item-exercise-data-checklist.vue`
-  - [ ] `item-exercise-data-weightlifting.vue`
-  - [ ] `item-exercise-data-sided-weightlifting.vue`
 
 `EDIT`
 
@@ -41,14 +48,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 ### Workout Result
 
 #### Dialog Components
-
-`CREATE`
-
-- [ ] `item-parent-workout.vue`
-- [@] `item-created-date.vue`
-- [ ] `item-finished-date.vue`
-- [ ] `item-orphaned-exercise-results.vue` (Would have to look at the Parent Workout exercises)
-- [@] `item-note.vue`
 
 `EDIT`
 

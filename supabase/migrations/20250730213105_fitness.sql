@@ -683,13 +683,9 @@ COMMENT ON FUNCTION public.edit_exercise(e_id UUID, e_name TEXT, e_description T
 
 -- inspect_workout_result
 
--- create_workout_result
-
 -- edit_workout_result
 
 -- inspect_exercise_result
-
--- create_exercise_result
 
 -- edit_exercise_result
 
