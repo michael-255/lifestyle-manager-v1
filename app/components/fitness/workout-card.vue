@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DialogConfirm } from '#components'
 import {
   cardMenuIcon,
   chartsIcon,
@@ -13,8 +14,12 @@ import type { TodaysWorkout } from '#shared/types/fitness-schemas'
 
 defineProps<{
   todaysWorkout: TodaysWorkout
+  hasActiveInList: boolean
 }>()
 
+const $q = useQuasar()
+const logger = useLogger()
+const supabase = useSupabaseClient<Database>()
 const router = useRouter()
 const { openInspectWorkout, openEditWorkout, openDeleteWorkout } = useFitnessDialogs()
 
@@ -23,12 +28,55 @@ function onCharts() {
 }
 
 async function onStart(id: IdType) {
-  console.log('Start Workout clicked')
-  router.push(`/fitness/${id}`)
+  try {
+    $q.loading.show()
+
+    const { error } = await supabase.rpc('start_workout', { w_id: id })
+    if (error) throw error
+
+    router.push(`/fitness/${id}`)
+  } catch (error) {
+    logger.error('Error starting workout', error as Error)
+  } finally {
+    $q.loading.hide()
+  }
+}
+
+async function onReplace(id: IdType) {
+  try {
+    $q.dialog({
+      component: DialogConfirm,
+      componentProps: {
+        title: 'Replace Active Workout',
+        message: `Are you sure you want to replace the active workout? This will delete any unsaved progress.`,
+        color: 'warning',
+        icon: refreshIcon,
+        requiresUnlock: false,
+      },
+    }).onOk(async () => {
+      try {
+        $q.loading.show()
+
+        console.log('Replacing active workout...', id)
+
+        // TODO:
+        // Delete WIP workout and results (is_active = true)
+        // SET is_active = false for workout and exercises
+        // Call start_workout with the new workout ID
+
+        logger.info('Active workout replaced')
+      } catch (error) {
+        logger.error('Error replacing active workout', error as Error)
+      } finally {
+        $q.loading.hide()
+      }
+    })
+  } catch (error) {
+    logger.error('Error opening replace active workout dialog', error as Error)
+  }
 }
 
 async function onResume(id: IdType) {
-  console.log('Resume Workout clicked')
   router.push(`/fitness/${id}`)
 }
 </script>
@@ -132,14 +180,24 @@ async function onResume(id: IdType) {
               color="positive"
               @click="onResume(todaysWorkout.id!)"
             />
-            <QBtn
-              v-else
-              class="full-width q-mb-sm"
-              :icon="startIcon"
-              label="Start Workout"
-              color="primary"
-              @click="onStart(todaysWorkout.id!)"
-            />
+            <div v-else>
+              <QBtn
+                v-if="hasActiveInList"
+                class="full-width q-mb-sm"
+                :icon="startIcon"
+                label="Replace Workout"
+                color="primary"
+                @click="onReplace(todaysWorkout.id!)"
+              />
+              <QBtn
+                v-else
+                class="full-width q-mb-sm"
+                :icon="startIcon"
+                label="Start Workout"
+                color="primary"
+                @click="onStart(todaysWorkout.id!)"
+              />
+            </div>
           </QItemSection>
         </QItem>
       </QCard>

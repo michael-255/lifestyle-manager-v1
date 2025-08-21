@@ -44,6 +44,7 @@ const tableColumns = [
   tableColumn('exercise_type', 'Exercise Type', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('note', 'Note', 'TEXT'),
+  tableColumn('is_active', 'Active', 'BOOL'),
   // TODO
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))

@@ -14,6 +14,7 @@ const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 
 const todaysWorkouts = ref<TodaysWorkout[]>([])
+const hasActiveInList = ref(false)
 const finishedLoading = ref(false)
 
 // TODO: Need a better setup for realtime data updates
@@ -24,6 +25,7 @@ const channel = supabase
     if (error) throw error
 
     todaysWorkouts.value = data
+    hasActiveInList.value = todaysWorkouts.value.some((workout) => workout.is_active)
   })
   .subscribe()
 
@@ -36,6 +38,7 @@ onMounted(async () => {
     if (error) throw error
 
     todaysWorkouts.value = data
+    hasActiveInList.value = todaysWorkouts.value.some((workout) => workout.is_active)
   } catch (error) {
     logger.error(`Error fetching today's workouts`, error as Error)
   } finally {
@@ -75,6 +78,7 @@ onUnmounted(() => {
         v-for="workout in todaysWorkouts"
         :key="workout.id!"
         :todays-workout="workout"
+        :has-active-in-list
       />
     </div>
   </QList>

@@ -647,6 +647,101 @@ COMMENT ON FUNCTION public.edit_exercise(e_id UUID, e_name TEXT, e_description T
 
 -- edit_exercise_result
 
--- start_workout
+CREATE OR REPLACE FUNCTION public.start_workout(w_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  exercises_data JSONB;
+BEGIN
+  -- Fetch exercises
+  SELECT COALESCE(jsonb_agg(to_jsonb(e) ORDER BY we.position), '[]'::jsonb)
+  INTO exercises_data
+  FROM public.workout_exercises we
+  JOIN public.exercises e ON e.id = we.exercise_id
+  WHERE we.workout_id = w_id;
+
+  -- Create new workout result
+  INSERT INTO public.workout_results (workout_id, is_active)
+  VALUES (w_id, TRUE);
+
+  -- Create exercise results for each exercise in the workout
+  IF jsonb_array_length(exercises_data) > 0 THEN
+    FOR i IN 0..jsonb_array_length(exercises_data) - 1 LOOP
+      INSERT INTO public.exercise_results (exercise_id, is_active)
+      VALUES ((exercises_data->i->>'id')::UUID, TRUE);
+    END LOOP;
+  END IF;
+
+  -- Set workout to active
+  UPDATE public.workouts
+  SET is_active = TRUE
+  WHERE id = w_id
+  AND user_id = (SELECT auth.uid());
+
+  -- Set exercises to active
+  UPDATE public.exercises
+  SET is_active = TRUE
+  WHERE id IN (SELECT (exercises_data->i->>'id')::UUID FROM generate_series(0, jsonb_array_length(exercises_data) - 1) AS i)
+  AND user_id = (SELECT auth.uid());
+END;
+$$;
+
+COMMENT ON FUNCTION public.start_workout(w_id UUID) IS 'Function starts a workout, creating a new workout result and exercise results, and setting the workout and exercises to active.';
+
+CREATE OR REPLACE FUNCTION public.get_active_workout(w_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  workout_data JSONB;
+  exercises_data JSONB;
+  new_workout_result_id UUID;
+  new_exercise_result_ids UUID[];
+  new_exercise_result_id UUID;
+BEGIN
+  -- Fetch workout
+  SELECT to_jsonb(w)
+  INTO workout_data
+  FROM public.workouts w
+  WHERE w.id = w_id
+  AND w.user_id = (SELECT auth.uid());
+
+  -- Fetch exercises
+  SELECT COALESCE(jsonb_agg(to_jsonb(e) ORDER BY we.position), '[]'::jsonb)
+  INTO exercises_data
+  FROM public.workout_exercises we
+  JOIN public.exercises e ON e.id = we.exercise_id
+  WHERE we.workout_id = w_id;
+
+  -- Fetch associated workout result
+  SELECT wr.id
+  INTO new_workout_result_id
+  FROM public.workout_results wr
+  WHERE wr.workout_id = w_id
+  AND wr.is_active = TRUE
+  AND wr.user_id = (SELECT auth.uid())
+  LIMIT 1;
+
+  -- Fetch assoicated exercise results
+  SELECT array_agg(er.id)
+  INTO new_exercise_result_ids
+  FROM public.exercise_results er
+  WHERE er.exercise_id IN (SELECT (exercises_data->i->>'id')::UUID FROM generate_series(0, jsonb_array_length(exercises_data) - 1) AS i)
+  AND er.is_active = TRUE
+  AND er.user_id = (SELECT auth.uid());
+
+  RETURN jsonb_build_object(
+    'workout', workout_data,
+    'exercises', exercises_data,
+    'new_workout_result_id', new_workout_result_id,
+    'new_exercise_result_ids', new_exercise_result_ids
+  );
+END;
+$$;
+
+COMMENT ON FUNCTION public.get_active_workout(w_id UUID) IS 'Function retrieves the active workout and its exercises, including the latest workout result and exercise results.';
 
 -- finish_workout

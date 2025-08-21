@@ -19,15 +19,12 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    // Getting the workout name for the layout toolbar
-    const { data, error } = await supabase
-      .from('workouts')
-      .select('name')
-      .eq('id', workoutId as string)
-      .single()
+    const { data, error } = await supabase.rpc('get_active_workout', { w_id: workoutId as IdType })
     if (error) throw error
 
-    workoutStore.name = data.name
+    logger.info('Active workout data:', data)
+
+    workoutStore.name = data.workout.name
 
     // Getting the active workout and exercises, and workout results and exercise results
     // TODO

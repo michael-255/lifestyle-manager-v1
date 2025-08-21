@@ -10,6 +10,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "supabase:all": "npx supabase db reset && npm run supabase:env && npm run supabase:typegen && npm run dev",
     "supabase:env": "npx tsx scripts/prepare-local-env.ts",
     "supabase:typegen": "npx tsx scripts/supabase-typegen.ts"
   },

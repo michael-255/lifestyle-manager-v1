@@ -618,6 +618,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_active_workout: {
+        Args: { w_id: string }
+        Returns: Json
+      }
       inspect_exercise: {
         Args: { e_id: string }
         Returns: Json
@@ -625,6 +629,10 @@ export type Database = {
       inspect_workout: {
         Args: { w_id: string }
         Returns: Json
+      }
+      start_workout: {
+        Args: { w_id: string }
+        Returns: undefined
       }
     }
     Enums: {
