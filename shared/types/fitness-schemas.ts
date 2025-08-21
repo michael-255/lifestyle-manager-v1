@@ -23,7 +23,6 @@ export const workoutScheduleSchema = z.enum(Constants.public.Enums.workout_sched
 export const inspectWorkoutResponseSchema = z.object({
   workout: z.object({
     id: idSchema,
-    user_id: idSchema,
     created_at: timestampzSchema,
     name: textLabelSchema,
     description: textAreaSchema.nullable(),
@@ -62,7 +61,6 @@ export type WorkoutExerciseOption = z.infer<typeof workoutExerciseOptionSchema>
 export const inspectExerciseResponseSchema = z.object({
   exercise: z.object({
     id: idSchema,
-    user_id: idSchema,
     created_at: timestampzSchema,
     name: textLabelSchema,
     description: textAreaSchema.nullable(),
@@ -84,3 +82,31 @@ export const inspectExerciseResponseSchema = z.object({
 })
 
 export type InspectExerciseResponse = z.infer<typeof inspectExerciseResponseSchema>
+
+export const getActiveWorkoutResponseSchema = z.object({
+  workout: z.object({
+    id: idSchema,
+    created_at: timestampzSchema,
+    name: textLabelSchema,
+    description: textAreaSchema.nullable(),
+    schedule: z.array(workoutScheduleSchema).nullable(),
+    is_active: z.boolean(),
+  }),
+  exercises: z.array(
+    z.object({
+      id: idSchema,
+      created_at: timestampzSchema,
+      name: textLabelSchema,
+      description: textAreaSchema.nullable(),
+      rest_timer: z.number().nullable(),
+      type: exerciseTypeSchema,
+      checklist_labels: z.array(z.string()).nullable(),
+      initial_sets: z.number().nullable(),
+      is_active: z.boolean(),
+    }),
+  ),
+  new_workout_result_id: idSchema.nullable(), // could be null if no active workout
+  new_exercise_result_ids: z.array(idSchema).nullable(), // could be null if no active workout
+})
+
+export type GetActiveWorkoutResponse = z.infer<typeof getActiveWorkoutResponseSchema>

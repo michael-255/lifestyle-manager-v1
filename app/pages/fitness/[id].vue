@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { appTitle } from '#shared/constants'
+import { DialogConfirm } from '#components'
+import { appTitle, saveIcon } from '#shared/constants'
+import { getActiveWorkoutResponseSchema } from '#shared/types/fitness-schemas'
 
 useMeta({ title: `${appTitle} | Fitness - Active Workout` })
 
@@ -8,6 +10,7 @@ const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 const workoutStore = useWorkoutStore()
 const route = useRoute()
+const router = useRouter()
 
 const workoutId = route.params.id
 
@@ -22,24 +25,63 @@ onMounted(async () => {
     const { data, error } = await supabase.rpc('get_active_workout', { w_id: workoutId as IdType })
     if (error) throw error
 
-    logger.info('Active workout data:', data)
+    const res = getActiveWorkoutResponseSchema.parse(data)
 
-    workoutStore.name = data.workout.name
-
-    // Getting the active workout and exercises, and workout results and exercise results
-    // TODO
+    workoutStore.name = res.workout.name
   } catch (error) {
     logger.error('Error starting active workout', error as Error)
+    router.push('/fitness')
   } finally {
     $q.loading.hide()
   }
 })
 
-// TODO:
-// Get workout and exercise data from DB
-// Set
+onUnmounted(() => {
+  workoutStore.$reset()
+})
+
+async function onFinished() {
+  try {
+    $q.dialog({
+      component: DialogConfirm,
+      componentProps: {
+        title: 'Finish Workout',
+        message: `Are you sure you want to finish this workout?`,
+        color: 'positive',
+        icon: saveIcon,
+        requiresUnlock: false,
+      },
+    }).onOk(async () => {
+      try {
+        $q.loading.show()
+
+        const { error } = await supabase.rpc('finish_workout', { w_id: workoutId as IdType })
+        if (error) throw error
+
+        router.push('/fitness')
+      } catch (error) {
+        logger.error('Error finishing workout', error as Error)
+      } finally {
+        $q.loading.hide()
+      }
+    })
+  } catch (error) {
+    logger.error('Error opening finish workout dialog', error as Error)
+  }
+}
 </script>
 
 <template>
-  <QList padding> {{ workoutId }} </QList>
+  <QList padding>
+    {{ workoutId }}
+    <QItem>
+      <QItemSection>
+        <QItemLabel>
+          <div class="row justify-center">
+            <QBtn label="Finish Workout" :icon="saveIcon" color="positive" @click="onFinished" />
+          </div>
+        </QItemLabel>
+      </QItemSection>
+    </QItem>
+  </QList>
 </template>

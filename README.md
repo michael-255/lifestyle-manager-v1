@@ -7,6 +7,8 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 ### General
 
 - Use a view to get the counts for reminder notifications on apps
+- Implement the Active Workout footer timer component
+- Work on active workout exercise components
 
 ### Exercise Result
 
@@ -45,30 +47,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 - [ ] `create_workout_result`
 - [ ] `inspect_workout_result`
 - [ ] `edit_workout_result`
-
-### Start/Finish Workout
-
-- [ ] `start_workout`
-  - Gets the workout
-  - Gets all assoicated exercises (full data)
-  - Gets the last workout results (previous duration and notes)
-  - Gets all last exercise results for the exercises (previous values and notes)
-  - Locks the workout
-  - locks all associated exercises
-  - Creates placeholder workout_result (locked?)
-  - Creates placeholder exercise_results for each exercise (locked?)
-- [ ] `finish_workout`
-  - Saves the workout_result
-  - Saves the exercise_results
-  - Unlocks the workout
-  - Unlocks the exercises
-  - Unlocks the workout_result
-  - Unlocks the exercise_results
-
-#### Route
-
-- [ ] Use a route param with the id of the active workout
-- [ ] If the workout is not locked, or does not exist, then redirect to the Todays Plan page
 
 ### Data Tables
 

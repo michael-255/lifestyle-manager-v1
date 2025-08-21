@@ -57,14 +57,10 @@ async function onReplace(id: IdType) {
       try {
         $q.loading.show()
 
-        console.log('Replacing active workout...', id)
+        const { error } = await supabase.rpc('replace_workout', { w_id: id })
+        if (error) throw error
 
-        // TODO:
-        // Delete WIP workout and results (is_active = true)
-        // SET is_active = false for workout and exercises
-        // Call start_workout with the new workout ID
-
-        logger.info('Active workout replaced')
+        router.push(`/fitness/${id}`)
       } catch (error) {
         logger.error('Error replacing active workout', error as Error)
       } finally {
@@ -77,6 +73,7 @@ async function onReplace(id: IdType) {
 }
 
 async function onResume(id: IdType) {
+  // Will get all the needed data on the workout page
   router.push(`/fitness/${id}`)
 }
 </script>

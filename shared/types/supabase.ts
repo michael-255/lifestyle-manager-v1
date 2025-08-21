@@ -98,7 +98,6 @@ export type Database = {
           id: string
           is_active: boolean
           note: string | null
-          user_id: string
         }
         Insert: {
           created_at?: string
@@ -106,7 +105,6 @@ export type Database = {
           id?: string
           is_active?: boolean
           note?: string | null
-          user_id?: string
         }
         Update: {
           created_at?: string
@@ -114,7 +112,6 @@ export type Database = {
           id?: string
           is_active?: boolean
           note?: string | null
-          user_id?: string
         }
         Relationships: [
           {
@@ -151,7 +148,6 @@ export type Database = {
           name: string
           rest_timer: number | null
           type: Database["public"]["Enums"]["exercise_type"]
-          user_id: string
         }
         Insert: {
           checklist_labels?: string[] | null
@@ -163,7 +159,6 @@ export type Database = {
           name: string
           rest_timer?: number | null
           type: Database["public"]["Enums"]["exercise_type"]
-          user_id?: string
         }
         Update: {
           checklist_labels?: string[] | null
@@ -175,7 +170,6 @@ export type Database = {
           name?: string
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"]
-          user_id?: string
         }
         Relationships: []
       }
@@ -294,7 +288,6 @@ export type Database = {
           id: string
           is_active: boolean
           note: string | null
-          user_id: string
           workout_id: string
         }
         Insert: {
@@ -303,7 +296,6 @@ export type Database = {
           id?: string
           is_active?: boolean
           note?: string | null
-          user_id?: string
           workout_id: string
         }
         Update: {
@@ -312,7 +304,6 @@ export type Database = {
           id?: string
           is_active?: boolean
           note?: string | null
-          user_id?: string
           workout_id?: string
         }
         Relationships: [
@@ -349,7 +340,6 @@ export type Database = {
           schedule:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
-          user_id: string
         }
         Insert: {
           created_at?: string
@@ -360,7 +350,6 @@ export type Database = {
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
-          user_id?: string
         }
         Update: {
           created_at?: string
@@ -371,7 +360,6 @@ export type Database = {
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
-          user_id?: string
         }
         Relationships: []
       }
@@ -384,12 +372,12 @@ export type Database = {
           value: string | null
         }
         Insert: {
-          disable?: boolean | null
+          disable?: never
           label?: never
           value?: string | null
         }
         Update: {
-          disable?: boolean | null
+          disable?: never
           label?: never
           value?: string | null
         }
@@ -404,7 +392,6 @@ export type Database = {
           id: string | null
           is_active: boolean | null
           note: string | null
-          user_id: string | null
         }
         Relationships: [
           {
@@ -442,7 +429,6 @@ export type Database = {
           name: string | null
           rest_timer: number | null
           type: Database["public"]["Enums"]["exercise_type"] | null
-          user_id: string | null
           workout_count: number | null
         }
         Insert: {
@@ -456,7 +442,6 @@ export type Database = {
           name?: string | null
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"] | null
-          user_id?: string | null
           workout_count?: never
         }
         Update: {
@@ -470,7 +455,6 @@ export type Database = {
           name?: string | null
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"] | null
-          user_id?: string | null
           workout_count?: never
         }
         Relationships: []
@@ -503,7 +487,6 @@ export type Database = {
           id: string | null
           is_active: boolean | null
           note: string | null
-          user_id: string | null
           workout_id: string | null
           workout_name: string | null
         }
@@ -542,7 +525,6 @@ export type Database = {
           schedule:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
-          user_id: string | null
           workout_result_count: number | null
         }
         Insert: {
@@ -555,7 +537,6 @@ export type Database = {
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
-          user_id?: string | null
           workout_result_count?: never
         }
         Update: {
@@ -568,7 +549,6 @@ export type Database = {
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
-          user_id?: string | null
           workout_result_count?: never
         }
         Relationships: []
@@ -618,6 +598,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      finish_workout: {
+        Args: { w_id: string }
+        Returns: undefined
+      }
       get_active_workout: {
         Args: { w_id: string }
         Returns: Json
@@ -629,6 +613,10 @@ export type Database = {
       inspect_workout: {
         Args: { w_id: string }
         Returns: Json
+      }
+      replace_workout: {
+        Args: { w_id: string }
+        Returns: undefined
       }
       start_workout: {
         Args: { w_id: string }

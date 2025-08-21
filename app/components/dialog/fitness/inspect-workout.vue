@@ -38,7 +38,6 @@ onMounted(async () => {
 <template>
   <DialogInspect label="Exercise" :is-loading>
     <DialogSharedInspectText label="Id" :value="workout.id" />
-    <DialogSharedInspectText label="User Id" :value="workout.user_id" />
     <DialogSharedInspectDate label="Created At" :value="workout.created_at" />
     <DialogSharedInspectText label="Name" :value="workout.name" />
     <DialogSharedInspectText label="Description" :value="workout.description" />
