@@ -16,14 +16,14 @@ const { dialogRef, onDialogHide, onDialogCancel, onDialogOK } = useDialogPluginC
 
 const $q = useQuasar()
 const logger = useLogger()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
-localRecordStore.action = 'EDIT'
+recordStore.action = 'EDIT'
 
 const isFormValid = ref(true)
 
 function resetStore() {
-  localRecordStore.$reset()
+  recordStore.$reset()
 }
 
 function handleDialogHide() {

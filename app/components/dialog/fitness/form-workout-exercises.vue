@@ -4,13 +4,13 @@ import { onMounted, ref } from 'vue'
 
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const options: Ref<WorkoutExerciseOption[]> = ref([])
 
 onMounted(async () => {
   try {
-    const { data, error } = await supabase.from('workout_exercise_options').select('*')
+    const { data, error } = await supabase.from('exercise_options').select('*')
     if (error) throw error
 
     options.value = data ?? []
@@ -24,7 +24,7 @@ onMounted(async () => {
   <DialogSharedBaseItemForm label="Exercises">
     <QItemLabel>
       <QSelect
-        v-model="localRecordStore.record.exercises"
+        v-model="recordStore.record.exercises"
         :options="options"
         multiple
         counter
@@ -40,11 +40,11 @@ onMounted(async () => {
             <QItemSection>
               <template
                 v-if="
-                  localRecordStore.record.exercises &&
-                  localRecordStore.record.exercises.includes(scope.opt.value)
+                  recordStore.record.exercises &&
+                  recordStore.record.exercises.includes(scope.opt.value)
                 "
               >
-                {{ localRecordStore.record.exercises.indexOf(scope.opt.value) + 1 + '. ' }}
+                {{ recordStore.record.exercises.indexOf(scope.opt.value) + 1 + '. ' }}
               </template>
               {{ scope.opt.label }}
             </QItemSection>

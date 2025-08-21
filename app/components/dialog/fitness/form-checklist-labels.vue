@@ -2,17 +2,15 @@
 import { addIcon, removeIcon } from '#shared/constants'
 import { ref } from 'vue'
 
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const allowedTypes: ExerciseType[] = ['Checklist']
 
 const MAX_LABELS = 20
-const checklistLabels: Ref<string[]> = ref(localRecordStore.record.checklist_labels || [''])
+const checklistLabels: Ref<string[]> = ref(recordStore.record.checklist_labels || [''])
 
 function updateChecklistLabels() {
-  localRecordStore.record.checklist_labels = checklistLabels.value.filter(
-    (l) => l.trim().length > 0,
-  )
+  recordStore.record.checklist_labels = checklistLabels.value.filter((l) => l.trim().length > 0)
 }
 
 function removeChecklistLabel(idx: number) {
@@ -25,19 +23,18 @@ function removeChecklistLabel(idx: number) {
 
 <template>
   <DialogSharedBaseItemForm
-    v-if="allowedTypes.includes(localRecordStore.record.type)"
+    v-if="allowedTypes.includes(recordStore.record.type)"
     label="Checklist Labels"
   >
-    <QItemLabel v-if="localRecordStore.action === 'EDIT'">
+    <QItemLabel v-if="recordStore.action === 'EDIT'">
       <ul
         v-if="
-          localRecordStore.record.checklist_labels &&
-          localRecordStore.record.checklist_labels?.length > 0
+          recordStore.record.checklist_labels && recordStore.record.checklist_labels?.length > 0
         "
         class="q-pl-sm q-my-none"
       >
         <li
-          v-for="label in localRecordStore.record.checklist_labels"
+          v-for="label in recordStore.record.checklist_labels"
           :key="label"
           class="q-ml-sm q-mb-xs"
         >

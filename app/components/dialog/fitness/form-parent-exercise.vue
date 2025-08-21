@@ -4,13 +4,13 @@ import { onMounted, ref } from 'vue'
 
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const options: Ref<WorkoutExerciseOption[]> = ref([])
 
 onMounted(async () => {
   try {
-    const { data, error } = await supabase.from('workout_exercise_options').select('*')
+    const { data, error } = await supabase.from('exercise_options').select('*')
     if (error) throw error
 
     options.value = data ?? []
@@ -24,7 +24,7 @@ onMounted(async () => {
   <DialogSharedBaseItemForm label="Parent Exercise">
     <QItemLabel>
       <QSelect
-        v-model="localRecordStore.record.exercise"
+        v-model="recordStore.record.exercise"
         :options="options"
         emit-value
         map-options

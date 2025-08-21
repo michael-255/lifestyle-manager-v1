@@ -36,6 +36,8 @@ export type Database = {
     Tables: {
       exercise_result_item: {
         Row: {
+          calories: number | null
+          duration_seconds: number | null
           exercise_result_id: string
           is_checked: boolean | null
           left_reps: number | null
@@ -47,6 +49,8 @@ export type Database = {
           weight: number | null
         }
         Insert: {
+          calories?: number | null
+          duration_seconds?: number | null
           exercise_result_id: string
           is_checked?: boolean | null
           left_reps?: number | null
@@ -58,6 +62,8 @@ export type Database = {
           weight?: number | null
         }
         Update: {
+          calories?: number | null
+          duration_seconds?: number | null
           exercise_result_id?: string
           is_checked?: boolean | null
           left_reps?: number | null
@@ -90,7 +96,6 @@ export type Database = {
           created_at: string
           exercise_id: string
           id: string
-          is_locked: boolean | null
           note: string | null
           user_id: string
         }
@@ -98,7 +103,6 @@ export type Database = {
           created_at?: string
           exercise_id: string
           id?: string
-          is_locked?: boolean | null
           note?: string | null
           user_id?: string
         }
@@ -106,7 +110,6 @@ export type Database = {
           created_at?: string
           exercise_id?: string
           id?: string
-          is_locked?: boolean | null
           note?: string | null
           user_id?: string
         }
@@ -115,8 +118,8 @@ export type Database = {
             foreignKeyName: "exercise_results_exercise_id_fkey"
             columns: ["exercise_id"]
             isOneToOne: false
-            referencedRelation: "exercise_results_table"
-            referencedColumns: ["exercise_id"]
+            referencedRelation: "exercise_options"
+            referencedColumns: ["value"]
           },
           {
             foreignKeyName: "exercise_results_exercise_id_fkey"
@@ -132,13 +135,6 @@ export type Database = {
             referencedRelation: "exercises_table"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "workout_exercise_options"
-            referencedColumns: ["value"]
-          },
         ]
       }
       exercises: {
@@ -148,7 +144,6 @@ export type Database = {
           description: string | null
           id: string
           initial_sets: number | null
-          is_locked: boolean | null
           name: string
           rest_timer: number | null
           type: Database["public"]["Enums"]["exercise_type"]
@@ -160,7 +155,6 @@ export type Database = {
           description?: string | null
           id?: string
           initial_sets?: number | null
-          is_locked?: boolean | null
           name: string
           rest_timer?: number | null
           type: Database["public"]["Enums"]["exercise_type"]
@@ -172,7 +166,6 @@ export type Database = {
           description?: string | null
           id?: string
           initial_sets?: number | null
-          is_locked?: boolean | null
           name?: string
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"]
@@ -201,8 +194,8 @@ export type Database = {
             foreignKeyName: "workout_exercises_exercise_id_fkey"
             columns: ["exercise_id"]
             isOneToOne: false
-            referencedRelation: "exercise_results_table"
-            referencedColumns: ["exercise_id"]
+            referencedRelation: "exercise_options"
+            referencedColumns: ["value"]
           },
           {
             foreignKeyName: "workout_exercises_exercise_id_fkey"
@@ -219,25 +212,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "workout_exercises_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "workout_exercise_options"
-            referencedColumns: ["value"]
-          },
-          {
             foreignKeyName: "workout_exercises_workout_id_fkey"
             columns: ["workout_id"]
             isOneToOne: false
             referencedRelation: "todays_workouts"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_exercises_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "workout_results_table"
-            referencedColumns: ["workout_id"]
           },
           {
             foreignKeyName: "workout_exercises_workout_id_fkey"
@@ -307,7 +286,7 @@ export type Database = {
           created_at: string
           finished_at: string | null
           id: string
-          is_locked: boolean | null
+          is_active: boolean
           note: string | null
           user_id: string
           workout_id: string
@@ -316,7 +295,7 @@ export type Database = {
           created_at?: string
           finished_at?: string | null
           id?: string
-          is_locked?: boolean | null
+          is_active?: boolean
           note?: string | null
           user_id?: string
           workout_id: string
@@ -325,7 +304,7 @@ export type Database = {
           created_at?: string
           finished_at?: string | null
           id?: string
-          is_locked?: boolean | null
+          is_active?: boolean
           note?: string | null
           user_id?: string
           workout_id?: string
@@ -337,13 +316,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "todays_workouts"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_results_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "workout_results_table"
-            referencedColumns: ["workout_id"]
           },
           {
             foreignKeyName: "workout_results_workout_id_fkey"
@@ -366,7 +338,6 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          is_locked: boolean | null
           name: string
           schedule:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -377,7 +348,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          is_locked?: boolean | null
           name: string
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -388,7 +358,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          is_locked?: boolean | null
           name?: string
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -399,6 +368,21 @@ export type Database = {
       }
     }
     Views: {
+      exercise_options: {
+        Row: {
+          label: string | null
+          value: string | null
+        }
+        Insert: {
+          label?: never
+          value?: string | null
+        }
+        Update: {
+          label?: never
+          value?: string | null
+        }
+        Relationships: []
+      }
       exercise_results_table: {
         Row: {
           created_at: string | null
@@ -406,10 +390,32 @@ export type Database = {
           exercise_name: string | null
           exercise_type: Database["public"]["Enums"]["exercise_type"] | null
           id: string | null
-          is_locked: boolean | null
           note: string | null
+          user_id: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "exercise_results_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_options"
+            referencedColumns: ["value"]
+          },
+          {
+            foreignKeyName: "exercise_results_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_results_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises_table"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       exercises_table: {
         Row: {
@@ -419,10 +425,10 @@ export type Database = {
           exercise_result_count: number | null
           id: string | null
           initial_sets: number | null
-          is_locked: boolean | null
           name: string | null
           rest_timer: number | null
           type: Database["public"]["Enums"]["exercise_type"] | null
+          user_id: string | null
           workout_count: number | null
         }
         Insert: {
@@ -432,10 +438,10 @@ export type Database = {
           exercise_result_count?: never
           id?: string | null
           initial_sets?: number | null
-          is_locked?: boolean | null
           name?: string | null
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"] | null
+          user_id?: string | null
           workout_count?: never
         }
         Update: {
@@ -445,10 +451,10 @@ export type Database = {
           exercise_result_count?: never
           id?: string | null
           initial_sets?: number | null
-          is_locked?: boolean | null
           name?: string | null
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"] | null
+          user_id?: string | null
           workout_count?: never
         }
         Relationships: []
@@ -465,29 +471,11 @@ export type Database = {
       todays_workouts: {
         Row: {
           id: string | null
-          is_locked: boolean | null
           last_created_at: string | null
           last_duration_seconds: number | null
+          last_is_active: boolean | null
           last_note: string | null
           name: string | null
-        }
-        Relationships: []
-      }
-      workout_exercise_options: {
-        Row: {
-          disable: boolean | null
-          label: string | null
-          value: string | null
-        }
-        Insert: {
-          disable?: boolean | null
-          label?: never
-          value?: string | null
-        }
-        Update: {
-          disable?: boolean | null
-          label?: never
-          value?: string | null
         }
         Relationships: []
       }
@@ -497,12 +485,35 @@ export type Database = {
           duration_seconds: number | null
           finished_at: string | null
           id: string | null
-          is_locked: boolean | null
+          is_active: boolean | null
           note: string | null
+          user_id: string | null
           workout_id: string | null
           workout_name: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "workout_results_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "todays_workouts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_results_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_results_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts_table"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       workouts_table: {
         Row: {
@@ -510,11 +521,11 @@ export type Database = {
           description: string | null
           exercise_count: number | null
           id: string | null
-          is_locked: boolean | null
           name: string | null
           schedule:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
+          user_id: string | null
           workout_result_count: number | null
         }
         Insert: {
@@ -522,11 +533,11 @@ export type Database = {
           description?: string | null
           exercise_count?: never
           id?: string | null
-          is_locked?: boolean | null
           name?: string | null
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
+          user_id?: string | null
           workout_result_count?: never
         }
         Update: {
@@ -534,11 +545,11 @@ export type Database = {
           description?: string | null
           exercise_count?: never
           id?: string | null
-          is_locked?: boolean | null
           name?: string | null
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
             | null
+          user_id?: string | null
           workout_result_count?: never
         }
         Relationships: []
@@ -598,7 +609,11 @@ export type Database = {
       }
     }
     Enums: {
-      exercise_type: "Checklist" | "Weightlifting" | "Sided Weightlifting"
+      exercise_type:
+        | "Checklist"
+        | "Cardio"
+        | "Weightlifting"
+        | "Sided Weightlifting"
       workout_schedule_type:
         | "Daily"
         | "Weekly"
@@ -739,7 +754,12 @@ export const Constants = {
   },
   public: {
     Enums: {
-      exercise_type: ["Checklist", "Weightlifting", "Sided Weightlifting"],
+      exercise_type: [
+        "Checklist",
+        "Cardio",
+        "Weightlifting",
+        "Sided Weightlifting",
+      ],
       workout_schedule_type: [
         "Daily",
         "Weekly",

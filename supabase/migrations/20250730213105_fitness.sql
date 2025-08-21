@@ -4,6 +4,7 @@
 
 CREATE TYPE public.exercise_type AS ENUM (
     'Checklist',
+    'Cardio',
     'Weightlifting',
     'Sided Weightlifting'
 );
@@ -41,7 +42,7 @@ CREATE TABLE public.exercises (
     type public.exercise_type NOT NULL,
     checklist_labels TEXT[], -- Checklist: Ordered list of labels
     initial_sets INTEGER, -- Weightlifting and Sided Weightlifting
-    is_locked BOOLEAN DEFAULT FALSE
+    is_active BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 COMMENT ON TABLE public.exercises IS 'Stores exercises with rows for each exercise type data.';
@@ -52,7 +53,7 @@ CREATE TABLE public.exercise_results (
     exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     note TEXT,
-    is_locked BOOLEAN DEFAULT FALSE
+    is_active BOOLEAN NOT NULL DEFAULT FALSE
     -- exercise_result_items
 );
 
@@ -62,6 +63,8 @@ CREATE TABLE public.exercise_result_item (
     exercise_result_id UUID NOT NULL REFERENCES public.exercise_results(id) ON DELETE CASCADE,
     position INTEGER NOT NULL,
     is_checked BOOLEAN,         -- Checklist
+    duration_seconds INTEGER,   -- Cardio
+    calories INTEGER,           -- Cardio
     reps INTEGER,               -- Weightlifting
     weight NUMERIC,             -- Weightlifting
     left_reps INTEGER,          -- Sided Weightlifting
@@ -81,7 +84,7 @@ CREATE TABLE public.workouts (
     name TEXT NOT NULL,
     description TEXT,
     schedule public.workout_schedule_type[],
-    is_locked BOOLEAN DEFAULT FALSE
+    is_active BOOLEAN NOT NULL DEFAULT FALSE
     -- workout_exercises
 );
 
@@ -104,7 +107,7 @@ CREATE TABLE public.workout_results (
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     finished_at TIMESTAMPTZ,
     note TEXT,
-    is_locked BOOLEAN DEFAULT FALSE
+    is_active BOOLEAN NOT NULL DEFAULT FALSE
     -- workout_result_exercise_results
 );
 
@@ -130,16 +133,17 @@ AS
 SELECT
   w.id,
   w.name,
-  w.is_locked,
   wr.created_at AS last_created_at,
   wr.note AS last_note,
-  (EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at))::integer) AS last_duration_seconds
+  (EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at))::integer) AS last_duration_seconds,
+  wr.is_active AS last_is_active
 FROM public.workouts w
 LEFT JOIN LATERAL (
   SELECT
     wr.created_at,
     wr.finished_at,
-    wr.note
+    wr.note,
+    wr.is_active
   FROM public.workout_results wr
   WHERE wr.workout_id = w.id
   ORDER BY wr.created_at DESC
@@ -172,28 +176,23 @@ SELECT
 
 COMMENT ON VIEW public.table_counts IS 'View for user-specific table counts.';
 
-CREATE OR REPLACE VIEW public.workout_exercise_options
+CREATE OR REPLACE VIEW public.exercise_options
 WITH (security_invoker=on)
 AS
 SELECT
   id AS value,
-  name || ' (' || LEFT(id::text, 4) || '*' || ')' AS label,
-  is_locked AS disable
+  name || ' (' || LEFT(id::text, 4) || '*' || ')' AS label
+  disable BOOLEAN DEFAULT FALSE
 FROM public.exercises
 WHERE user_id = auth.uid();
 
-COMMENT ON VIEW public.workout_exercise_options IS 'View for workout exercise options used in forms.';
+COMMENT ON VIEW public.exercise_options IS 'View for exercise options used in forms.';
 
 CREATE OR REPLACE VIEW public.workouts_table
 WITH (security_invoker=on)
 AS
 SELECT
-  w.id,
-  w.created_at,
-  w.name,
-  w.description,
-  w.schedule,
-  w.is_locked,
+  w.*,
   (SELECT COUNT(*) FROM public.workout_exercises we WHERE we.workout_id = w.id) AS exercise_count,
   (SELECT COUNT(*) FROM public.workout_results wr WHERE wr.workout_id = w.id) AS workout_result_count
 FROM public.workouts w
@@ -205,15 +204,7 @@ CREATE OR REPLACE VIEW public.exercises_table
 WITH (security_invoker=on)
 AS
 SELECT
-  e.id,
-  e.created_at,
-  e.name,
-  e.description,
-  e.rest_timer,
-  e.type,
-  e.checklist_labels,
-  e.initial_sets,
-  e.is_locked,
+  e.*,
   (SELECT COUNT(*) FROM public.workout_exercises we WHERE we.exercise_id = e.id) AS workout_count,
   (SELECT COUNT(*) FROM public.exercise_results er WHERE er.exercise_id = e.id) AS exercise_result_count
 FROM public.exercises e
@@ -225,12 +216,7 @@ CREATE OR REPLACE VIEW public.workout_results_table
 WITH (security_invoker=on)
 AS
 SELECT
-  wr.id,
-  wr.created_at,
-  wr.finished_at,
-  wr.note,
-  wr.is_locked,
-  w.id AS workout_id,
+  wr.*,
   w.name AS workout_name,
   EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at)) AS duration_seconds
 FROM public.workout_results wr
@@ -243,11 +229,7 @@ CREATE OR REPLACE VIEW public.exercise_results_table
 WITH (security_invoker=on)
 AS
 SELECT
-  er.id,
-  er.created_at,
-  er.note,
-  er.is_locked,
-  e.id AS exercise_id,
+  er.*,
   e.name AS exercise_name,
   e.type AS exercise_type
 FROM public.exercise_results er
@@ -542,19 +524,7 @@ RETURNS void
 LANGUAGE plpgsql
 SET search_path = ''
 AS $$
-DECLARE
-  is_locked BOOLEAN;
 BEGIN
-  -- Check if workout is locked
-  SELECT w.is_locked INTO is_locked
-  FROM public.workouts w
-  WHERE w.id = w_id
-  AND w.user_id = auth.uid();
-
-  IF is_locked THEN
-    RAISE EXCEPTION 'Workout is locked and cannot be edited';
-  END IF;
-
   -- Update workout
   UPDATE public.workouts
   SET name = w_name,
@@ -655,19 +625,7 @@ RETURNS void
 LANGUAGE plpgsql
 SET search_path = ''
 AS $$
-DECLARE
-  is_locked BOOLEAN;
 BEGIN
-  -- Check if exercise is locked
-  SELECT e.is_locked INTO is_locked
-  FROM public.exercises e
-  WHERE e.id = e_id
-  AND e.user_id = auth.uid();
-
-  IF is_locked THEN
-    RAISE EXCEPTION 'Exercise is locked and cannot be edited';
-  END IF;
-
   -- Update exercise
   UPDATE public.exercises
   SET name = e_name,

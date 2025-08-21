@@ -6,7 +6,7 @@ const props = defineProps<{
 const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const label = 'Exercise'
 
@@ -21,7 +21,7 @@ onMounted(async () => {
 
     const res = inspectExerciseResponseSchema.parse(data)
 
-    localRecordStore.record = res.exercise
+    recordStore.record = res.exercise
   } catch (error) {
     logger.error('Error opening exercise edit dialog', error as Error)
   } finally {
@@ -33,10 +33,10 @@ onMounted(async () => {
 async function onSubmit() {
   const { error } = await supabase.rpc('edit_exercise', {
     e_id: props.id,
-    e_name: localRecordStore.record.name,
-    e_description: localRecordStore.record.description,
-    e_rest_timer: localRecordStore.record.rest_timer,
-    e_initial_sets: localRecordStore.record.initial_sets,
+    e_name: recordStore.record.name,
+    e_description: recordStore.record.description,
+    e_rest_timer: recordStore.record.rest_timer,
+    e_initial_sets: recordStore.record.initial_sets,
   })
   if (error) throw error
 

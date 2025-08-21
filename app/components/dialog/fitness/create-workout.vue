@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const label = 'Workout'
 
-localRecordStore.record = {
+recordStore.record = {
   name: '',
   description: '',
   created_at: new Date().toISOString(),
@@ -15,15 +15,15 @@ localRecordStore.record = {
 
 async function onSubmit() {
   const { error } = await supabase.rpc('create_workout', {
-    w_name: localRecordStore.record.name,
-    w_description: localRecordStore.record.description,
-    w_created_at: localRecordStore.record.created_at,
-    w_schedule: localRecordStore.record.schedule,
-    w_exercise_ids: localRecordStore.record.exercises.map((id: string) => id),
+    w_name: recordStore.record.name,
+    w_description: recordStore.record.description,
+    w_created_at: recordStore.record.created_at,
+    w_schedule: recordStore.record.schedule,
+    w_exercise_ids: recordStore.record.exercises.map((id: string) => id),
   })
   if (error) throw error
 
-  logger.info('Workout created', { name: localRecordStore.record.name })
+  logger.info('Workout created', { name: recordStore.record.name })
 }
 </script>
 

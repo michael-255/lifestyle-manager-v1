@@ -45,7 +45,6 @@ const tableColumns = [
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('note', 'Note', 'TEXT'),
   // TODO
-  tableColumn('is_locked', 'Locked', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const label = 'Exercise'
 
-localRecordStore.record = {
+recordStore.record = {
   name: '',
   description: '',
   created_at: new Date().toISOString(),
@@ -16,26 +16,28 @@ localRecordStore.record = {
 }
 
 async function onSubmit() {
-  const exerciseType: ExerciseType = localRecordStore.record.type
-  const checklistLabels =
-    exerciseType === 'Checklist' ? localRecordStore.record.checklist_labels : null
-  const initialSets =
-    exerciseType === 'Weightlifting' || exerciseType === 'Sided Weightlifting'
-      ? localRecordStore.record.initial_sets
-      : null
+  const exerciseType: ExerciseType = recordStore.record.type
+
+  if (exerciseType !== 'Checklist') {
+    recordStore.record.checklist_labels = null
+  }
+
+  if (exerciseType !== 'Weightlifting' && exerciseType !== 'Sided Weightlifting') {
+    recordStore.record.initial_sets = null
+  }
 
   const { error } = await supabase.rpc('create_exercise', {
-    e_name: localRecordStore.record.name,
-    e_description: localRecordStore.record.description,
-    e_created_at: localRecordStore.record.created_at,
-    e_rest_timer: localRecordStore.record.rest_timer,
-    e_type: localRecordStore.record.type,
-    e_checklist_labels: checklistLabels,
-    e_initial_sets: initialSets,
+    e_name: recordStore.record.name,
+    e_description: recordStore.record.description,
+    e_created_at: recordStore.record.created_at,
+    e_rest_timer: recordStore.record.rest_timer,
+    e_type: recordStore.record.type,
+    e_checklist_labels: recordStore.record.checklist_labels,
+    e_initial_sets: recordStore.record.initial_sets,
   })
   if (error) throw error
 
-  logger.info('Exercise created', { name: localRecordStore.record.name })
+  logger.info('Exercise created', { name: recordStore.record.name })
 }
 </script>
 

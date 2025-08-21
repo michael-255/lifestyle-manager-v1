@@ -8,23 +8,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 - Use a view to get the counts for reminder notifications on apps
 
-- Use table view for editing?
-
-```vue
-<template v-if="col.name === 'name'">
-  {{ props.row.name }}
-  <QPopupEdit
-    v-slot="scope"
-    v-model="props.row.name"
-    title="Edit Name"
-    buttons
-    @save="test($event)"
-  >
-    <QInput v-model="scope.value" dense autofocus @keyup.enter="scope.set" />
-  </QPopupEdit>
-</template>
-```
-
 ### Exercise Result
 
 #### Dialog Components

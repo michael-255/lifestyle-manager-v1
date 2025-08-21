@@ -45,7 +45,7 @@ const tableColumns = [
   tableColumn('finished_at', 'Finished Date', 'ISO-DATE'),
   tableColumn('duration_seconds', 'Duration', 'TIME'),
   tableColumn('note', 'Note', 'TEXT'),
-  tableColumn('is_locked', 'Locked', 'BOOL'),
+  tableColumn('is_active', 'Active', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))

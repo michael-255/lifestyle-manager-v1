@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { exitIcon } from '#shared/constants'
-import { useQuasar } from 'quasar'
+import { closeIcon } from '#shared/constants'
 
-const $q = useQuasar()
-const isDesktop = computed(() => $q.screen.gt.xs)
+const workoutStore = useWorkoutStore()
 </script>
 
 <template>
   <QLayout view="hHh lpr lfr">
     <QHeader bordered>
-      <QTabs class="text-caption" active-color="yellow" outside-arrows mobile-arrows>
-        <QRouteTab no-caps :icon="exitIcon" exact to="/">
-          <template v-if="isDesktop">Exit</template>
-        </QRouteTab>
-      </QTabs>
+      <QToolbar class="toolbar-height">
+        <QToolbarTitle>{{ workoutStore.name }}</QToolbarTitle>
+        <QBtn flat round :icon="closeIcon" to="/fitness" />
+      </QToolbar>
     </QHeader>
 
     <LayoutContainer />
   </QLayout>
 </template>
+
+<style scoped>
+.toolbar-height {
+  height: 3.25rem;
+}
+</style>

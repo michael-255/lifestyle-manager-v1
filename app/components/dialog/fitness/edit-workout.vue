@@ -6,7 +6,7 @@ const props = defineProps<{
 const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const label = 'Workout'
 
@@ -21,7 +21,7 @@ onMounted(async () => {
 
     const res = inspectWorkoutResponseSchema.parse(data)
 
-    localRecordStore.record = {
+    recordStore.record = {
       ...res.workout,
       exercises: res.exercises?.map((e) => e.id) || [],
     }
@@ -36,11 +36,11 @@ onMounted(async () => {
 async function onSubmit() {
   const { error } = await supabase.rpc('edit_workout', {
     w_id: props.id,
-    w_name: localRecordStore.record.name,
-    w_description: localRecordStore.record.description,
-    w_created_at: localRecordStore.record.created_at,
-    w_schedule: localRecordStore.record.schedule,
-    w_exercise_ids: localRecordStore.record.exercises.map((id: string) => id),
+    w_name: recordStore.record.name,
+    w_description: recordStore.record.description,
+    w_created_at: recordStore.record.created_at,
+    w_schedule: recordStore.record.schedule,
+    w_exercise_ids: recordStore.record.exercises.map((id: string) => id),
   })
   if (error) throw error
 

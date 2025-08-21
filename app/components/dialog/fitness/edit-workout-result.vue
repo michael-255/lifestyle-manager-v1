@@ -6,7 +6,7 @@ const props = defineProps<{
 const $q = useQuasar()
 const logger = useLogger()
 // const supabase = useSupabaseClient<Database>()
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const label = 'Workout Result'
 
@@ -16,7 +16,7 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    localRecordStore.record = {}
+    recordStore.record = {}
   } catch (error) {
     logger.error('Error opening workout result edit dialog', error as Error)
   } finally {

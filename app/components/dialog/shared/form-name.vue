@@ -2,14 +2,14 @@
 import { cancelIcon } from '#shared/constants'
 import { limitRuleLookup } from '#shared/utils/utils'
 
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 </script>
 
 <template>
   <DialogSharedBaseItemForm label="Name">
     <QItemLabel>
       <QInput
-        v-model="localRecordStore.record.name"
+        v-model="recordStore.record.name"
         :rules="[
           (val: string) => (!!val && val.trim().length >= 1) || 'Name is required',
           (val: string) =>
@@ -24,14 +24,14 @@ const localRecordStore = useLocalRecordStore()
         dense
         outlined
         color="primary"
-        @blur="localRecordStore.record.name = localRecordStore.record?.name?.trim()"
+        @blur="recordStore.record.name = recordStore.record?.name?.trim()"
       >
         <template #append>
           <QIcon
-            v-if="localRecordStore.record.name && localRecordStore.record.name !== ''"
+            v-if="recordStore.record.name && recordStore.record.name !== ''"
             class="cursor-pointer"
             :name="cancelIcon"
-            @click="localRecordStore.record.name = ''"
+            @click="recordStore.record.name = ''"
           />
         </template>
       </QInput>

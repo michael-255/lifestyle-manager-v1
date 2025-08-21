@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const scheduleOptions = Constants.public.Enums.workout_schedule_type
 
@@ -9,8 +9,8 @@ const weekDayOptions = scheduleOptions.filter((opt) => opt.includes('day'))
 const specialOptions = scheduleOptions.filter((opt) => !opt.includes('day'))
 
 const schedule = computed({
-  get: () => localRecordStore.record.schedule || [],
-  set: (val) => (localRecordStore.record.schedule = val),
+  get: () => recordStore.record.schedule || [],
+  set: (val) => (recordStore.record.schedule = val),
 })
 </script>
 

@@ -6,6 +6,8 @@ export type TodaysWorkout = Tables<'todays_workouts'>
 export type Workout = Database['public']['Tables']['workouts']['Row']
 export type WorkoutResult = Database['public']['Tables']['workout_results']['Row']
 
+export type WorkoutExercise = Database['public']['Tables']['workout_exercises']['Row']
+
 export type Exercise = Database['public']['Tables']['exercises']['Row']
 export type ExerciseResult = Database['public']['Tables']['exercise_results']['Row']
 
@@ -26,7 +28,6 @@ export const inspectWorkoutResponseSchema = z.object({
     name: textLabelSchema,
     description: textAreaSchema.nullable(),
     schedule: z.array(workoutScheduleSchema).nullable(),
-    is_locked: z.boolean(),
   }),
   exercises: z
     .array(
@@ -43,6 +44,7 @@ export const inspectWorkoutResponseSchema = z.object({
       finished_at: finishedAtSchema.nullable(),
       duration_seconds: z.number().nullable(),
       note: textAreaSchema.nullable(),
+      is_active: z.boolean(),
     })
     .nullable(), // could be null if no previous workout results
 })
@@ -68,7 +70,6 @@ export const inspectExerciseResponseSchema = z.object({
     type: exerciseTypeSchema,
     checklist_labels: z.array(z.string()).nullable(),
     initial_sets: z.number().nullable(),
-    is_locked: z.boolean(),
   }),
   total_results: z.number().nullable(),
   workouts_used: z

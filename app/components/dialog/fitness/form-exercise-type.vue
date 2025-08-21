@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { Constants } from '#shared/types/supabase'
 
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
 const options = Constants.public.Enums.exercise_type
 </script>
 
 <template>
   <DialogSharedBaseItemForm label="Exercise Type">
-    <QItemLabel v-if="localRecordStore.action === 'EDIT'">
+    <QItemLabel v-if="recordStore.action === 'EDIT'">
       <span class="text-body2">
-        {{ localRecordStore.record.type }}
+        {{ recordStore.record.type }}
       </span>
     </QItemLabel>
 
     <QItemLabel v-else>
       <QSelect
-        v-model="localRecordStore.record.type"
+        v-model="recordStore.record.type"
         :options="options"
         :rules="[(val) => !!val || 'Required']"
         lazy-rules

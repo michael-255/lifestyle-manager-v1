@@ -1,11 +1,8 @@
 <script setup lang="ts">
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
-if (
-  localRecordStore.record.rest_timer === null ||
-  localRecordStore.record.rest_timer === undefined
-) {
-  localRecordStore.record.rest_timer = 0
+if (recordStore.record.rest_timer === null || recordStore.record.rest_timer === undefined) {
+  recordStore.record.rest_timer = 0
 }
 
 const options = [
@@ -24,7 +21,7 @@ const options = [
   <DialogSharedBaseItemForm label="Rest Timer" class="q-mb-md">
     <QItemLabel>
       <QSelect
-        v-model="localRecordStore.record.rest_timer"
+        v-model="recordStore.record.rest_timer"
         :options="options"
         lazy-rules
         emit-value

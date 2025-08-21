@@ -14,15 +14,22 @@ defineProps<{
   todaysWorkout: TodaysWorkout
 }>()
 
+const router = useRouter()
 const { openInspectWorkout, openEditWorkout, openDeleteWorkout } = useFitnessDialogs()
 
 function onCharts() {
   console.log('Charts clicked')
 }
 
-function onStart() {
+async function onStart(id: IdType) {
   console.log('Start Workout clicked')
+  router.push(`/fitness/${id}`)
 }
+
+// async function onResume(id: IdType) {
+//   console.log('Resume Workout clicked')
+//   router.push(`/fitness/${id}`)
+// }
 </script>
 
 <template>
@@ -113,7 +120,7 @@ function onStart() {
               :icon="startIcon"
               label="Start Workout"
               color="primary"
-              @click="onStart"
+              @click="onStart(todaysWorkout.id!)"
             />
           </QItemSection>
         </QItem>

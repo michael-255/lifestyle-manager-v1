@@ -8,20 +8,20 @@ import {
 import { localDisplayDate, localPickerDate } from '#shared/utils/utils'
 import { computed, ref, watch } from 'vue'
 
-const localRecordStore = useLocalRecordStore()
+const recordStore = useRecordStore()
 
-const dateTimePicker = ref(localPickerDate(localRecordStore.record?.created_at))
-const displayDate = computed(() => localDisplayDate(localRecordStore.record?.created_at))
+const dateTimePicker = ref(localPickerDate(recordStore.record?.created_at))
+const displayDate = computed(() => localDisplayDate(recordStore.record?.created_at))
 
 watch(dateTimePicker, () => {
   if (dateTimePicker.value) {
     // Convert back to UTC string for the store
-    localRecordStore.record.created_at = new Date(dateTimePicker.value).toISOString()
+    recordStore.record.created_at = new Date(dateTimePicker.value).toISOString()
   }
 })
 
 function onClear() {
-  localRecordStore.record.created_at = null
+  recordStore.record.created_at = null
   dateTimePicker.value = localPickerDate('')
 }
 </script>
