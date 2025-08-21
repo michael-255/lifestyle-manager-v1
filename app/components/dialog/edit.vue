@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DialogConfirm } from '#components'
-import { closeIcon, createIcon, saveIcon } from '#shared/constants'
+import { closeIcon, createIcon, lockIcon, saveIcon } from '#shared/constants'
 import useLogger from '@/composables/useLogger'
 import { useDialogPluginComponent, useQuasar } from 'quasar'
 import { ref } from 'vue'
@@ -93,6 +93,14 @@ async function onSubmit() {
                     <QItemLabel>
                       <div class="row justify-center">
                         <QBtn
+                          v-if="!!recordStore.record?.is_active"
+                          label="Active Record Locked"
+                          :icon="lockIcon"
+                          color="warning"
+                          disable
+                        />
+                        <QBtn
+                          v-else
                           :label="`Update ${label}`"
                           :icon="saveIcon"
                           :disable="!isFormValid"

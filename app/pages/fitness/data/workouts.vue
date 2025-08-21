@@ -115,22 +115,22 @@ onMounted(async () => {
             @click="openInspectWorkout(props.row.id)"
           />
           <QBtn
-            :disable="props.row.is_locked"
+            :disable="props.row.is_active"
             flat
             round
             dense
             class="q-ml-xs"
             :icon="editIcon"
-            :color="props.row.is_locked ? 'grey' : 'amber'"
+            :color="props.row.is_active ? 'grey' : 'amber'"
             @click="openEditWorkout(props.row.id)"
           />
           <QBtn
-            :disable="props.row.is_locked"
+            :disable="props.row.is_active"
             flat
             round
             dense
             class="q-ml-xs"
-            :color="props.row.is_locked ? 'grey' : 'negative'"
+            :color="props.row.is_active ? 'grey' : 'negative'"
             :icon="deleteIcon"
             @click="openDeleteWorkout(props.row.id)"
           />

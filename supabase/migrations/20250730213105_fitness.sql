@@ -133,24 +133,23 @@ AS
 SELECT
   w.id,
   w.name,
+  w.is_active,
   wr.created_at AS last_created_at,
   wr.note AS last_note,
-  (EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at))::integer) AS last_duration_seconds,
-  wr.is_active AS last_is_active
+  (EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at))::integer) AS last_duration_seconds
 FROM public.workouts w
 LEFT JOIN LATERAL (
   SELECT
     wr.created_at,
     wr.finished_at,
-    wr.note,
-    wr.is_active
+    wr.note
   FROM public.workout_results wr
   WHERE wr.workout_id = w.id
   ORDER BY wr.created_at DESC
   LIMIT 1
 ) wr ON TRUE
 WHERE
-  w.user_id = auth.uid()
+  w.user_id = (SELECT auth.uid())
   AND (
     'Daily' = ANY(w.schedule::text[])
     OR TRIM(TO_CHAR(CURRENT_DATE, 'Day')) = ANY(w.schedule::text[])
@@ -161,7 +160,8 @@ WHERE
         OR wr.created_at::date < (CURRENT_DATE - INTERVAL '7 days')
       )
     )
-  );
+  )
+ORDER BY w.is_active DESC, w.name;
 
 COMMENT ON VIEW public.todays_workouts IS 'View for the today''s workouts page.';
 
@@ -169,10 +169,10 @@ CREATE OR REPLACE VIEW public.table_counts
 WITH (security_invoker=on)
 AS
 SELECT
-  (SELECT COUNT(*) FROM public.workouts WHERE user_id = auth.uid()) AS workouts,
-  (SELECT COUNT(*) FROM public.exercises WHERE user_id = auth.uid()) AS exercises,
-  (SELECT COUNT(*) FROM public.workout_results WHERE user_id = auth.uid()) AS workout_results,
-  (SELECT COUNT(*) FROM public.exercise_results WHERE user_id = auth.uid()) AS exercise_results;
+  (SELECT COUNT(*) FROM public.workouts WHERE user_id = (SELECT auth.uid())) AS workouts,
+  (SELECT COUNT(*) FROM public.exercises WHERE user_id = (SELECT auth.uid())) AS exercises,
+  (SELECT COUNT(*) FROM public.workout_results WHERE user_id = (SELECT auth.uid())) AS workout_results,
+  (SELECT COUNT(*) FROM public.exercise_results WHERE user_id = (SELECT auth.uid())) AS exercise_results;
 
 COMMENT ON VIEW public.table_counts IS 'View for user-specific table counts.';
 
@@ -184,7 +184,7 @@ SELECT
   name || ' (' || LEFT(id::text, 4) || '*' || ')' AS label,
   is_active AS disable
 FROM public.exercises
-WHERE user_id = auth.uid();
+WHERE user_id = (SELECT auth.uid());
 
 COMMENT ON VIEW public.exercise_options IS 'View for exercise options used in forms.';
 
@@ -196,7 +196,7 @@ SELECT
   (SELECT COUNT(*) FROM public.workout_exercises we WHERE we.workout_id = w.id) AS exercise_count,
   (SELECT COUNT(*) FROM public.workout_results wr WHERE wr.workout_id = w.id) AS workout_result_count
 FROM public.workouts w
-WHERE w.user_id = auth.uid();
+WHERE w.user_id = (SELECT auth.uid());
 
 COMMENT ON VIEW public.workouts_table IS 'View for workouts table, providing workout details and counts of exercises and results.';
 
@@ -208,7 +208,7 @@ SELECT
   (SELECT COUNT(*) FROM public.workout_exercises we WHERE we.exercise_id = e.id) AS workout_count,
   (SELECT COUNT(*) FROM public.exercise_results er WHERE er.exercise_id = e.id) AS exercise_result_count
 FROM public.exercises e
-WHERE e.user_id = auth.uid();
+WHERE e.user_id = (SELECT auth.uid());
 
 COMMENT ON VIEW public.exercises_table IS 'View for exercises table, providing exercise details and counts of workouts and results.';
 
@@ -221,7 +221,7 @@ SELECT
   EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at)) AS duration_seconds
 FROM public.workout_results wr
 JOIN public.workouts w ON w.id = wr.workout_id
-WHERE wr.user_id = auth.uid();
+WHERE wr.user_id = (SELECT auth.uid());
 
 COMMENT ON VIEW public.workout_results_table IS 'View for workout results table, providing workout result details and counts of exercise results.';
 
@@ -234,7 +234,7 @@ SELECT
   e.type AS exercise_type
 FROM public.exercise_results er
 JOIN public.exercises e ON e.id = er.exercise_id
-WHERE er.user_id = auth.uid();
+WHERE er.user_id = (SELECT auth.uid());
 
 COMMENT ON VIEW public.exercise_results_table IS 'View for exercise results table, providing exercise result details and counts of workout results.';
 
@@ -266,26 +266,26 @@ CREATE POLICY "Authenticated user can select"
 ON public.exercises
 FOR SELECT
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can insert"
 ON public.exercises
 FOR INSERT
 TO authenticated
-WITH CHECK (user_id = (select auth.uid()));
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can update"
 ON public.exercises
 FOR UPDATE
 TO authenticated
-USING (user_id = (select auth.uid()))
-WITH CHECK (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()))
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can delete"
 ON public.exercises
 FOR DELETE
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 -- workouts
 ALTER TABLE public.workouts ENABLE ROW LEVEL SECURITY;
@@ -294,26 +294,26 @@ CREATE POLICY "Authenticated user can select"
 ON public.workouts
 FOR SELECT
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can insert"
 ON public.workouts
 FOR INSERT
 TO authenticated
-WITH CHECK (user_id = (select auth.uid()));
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can update"
 ON public.workouts
 FOR UPDATE
 TO authenticated
-USING (user_id = (select auth.uid()))
-WITH CHECK (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()))
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can delete"
 ON public.workouts
 FOR DELETE
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 -- exercise_results
 ALTER TABLE public.exercise_results ENABLE ROW LEVEL SECURITY;
@@ -322,26 +322,26 @@ CREATE POLICY "Authenticated user can select"
 ON public.exercise_results
 FOR SELECT
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can insert"
 ON public.exercise_results
 FOR INSERT
 TO authenticated
-WITH CHECK (user_id = (select auth.uid()));
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can update"
 ON public.exercise_results
 FOR UPDATE
 TO authenticated
-USING (user_id = (select auth.uid()))
-WITH CHECK (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()))
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can delete"
 ON public.exercise_results
 FOR DELETE
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 -- workout_results
 ALTER TABLE public.workout_results ENABLE ROW LEVEL SECURITY;
@@ -350,26 +350,26 @@ CREATE POLICY "Authenticated user can select"
 ON public.workout_results
 FOR SELECT
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can insert"
 ON public.workout_results
 FOR INSERT
 TO authenticated
-WITH CHECK (user_id = (select auth.uid()));
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can update"
 ON public.workout_results
 FOR UPDATE
 TO authenticated
-USING (user_id = (select auth.uid()))
-WITH CHECK (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()))
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 CREATE POLICY "Authenticated user can delete"
 ON public.workout_results
 FOR DELETE
 TO authenticated
-USING (user_id = (select auth.uid()));
+USING (user_id = (SELECT auth.uid()));
 
 -- workout_exercises
 ALTER TABLE public.workout_exercises ENABLE ROW LEVEL SECURITY;
@@ -378,26 +378,26 @@ CREATE POLICY "Authenticated user can select"
 ON public.workout_exercises
 FOR SELECT
 TO authenticated
-USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())));
+USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (SELECT auth.uid())));
 
 CREATE POLICY "Authenticated user can insert"
 ON public.workout_exercises
 FOR INSERT
 TO authenticated
-WITH CHECK (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())));
+WITH CHECK (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (SELECT auth.uid())));
 
 CREATE POLICY "Authenticated user can update"
 ON public.workout_exercises
 FOR UPDATE
 TO authenticated
-USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())))
-WITH CHECK (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())));
+USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (SELECT auth.uid())))
+WITH CHECK (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (SELECT auth.uid())));
 
 CREATE POLICY "Authenticated user can delete"
 ON public.workout_exercises
 FOR DELETE
 TO authenticated
-USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (select auth.uid())));
+USING (workout_id IN (SELECT id FROM public.workouts WHERE user_id = (SELECT auth.uid())));
 
 -- workout_result_exercise_results
 ALTER TABLE public.workout_result_exercise_results ENABLE ROW LEVEL SECURITY;
@@ -406,26 +406,26 @@ CREATE POLICY "Authenticated user can select"
 ON public.workout_result_exercise_results
 FOR SELECT
 TO authenticated
-USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
+USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (SELECT auth.uid())));
 
 CREATE POLICY "Authenticated user can insert"
 ON public.workout_result_exercise_results
 FOR INSERT
 TO authenticated
-WITH CHECK (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
+WITH CHECK (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (SELECT auth.uid())));
 
 CREATE POLICY "Authenticated user can update"
 ON public.workout_result_exercise_results
 FOR UPDATE
 TO authenticated
-USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())))
-WITH CHECK (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
+USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (SELECT auth.uid())))
+WITH CHECK (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (SELECT auth.uid())));
 
 CREATE POLICY "Authenticated user can delete"
 ON public.workout_result_exercise_results
 FOR DELETE
 TO authenticated
-USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (select auth.uid())));
+USING (workout_result_id IN (SELECT id FROM public.workout_results WHERE user_id = (SELECT auth.uid())));
 
 --
 -- Functions
@@ -447,7 +447,7 @@ BEGIN
   INTO workout
   FROM public.workouts w
   WHERE w.id = w_id
-  AND w.user_id = auth.uid();
+  AND w.user_id = (SELECT auth.uid());
 
   -- exercises
   SELECT COALESCE(jsonb_agg(jsonb_build_object('id', e.id, 'name', e.name) ORDER BY we.position), '[]'::jsonb)
@@ -532,7 +532,7 @@ BEGIN
       created_at = w_created_at,
       schedule = w_schedule
   WHERE id = w_id
-  AND user_id = auth.uid();
+  AND user_id = (SELECT auth.uid());
 
   -- Remove existing workout_exercises
   DELETE FROM public.workout_exercises WHERE workout_id = w_id;
@@ -565,14 +565,14 @@ BEGIN
   INTO exercise
   FROM public.exercises e
   WHERE e.id = e_id
-  AND e.user_id = auth.uid();
+  AND e.user_id = (SELECT auth.uid());
 
   -- Count of exercise results
   SELECT COUNT(*)
   INTO total_results
   FROM public.exercise_results er
   WHERE er.exercise_id = e_id
-  AND er.user_id = auth.uid();
+  AND er.user_id = (SELECT auth.uid());
 
   -- List of workouts that use this exercise
   SELECT COALESCE(jsonb_agg(jsonb_build_object('id', w.id, 'name', w.name)), '[]'::jsonb)
@@ -580,7 +580,7 @@ BEGIN
   FROM public.workout_exercises we
   JOIN public.workouts w ON w.id = we.workout_id
   WHERE we.exercise_id = e_id
-  AND w.user_id = auth.uid();
+  AND w.user_id = (SELECT auth.uid());
 
   RETURN jsonb_build_object(
     'exercise', exercise,
@@ -633,7 +633,7 @@ BEGIN
       rest_timer = e_rest_timer,
       initial_sets = e_initial_sets
   WHERE id = e_id
-  AND user_id = auth.uid();
+  AND user_id = (SELECT auth.uid());
 END;
 $$;
 

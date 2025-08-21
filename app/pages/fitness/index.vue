@@ -19,12 +19,8 @@ const finishedLoading = ref(false)
 // TODO: Need a better setup for realtime data updates
 const channel = supabase
   .channel('public.workouts')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts' }, async (payload) => {
-    logger.info('Received real-time update for todays_workouts', payload)
-    const { data, error } = await supabase
-      .from('todays_workouts')
-      .select('*')
-      .order('name', { ascending: true })
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts' }, async () => {
+    const { data, error } = await supabase.from('todays_workouts').select()
     if (error) throw error
 
     todaysWorkouts.value = data
@@ -35,10 +31,7 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase
-      .from('todays_workouts')
-      .select('*')
-      .order('name', { ascending: true })
+    const { data, error } = await supabase.from('todays_workouts').select()
 
     if (error) throw error
 

@@ -487,9 +487,9 @@ export type Database = {
       todays_workouts: {
         Row: {
           id: string | null
+          is_active: boolean | null
           last_created_at: string | null
           last_duration_seconds: number | null
-          last_is_active: boolean | null
           last_note: string | null
           name: string | null
         }

@@ -6,6 +6,7 @@ import {
   editIcon,
   inspectIcon,
   noteIcon,
+  refreshIcon,
   startIcon,
 } from '#shared/constants'
 import type { TodaysWorkout } from '#shared/types/fitness-schemas'
@@ -26,10 +27,10 @@ async function onStart(id: IdType) {
   router.push(`/fitness/${id}`)
 }
 
-// async function onResume(id: IdType) {
-//   console.log('Resume Workout clicked')
-//   router.push(`/fitness/${id}`)
-// }
+async function onResume(id: IdType) {
+  console.log('Resume Workout clicked')
+  router.push(`/fitness/${id}`)
+}
 </script>
 
 <template>
@@ -80,7 +81,11 @@ async function onStart(id: IdType) {
                     <QItemSection>Inspect</QItemSection>
                   </QItem>
 
-                  <QItem clickable @click="openEditWorkout(todaysWorkout.id!)">
+                  <QItem
+                    clickable
+                    :disable="!!todaysWorkout?.is_active"
+                    @click="openEditWorkout(todaysWorkout.id!)"
+                  >
                     <QItemSection avatar>
                       <QIcon color="amber" :name="editIcon" />
                     </QItemSection>
@@ -88,7 +93,11 @@ async function onStart(id: IdType) {
                     <QItemSection>Edit</QItemSection>
                   </QItem>
 
-                  <QItem clickable @click="openDeleteWorkout(todaysWorkout.id!)">
+                  <QItem
+                    clickable
+                    :disable="!!todaysWorkout?.is_active"
+                    @click="openDeleteWorkout(todaysWorkout.id!)"
+                  >
                     <QItemSection avatar>
                       <QIcon color="negative" :name="deleteIcon" />
                     </QItemSection>
@@ -116,6 +125,15 @@ async function onStart(id: IdType) {
         <QItem>
           <QItemSection>
             <QBtn
+              v-if="!!todaysWorkout?.is_active"
+              class="full-width q-mb-sm"
+              :icon="refreshIcon"
+              label="Resume Workout"
+              color="positive"
+              @click="onResume(todaysWorkout.id!)"
+            />
+            <QBtn
+              v-else
               class="full-width q-mb-sm"
               :icon="startIcon"
               label="Start Workout"

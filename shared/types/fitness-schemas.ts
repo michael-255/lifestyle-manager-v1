@@ -45,7 +45,6 @@ export const inspectWorkoutResponseSchema = z.object({
       finished_at: finishedAtSchema.nullable(),
       duration_seconds: z.number().nullable(),
       note: textAreaSchema.nullable(),
-      is_active: z.boolean(),
     })
     .nullable(), // could be null if no previous workout results
 })
