@@ -181,8 +181,8 @@ WITH (security_invoker=on)
 AS
 SELECT
   id AS value,
-  name || ' (' || LEFT(id::text, 4) || '*' || ')' AS label
-  disable BOOLEAN DEFAULT FALSE
+  name || ' (' || LEFT(id::text, 4) || '*' || ')' AS label,
+  is_active AS disable
 FROM public.exercises
 WHERE user_id = auth.uid();
 

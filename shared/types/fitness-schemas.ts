@@ -28,6 +28,7 @@ export const inspectWorkoutResponseSchema = z.object({
     name: textLabelSchema,
     description: textAreaSchema.nullable(),
     schedule: z.array(workoutScheduleSchema).nullable(),
+    is_active: z.boolean(),
   }),
   exercises: z
     .array(
@@ -70,6 +71,7 @@ export const inspectExerciseResponseSchema = z.object({
     type: exerciseTypeSchema,
     checklist_labels: z.array(z.string()).nullable(),
     initial_sets: z.number().nullable(),
+    is_active: z.boolean(),
   }),
   total_results: z.number().nullable(),
   workouts_used: z

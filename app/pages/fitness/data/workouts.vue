@@ -41,6 +41,7 @@ const tableColumns = [
   tableColumn('schedule', 'Schedule', 'LIST-PRINT'),
   tableColumn('exercise_count', 'Exercises Used', 'NUMBER'),
   tableColumn('workout_result_count', 'Total Results', 'NUMBER'),
+  tableColumn('is_active', 'Active Workout', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))

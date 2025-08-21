@@ -48,5 +48,6 @@ onMounted(async () => {
     <DialogSharedInspectText label="Initial Sets" :value="exercise.initial_sets" />
     <DialogSharedInspectText label="Total Results" :value="totalResults" />
     <DialogSharedInspectObjectList label="Workouts Used" :value="workoutsUsed" />
+    <DialogSharedInspectBoolean label="Active Workout" :value="exercise.is_active" />
   </DialogInspect>
 </template>

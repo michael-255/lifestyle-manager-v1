@@ -96,6 +96,7 @@ export type Database = {
           created_at: string
           exercise_id: string
           id: string
+          is_active: boolean
           note: string | null
           user_id: string
         }
@@ -103,6 +104,7 @@ export type Database = {
           created_at?: string
           exercise_id: string
           id?: string
+          is_active?: boolean
           note?: string | null
           user_id?: string
         }
@@ -110,6 +112,7 @@ export type Database = {
           created_at?: string
           exercise_id?: string
           id?: string
+          is_active?: boolean
           note?: string | null
           user_id?: string
         }
@@ -144,6 +147,7 @@ export type Database = {
           description: string | null
           id: string
           initial_sets: number | null
+          is_active: boolean
           name: string
           rest_timer: number | null
           type: Database["public"]["Enums"]["exercise_type"]
@@ -155,6 +159,7 @@ export type Database = {
           description?: string | null
           id?: string
           initial_sets?: number | null
+          is_active?: boolean
           name: string
           rest_timer?: number | null
           type: Database["public"]["Enums"]["exercise_type"]
@@ -166,6 +171,7 @@ export type Database = {
           description?: string | null
           id?: string
           initial_sets?: number | null
+          is_active?: boolean
           name?: string
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"]
@@ -338,6 +344,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          is_active: boolean
           name: string
           schedule:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -348,6 +355,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_active?: boolean
           name: string
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -358,6 +366,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_active?: boolean
           name?: string
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -370,14 +379,17 @@ export type Database = {
     Views: {
       exercise_options: {
         Row: {
+          disable: boolean | null
           label: string | null
           value: string | null
         }
         Insert: {
+          disable?: boolean | null
           label?: never
           value?: string | null
         }
         Update: {
+          disable?: boolean | null
           label?: never
           value?: string | null
         }
@@ -390,6 +402,7 @@ export type Database = {
           exercise_name: string | null
           exercise_type: Database["public"]["Enums"]["exercise_type"] | null
           id: string | null
+          is_active: boolean | null
           note: string | null
           user_id: string | null
         }
@@ -425,6 +438,7 @@ export type Database = {
           exercise_result_count: number | null
           id: string | null
           initial_sets: number | null
+          is_active: boolean | null
           name: string | null
           rest_timer: number | null
           type: Database["public"]["Enums"]["exercise_type"] | null
@@ -438,6 +452,7 @@ export type Database = {
           exercise_result_count?: never
           id?: string | null
           initial_sets?: number | null
+          is_active?: boolean | null
           name?: string | null
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"] | null
@@ -451,6 +466,7 @@ export type Database = {
           exercise_result_count?: never
           id?: string | null
           initial_sets?: number | null
+          is_active?: boolean | null
           name?: string | null
           rest_timer?: number | null
           type?: Database["public"]["Enums"]["exercise_type"] | null
@@ -521,6 +537,7 @@ export type Database = {
           description: string | null
           exercise_count: number | null
           id: string | null
+          is_active: boolean | null
           name: string | null
           schedule:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -533,6 +550,7 @@ export type Database = {
           description?: string | null
           exercise_count?: never
           id?: string | null
+          is_active?: boolean | null
           name?: string | null
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]
@@ -545,6 +563,7 @@ export type Database = {
           description?: string | null
           exercise_count?: never
           id?: string | null
+          is_active?: boolean | null
           name?: string | null
           schedule?:
             | Database["public"]["Enums"]["workout_schedule_type"][]

@@ -14,12 +14,14 @@ recordStore.record = {
 }
 
 async function onSubmit() {
+  const exerciseIds = recordStore.record.exercises?.map((id: string) => id) || []
+
   const { error } = await supabase.rpc('create_workout', {
     w_name: recordStore.record.name,
     w_description: recordStore.record.description,
     w_created_at: recordStore.record.created_at,
     w_schedule: recordStore.record.schedule,
-    w_exercise_ids: recordStore.record.exercises.map((id: string) => id),
+    w_exercise_ids: exerciseIds,
   })
   if (error) throw error
 

@@ -45,5 +45,6 @@ onMounted(async () => {
     <DialogSharedInspectList label="Schedule" :value="workout.schedule" />
     <DialogSharedInspectObject label="Last Workout" :value="lastWorkoutResult" />
     <DialogSharedInspectObjectList label="Exercises" :value="exercises" />
+    <DialogSharedInspectBoolean label="Active Workout" :value="workout.is_active" />
   </DialogInspect>
 </template>
