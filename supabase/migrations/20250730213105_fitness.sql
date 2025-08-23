@@ -713,9 +713,8 @@ AS $$
 DECLARE
   workout_data JSONB;
   exercises_data JSONB;
-  new_workout_result_id UUID;
-  new_exercise_result_ids UUID[];
-  new_exercise_result_id UUID;
+  workout_result_data JSONB;
+  exercise_results_data JSONB;
 BEGIN
   -- Fetch workout
   SELECT to_jsonb(w)
@@ -730,17 +729,17 @@ BEGIN
   JOIN public.exercises e ON e.id = we.exercise_id
   WHERE we.workout_id = w_id;
 
-  -- Fetch associated workout result
-  SELECT wr.id
-  INTO new_workout_result_id
+  -- Fetch associated workout result (full row)
+  SELECT to_jsonb(wr)
+  INTO workout_result_data
   FROM public.workout_results wr
   WHERE wr.workout_id = w_id
   AND wr.is_active = TRUE
   LIMIT 1;
 
-  -- Fetch assoicated exercise results
-  SELECT array_agg(er.id)
-  INTO new_exercise_result_ids
+  -- Fetch associated exercise results (full rows)
+  SELECT COALESCE(jsonb_agg(to_jsonb(er)), '[]'::jsonb)
+  INTO exercise_results_data
   FROM public.exercise_results er
   WHERE er.exercise_id IN (SELECT (exercises_data->i->>'id')::UUID FROM generate_series(0, jsonb_array_length(exercises_data) - 1) AS i)
   AND er.is_active = TRUE;
@@ -748,8 +747,8 @@ BEGIN
   RETURN jsonb_build_object(
     'workout', workout_data,
     'exercises', exercises_data,
-    'new_workout_result_id', new_workout_result_id,
-    'new_exercise_result_ids', new_exercise_result_ids
+    'workout_result', workout_result_data,
+    'exercise_results', exercise_results_data
   );
 END;
 $$;

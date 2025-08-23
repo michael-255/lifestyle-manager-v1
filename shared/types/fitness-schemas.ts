@@ -105,8 +105,21 @@ export const getActiveWorkoutResponseSchema = z.object({
       is_active: z.boolean(),
     }),
   ),
-  new_workout_result_id: idSchema.nullable(), // could be null if no active workout
-  new_exercise_result_ids: z.array(idSchema).nullable(), // could be null if no active workout
+  workout_result: z.object({
+    id: idSchema,
+    created_at: timestampzSchema,
+    finished_at: finishedAtSchema.nullable(),
+    note: textAreaSchema.nullable(),
+    is_active: z.boolean(),
+  }),
+  exercise_results: z.array(
+    z.object({
+      id: idSchema,
+      created_at: timestampzSchema,
+      note: textAreaSchema.nullable(),
+      is_active: z.boolean(),
+    }),
+  ),
 })
 
 export type GetActiveWorkoutResponse = z.infer<typeof getActiveWorkoutResponseSchema>

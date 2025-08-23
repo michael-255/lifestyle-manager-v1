@@ -7,8 +7,8 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 ### General
 
 - Use a view to get the counts for reminder notifications on apps
-- Implement the Active Workout footer timer component
 - Work on active workout exercise components
+  - Consider moving checklist labels and cardio fields directly on Exercise results
 
 ### Exercise Result
 

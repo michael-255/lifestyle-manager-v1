@@ -42,6 +42,7 @@ import {
   symRoundedStat2,
   symRoundedStickyNote2,
   symRoundedStorage,
+  symRoundedTimer,
   symRoundedTune,
   symRoundedViewWeek,
   symRoundedWarning,
@@ -147,4 +148,5 @@ export const calendarCheckIcon = symRoundedEventAvailable
 export const calendarClearIcon = symRoundedEventBusy
 export const calendarScheduleIcon = symRoundedCalendarMonth
 export const scheduleTimeIcon = symRoundedSchedule
+export const timerIcon = symRoundedTimer
 export const verticalDotMenuIcon = symRoundedMoreVert

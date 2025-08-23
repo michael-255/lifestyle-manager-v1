@@ -207,8 +207,8 @@ export function localPickerDate(utcDate: string): string {
 }
 
 /**
- * Converts a duration in seconds to a human-readable string.
- * @param duration Duration in seconds
+ * Converts a duration in milliseconds to a human-readable string.
+ * @param duration Duration in milliseconds
  * @returns
  */
 export function timeFromDuration(duration: number): string {
@@ -216,10 +216,11 @@ export function timeFromDuration(duration: number): string {
     return ''
   }
 
-  const seconds = Math.floor(duration % 60)
-  const minutes = Math.floor((duration / 60) % 60)
-  const hours = Math.floor((duration / 3600) % 24)
-  const days = Math.floor(duration / 86400)
+  const totalSeconds = Math.floor(duration / 1000)
+  const seconds = totalSeconds % 60
+  const minutes = Math.floor(totalSeconds / 60) % 60
+  const hours = Math.floor(totalSeconds / 3600) % 24
+  const days = Math.floor(totalSeconds / 86400)
 
   const daysStr = days > 0 ? `${days}d ` : ''
   const hoursStr = hours > 0 ? `${hours}h ` : ''

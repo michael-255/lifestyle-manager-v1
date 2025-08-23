@@ -28,6 +28,7 @@ onMounted(async () => {
     const res = getActiveWorkoutResponseSchema.parse(data)
 
     workoutStore.name = res.workout.name
+    workoutStore.workoutResultCreatedAt = res.workout_result.created_at
   } catch (error) {
     logger.error('Error starting active workout', error as Error)
     router.push('/fitness')

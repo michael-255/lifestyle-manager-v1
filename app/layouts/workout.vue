@@ -1,7 +1,30 @@
 <script setup lang="ts">
-import { closeIcon } from '#shared/constants'
+import { closeIcon, timerIcon } from '#shared/constants'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const workoutStore = useWorkoutStore()
+
+const elapsedTime = ref('')
+let timer: number | undefined
+
+const startTime = computed(() => {
+  return workoutStore.workoutResultCreatedAt
+    ? new Date(workoutStore.workoutResultCreatedAt).getTime()
+    : Date.now()
+})
+
+function updateElapsedTime() {
+  elapsedTime.value = timeFromDuration(Date.now() - startTime.value)
+}
+
+onMounted(() => {
+  updateElapsedTime()
+  timer = window.setInterval(updateElapsedTime, 1000)
+})
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
 </script>
 
 <template>
@@ -14,6 +37,15 @@ const workoutStore = useWorkoutStore()
     </QHeader>
 
     <LayoutContainer />
+
+    <QFooter bordered>
+      <QToolbar>
+        <QSpace />
+        <QIcon :name="timerIcon" size="sm" class="q-mr-sm" />
+        <div class="text-h6">{{ elapsedTime }}</div>
+        <QSpace />
+      </QToolbar>
+    </QFooter>
   </QLayout>
 </template>
 
