@@ -13,10 +13,6 @@ export type ExerciseResult = Database['public']['Tables']['exercise_results']['R
 
 export type WorkoutSchedule = Database['public']['Enums']['workout_schedule_type']
 
-export type ExerciseType = Database['public']['Enums']['exercise_type']
-
-export const exerciseTypeSchema = z.enum(Constants.public.Enums.exercise_type)
-
 export const finishedAtSchema = timestampzSchema.optional()
 export const workoutScheduleSchema = z.enum(Constants.public.Enums.workout_schedule_type)
 
@@ -65,9 +61,7 @@ export const inspectExerciseResponseSchema = z.object({
     name: textLabelSchema,
     description: textAreaSchema.nullable(),
     rest_timer: z.number().nullable(),
-    type: exerciseTypeSchema,
-    checklist_labels: z.array(z.string()).nullable(),
-    initial_sets: z.number().nullable(),
+    checklist: z.array(z.string()).nullable(),
     is_active: z.boolean(),
   }),
   total_results: z.number().nullable(),
@@ -99,9 +93,7 @@ export const getActiveWorkoutResponseSchema = z.object({
       name: textLabelSchema,
       description: textAreaSchema.nullable(),
       rest_timer: z.number().nullable(),
-      type: exerciseTypeSchema,
-      checklist_labels: z.array(z.string()).nullable(),
-      initial_sets: z.number().nullable(),
+      checklist: z.array(z.string()).nullable(),
       is_active: z.boolean(),
     }),
   ),

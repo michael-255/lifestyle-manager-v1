@@ -42,9 +42,7 @@ onMounted(async () => {
     <DialogSharedInspectText label="Name" :value="exercise.name" />
     <DialogSharedInspectText label="Description" :value="exercise.description" />
     <DialogSharedInspectText label="Rest Timer" :value="exercise.rest_timer" />
-    <DialogSharedInspectText label="Type" :value="exercise.type" />
-    <DialogSharedInspectList label="Checklist Labels" :value="exercise.checklist_labels" />
-    <DialogSharedInspectText label="Initial Sets" :value="exercise.initial_sets" />
+    <DialogSharedInspectList label="Checklist" :value="exercise.checklist" />
     <DialogSharedInspectText label="Total Results" :value="totalResults" />
     <DialogSharedInspectObjectList label="Workouts Used" :value="workoutsUsed" />
     <DialogSharedInspectBoolean label="Active Workout" :value="exercise.is_active" />

@@ -6,9 +6,10 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ### General
 
-- Use a view to get the counts for reminder notifications on apps
-- Work on active workout exercise components
-  - Consider moving checklist labels and cardio fields directly on Exercise results
+- Build `Exercise Result` EDIT dialog
+- Build `Workout Result` EDIT dialog
+- Build `Active Workout` page
+- (Post completion) Use a view to get the counts for reminder notifications on apps
 
 ### Exercise Result
 
@@ -19,10 +20,7 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 - ~~`item-parent-exercise.vue`~~ (cant't edit parent once created)
 - [@] `item-created-date.vue`
 - [@] `item-note.vue`
-- [ ] `item-exercise-data.vue` (may break this up into multiple components)
-  - [ ] `item-exercise-data-checklist.vue`
-  - [ ] `item-exercise-data-weightlifting.vue`
-  - [ ] `item-exercise-data-sided-weightlifting.vue`
+- [ ] `item-exercise-checked.vue`
 
 #### RPC Functions
 

@@ -36,7 +36,7 @@ async function onSubmit() {
     e_name: recordStore.record.name,
     e_description: recordStore.record.description,
     e_rest_timer: recordStore.record.rest_timer,
-    e_initial_sets: recordStore.record.initial_sets,
+    e_checklist: recordStore.record.checklist,
   })
   if (error) throw error
 
@@ -50,8 +50,6 @@ async function onSubmit() {
     <DialogSharedFormDescription />
     <DialogSharedFormCreatedDate />
     <DialogFitnessFormRestTimer />
-    <DialogFitnessFormExerciseType />
-    <DialogFitnessFormChecklistLabels />
-    <DialogFitnessFormInitialSets />
+    <DialogFitnessFormExerciseChecklist />
   </DialogEdit>
 </template>

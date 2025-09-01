@@ -2,15 +2,6 @@
 -- ENUMS
 --
 
-CREATE TYPE public.exercise_type AS ENUM (
-    'Checklist',
-    'Cardio',
-    'Weightlifting',
-    'Sided Weightlifting'
-);
-
-COMMENT ON TYPE public.exercise_type IS 'Type of exercise, used to determine what the user can record.';
-
 CREATE TYPE public.workout_schedule_type AS ENUM (
     -- By Time
     'Daily',
@@ -38,41 +29,22 @@ CREATE TABLE public.exercises (
     name TEXT NOT NULL,
     description TEXT,
     rest_timer INTEGER DEFAULT 0, -- Seconds
-    type public.exercise_type NOT NULL,
-    checklist_labels TEXT[], -- Checklist: Ordered list of labels
-    initial_sets INTEGER, -- Weightlifting and Sided Weightlifting
+    checklist TEXT[],
     is_active BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-COMMENT ON TABLE public.exercises IS 'Stores exercises with rows for each exercise type data.';
+COMMENT ON TABLE public.exercises IS 'Stores exercises with their details.';
 
 CREATE TABLE public.exercise_results (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     exercise_id UUID NOT NULL REFERENCES public.exercises(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
+    checked BOOLEAN[] DEFAULT ARRAY[]::BOOLEAN[],
     note TEXT,
     is_active BOOLEAN NOT NULL DEFAULT FALSE
-    -- exercise_result_items
 );
 
-COMMENT ON TABLE public.exercise_results IS 'Stores individual exercise results with rows for each exercise type data.';
-
-CREATE TABLE public.exercise_result_item (
-    exercise_result_id UUID NOT NULL REFERENCES public.exercise_results(id) ON DELETE CASCADE,
-    position INTEGER NOT NULL,
-    is_checked BOOLEAN,         -- Checklist
-    duration_seconds INTEGER,   -- Cardio
-    calories INTEGER,           -- Cardio
-    reps INTEGER,               -- Weightlifting
-    weight NUMERIC,             -- Weightlifting
-    left_reps INTEGER,          -- Sided Weightlifting
-    left_weight NUMERIC,        -- Sided Weightlifting
-    right_reps INTEGER,         -- Sided Weightlifting
-    right_weight NUMERIC,       -- Sided Weightlifting
-    PRIMARY KEY (exercise_result_id, position)
-);
-
-COMMENT ON TABLE public.exercise_result_item IS 'Stores individual items for exercise results, supporting all exercise types.';
+COMMENT ON TABLE public.exercise_results IS 'Stores individual exercise results with status and notes.';
 
 -- WORKOUTS
 CREATE TABLE public.workouts (
@@ -222,8 +194,7 @@ WITH (security_invoker=on)
 AS
 SELECT
   er.*,
-  e.name AS exercise_name,
-  e.type AS exercise_type
+  e.name AS exercise_name
 FROM public.exercise_results er
 JOIN public.exercises e
 ON e.id = er.exercise_id;
@@ -584,9 +555,7 @@ CREATE OR REPLACE FUNCTION public.create_exercise(
   e_description TEXT,
   e_created_at TIMESTAMPTZ,
   e_rest_timer INTEGER,
-  e_type public.exercise_type,
-  e_checklist_labels TEXT[],
-  e_initial_sets INTEGER
+  e_checklist TEXT[]
 )
 RETURNS void
 LANGUAGE plpgsql
@@ -594,19 +563,19 @@ SET search_path = ''
 AS $$
 BEGIN
   -- Insert exercise
-  INSERT INTO public.exercises (name, description, created_at, rest_timer, type, checklist_labels, initial_sets)
-  VALUES (e_name, e_description, e_created_at, e_rest_timer, e_type, e_checklist_labels, e_initial_sets);
+  INSERT INTO public.exercises (name, description, created_at, rest_timer, checklist)
+  VALUES (e_name, e_description, e_created_at, e_rest_timer, e_checklist);
 END;
 $$;
 
-COMMENT ON FUNCTION public.create_exercise(e_name TEXT, e_description TEXT, e_created_at TIMESTAMPTZ, e_rest_timer INTEGER, e_type public.exercise_type, e_checklist_labels TEXT[], e_initial_sets INTEGER) IS 'Function creates an exercise with the provided details.';
+COMMENT ON FUNCTION public.create_exercise(e_name TEXT, e_description TEXT, e_created_at TIMESTAMPTZ, e_rest_timer INTEGER, e_checklist TEXT[]) IS 'Function creates an exercise with the provided details.';
 
 CREATE OR REPLACE FUNCTION public.edit_exercise(
   e_id UUID,
   e_name TEXT,
   e_description TEXT,
   e_rest_timer INTEGER,
-  e_initial_sets INTEGER
+  e_checklist TEXT[]
 )
 RETURNS void
 LANGUAGE plpgsql
@@ -618,12 +587,12 @@ BEGIN
   SET name = e_name,
       description = e_description,
       rest_timer = e_rest_timer,
-      initial_sets = e_initial_sets
+      checklist = e_checklist
   WHERE id = e_id;
 END;
 $$;
 
-COMMENT ON FUNCTION public.edit_exercise(e_id UUID, e_name TEXT, e_description TEXT, e_rest_timer INTEGER, e_initial_sets INTEGER) IS 'Function updates an exercise with the provided details.';
+COMMENT ON FUNCTION public.edit_exercise(e_id UUID, e_name TEXT, e_description TEXT, e_rest_timer INTEGER, e_checklist TEXT[]) IS 'Function updates an exercise with the provided details.';
 
 -- inspect_workout_result
 

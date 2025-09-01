@@ -10,30 +10,16 @@ recordStore.record = {
   description: '',
   created_at: new Date().toISOString(),
   rest_timer: 0,
-  type: null,
-  checklist_labels: null,
-  initial_sets: null,
+  checklist: null,
 }
 
 async function onSubmit() {
-  const exerciseType: ExerciseType = recordStore.record.type
-
-  if (exerciseType !== 'Checklist') {
-    recordStore.record.checklist_labels = null
-  }
-
-  if (exerciseType !== 'Weightlifting' && exerciseType !== 'Sided Weightlifting') {
-    recordStore.record.initial_sets = null
-  }
-
   const { error } = await supabase.rpc('create_exercise', {
     e_name: recordStore.record.name,
     e_description: recordStore.record.description,
     e_created_at: recordStore.record.created_at,
     e_rest_timer: recordStore.record.rest_timer,
-    e_type: recordStore.record.type,
-    e_checklist_labels: recordStore.record.checklist_labels,
-    e_initial_sets: recordStore.record.initial_sets,
+    e_checklist: recordStore.record.checklist,
   })
   if (error) throw error
 
@@ -47,8 +33,6 @@ async function onSubmit() {
     <DialogSharedFormDescription />
     <DialogSharedFormCreatedDate />
     <DialogFitnessFormRestTimer />
-    <DialogFitnessFormExerciseType />
-    <DialogFitnessFormChecklistLabels />
-    <DialogFitnessFormInitialSets />
+    <DialogFitnessFormExerciseChecklist />
   </DialogCreate>
 </template>

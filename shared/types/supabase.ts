@@ -34,65 +34,9 @@ export type Database = {
   }
   public: {
     Tables: {
-      exercise_result_item: {
-        Row: {
-          calories: number | null
-          duration_seconds: number | null
-          exercise_result_id: string
-          is_checked: boolean | null
-          left_reps: number | null
-          left_weight: number | null
-          position: number
-          reps: number | null
-          right_reps: number | null
-          right_weight: number | null
-          weight: number | null
-        }
-        Insert: {
-          calories?: number | null
-          duration_seconds?: number | null
-          exercise_result_id: string
-          is_checked?: boolean | null
-          left_reps?: number | null
-          left_weight?: number | null
-          position: number
-          reps?: number | null
-          right_reps?: number | null
-          right_weight?: number | null
-          weight?: number | null
-        }
-        Update: {
-          calories?: number | null
-          duration_seconds?: number | null
-          exercise_result_id?: string
-          is_checked?: boolean | null
-          left_reps?: number | null
-          left_weight?: number | null
-          position?: number
-          reps?: number | null
-          right_reps?: number | null
-          right_weight?: number | null
-          weight?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercise_result_item_exercise_result_id_fkey"
-            columns: ["exercise_result_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_results"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "exercise_result_item_exercise_result_id_fkey"
-            columns: ["exercise_result_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_results_table"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       exercise_results: {
         Row: {
+          checked: boolean[] | null
           created_at: string
           exercise_id: string
           id: string
@@ -100,6 +44,7 @@ export type Database = {
           note: string | null
         }
         Insert: {
+          checked?: boolean[] | null
           created_at?: string
           exercise_id: string
           id?: string
@@ -107,6 +52,7 @@ export type Database = {
           note?: string | null
         }
         Update: {
+          checked?: boolean[] | null
           created_at?: string
           exercise_id?: string
           id?: string
@@ -139,37 +85,31 @@ export type Database = {
       }
       exercises: {
         Row: {
-          checklist_labels: string[] | null
+          checklist: string[] | null
           created_at: string
           description: string | null
           id: string
-          initial_sets: number | null
           is_active: boolean
           name: string
           rest_timer: number | null
-          type: Database["public"]["Enums"]["exercise_type"]
         }
         Insert: {
-          checklist_labels?: string[] | null
+          checklist?: string[] | null
           created_at?: string
           description?: string | null
           id?: string
-          initial_sets?: number | null
           is_active?: boolean
           name: string
           rest_timer?: number | null
-          type: Database["public"]["Enums"]["exercise_type"]
         }
         Update: {
-          checklist_labels?: string[] | null
+          checklist?: string[] | null
           created_at?: string
           description?: string | null
           id?: string
-          initial_sets?: number | null
           is_active?: boolean
           name?: string
           rest_timer?: number | null
-          type?: Database["public"]["Enums"]["exercise_type"]
         }
         Relationships: []
       }
@@ -385,10 +325,10 @@ export type Database = {
       }
       exercise_results_table: {
         Row: {
+          checked: boolean[] | null
           created_at: string | null
           exercise_id: string | null
           exercise_name: string | null
-          exercise_type: Database["public"]["Enums"]["exercise_type"] | null
           id: string | null
           is_active: boolean | null
           note: string | null
@@ -419,42 +359,36 @@ export type Database = {
       }
       exercises_table: {
         Row: {
-          checklist_labels: string[] | null
+          checklist: string[] | null
           created_at: string | null
           description: string | null
           exercise_result_count: number | null
           id: string | null
-          initial_sets: number | null
           is_active: boolean | null
           name: string | null
           rest_timer: number | null
-          type: Database["public"]["Enums"]["exercise_type"] | null
           workout_count: number | null
         }
         Insert: {
-          checklist_labels?: string[] | null
+          checklist?: string[] | null
           created_at?: string | null
           description?: string | null
           exercise_result_count?: never
           id?: string | null
-          initial_sets?: number | null
           is_active?: boolean | null
           name?: string | null
           rest_timer?: number | null
-          type?: Database["public"]["Enums"]["exercise_type"] | null
           workout_count?: never
         }
         Update: {
-          checklist_labels?: string[] | null
+          checklist?: string[] | null
           created_at?: string | null
           description?: string | null
           exercise_result_count?: never
           id?: string | null
-          initial_sets?: number | null
           is_active?: boolean | null
           name?: string | null
           rest_timer?: number | null
-          type?: Database["public"]["Enums"]["exercise_type"] | null
           workout_count?: never
         }
         Relationships: []
@@ -557,13 +491,11 @@ export type Database = {
     Functions: {
       create_exercise: {
         Args: {
-          e_checklist_labels: string[]
+          e_checklist: string[]
           e_created_at: string
           e_description: string
-          e_initial_sets: number
           e_name: string
           e_rest_timer: number
-          e_type: Database["public"]["Enums"]["exercise_type"]
         }
         Returns: undefined
       }
@@ -579,9 +511,9 @@ export type Database = {
       }
       edit_exercise: {
         Args: {
+          e_checklist: string[]
           e_description: string
           e_id: string
-          e_initial_sets: number
           e_name: string
           e_rest_timer: number
         }
@@ -624,11 +556,6 @@ export type Database = {
       }
     }
     Enums: {
-      exercise_type:
-        | "Checklist"
-        | "Cardio"
-        | "Weightlifting"
-        | "Sided Weightlifting"
       workout_schedule_type:
         | "Daily"
         | "Weekly"
@@ -769,12 +696,6 @@ export const Constants = {
   },
   public: {
     Enums: {
-      exercise_type: [
-        "Checklist",
-        "Cardio",
-        "Weightlifting",
-        "Sided Weightlifting",
-      ],
       workout_schedule_type: [
         "Daily",
         "Weekly",
