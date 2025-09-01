@@ -599,6 +599,34 @@ COMMENT ON FUNCTION public.edit_exercise(e_id UUID, e_name TEXT, e_description T
 -- edit_workout_result
 
 -- inspect_exercise_result
+CREATE OR REPLACE FUNCTION public.inspect_exercise_result(er_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  exercise_result JSONB;
+  exercise JSONB;
+BEGIN
+  -- exercise_result
+  SELECT to_jsonb(er)
+  INTO exercise_result
+  FROM public.exercise_results er
+  WHERE er.id = er_id;
+
+  -- exercise
+  SELECT to_jsonb(e)
+  INTO exercise
+  FROM public.exercises e
+  WHERE e.id = (exercise_result->>'exercise_id')::UUID;
+  RETURN jsonb_build_object(
+    'exercise_result', exercise_result,
+    'exercise', exercise
+  );
+END;
+$$;
+
+COMMENT ON FUNCTION public.inspect_exercise_result(er_id UUID) IS 'Function for inspect exercise result dialogs. Provides selection of all relevant data for an exercise result, including the associated exercise.';
 
 -- edit_exercise_result
 

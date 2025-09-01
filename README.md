@@ -6,6 +6,8 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ### General
 
+- Build `Inspect Exercise` Result dialog
+- Build `Inspect Workout` Result dialog
 - Build `Exercise Result` EDIT dialog
 - Build `Workout Result` EDIT dialog
 - Build `Active Workout` page

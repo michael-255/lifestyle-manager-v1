@@ -542,6 +542,10 @@ export type Database = {
         Args: { e_id: string }
         Returns: Json
       }
+      inspect_exercise_result: {
+        Args: { er_id: string }
+        Returns: Json
+      }
       inspect_workout: {
         Args: { w_id: string }
         Returns: Json
