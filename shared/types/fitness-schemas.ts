@@ -94,6 +94,25 @@ export const inspectExerciseResultResponseSchema = z.object({
 
 export type InspectExerciseResultResponse = z.infer<typeof inspectExerciseResultResponseSchema>
 
+export const inspectWorkoutResultResponseSchema = z.object({
+  workout_result: z.object({
+    id: idSchema,
+    created_at: timestampzSchema,
+    finished_at: finishedAtSchema.nullable(),
+    duration_seconds: z.number().nullable(),
+    note: textAreaSchema.nullable(),
+    is_active: z.boolean(),
+  }),
+  workout: z.object({
+    id: idSchema,
+    name: textLabelSchema,
+    description: textAreaSchema.nullable(),
+    schedule: z.array(workoutScheduleSchema).nullable(),
+  }),
+})
+
+export type InspectWorkoutResultResponse = z.infer<typeof inspectWorkoutResultResponseSchema>
+
 export const getActiveWorkoutResponseSchema = z.object({
   workout: z.object({
     id: idSchema,

@@ -28,7 +28,7 @@ onMounted(async () => {
     exerciseResult.value = res.exercise_result
     exercise.value = res.exercise
   } catch (error) {
-    logger.error('Error opening exercise inspect dialog', error as Error)
+    logger.error('Error opening exercise result inspect dialog', error as Error)
   } finally {
     isLoading.value = false
     $q.loading.hide()

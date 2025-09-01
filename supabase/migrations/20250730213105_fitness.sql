@@ -594,11 +594,43 @@ $$;
 
 COMMENT ON FUNCTION public.edit_exercise(e_id UUID, e_name TEXT, e_description TEXT, e_rest_timer INTEGER, e_checklist TEXT[]) IS 'Function updates an exercise with the provided details.';
 
--- inspect_workout_result
+CREATE OR REPLACE FUNCTION public.inspect_workout_result(wr_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+DECLARE
+  workout_result JSONB;
+  workout JSONB;
+BEGIN
+  -- workout_result
+  SELECT to_jsonb(wr) || jsonb_build_object(
+    'duration_seconds', CASE
+      WHEN wr.finished_at IS NOT NULL THEN EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at))::integer
+      ELSE NULL
+    END
+  )
+  INTO workout_result
+  FROM public.workout_results wr
+  WHERE wr.id = wr_id;
 
--- edit_workout_result
+  -- workout
+  SELECT to_jsonb(w)
+  INTO workout
+  FROM public.workouts w
+  WHERE w.id = (workout_result->>'workout_id')::UUID;
 
--- inspect_exercise_result
+  RETURN jsonb_build_object(
+    'workout_result', workout_result,
+    'workout', workout
+  );
+END;
+$$;
+
+COMMENT ON FUNCTION public.inspect_workout_result(wr_id UUID) IS 'Function for inspect workout result dialogs. Provides selection of all relevant data for a workout result, including the associated workout.';
+
+-- TODO: edit_workout_result
+
 CREATE OR REPLACE FUNCTION public.inspect_exercise_result(er_id UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
@@ -628,7 +660,7 @@ $$;
 
 COMMENT ON FUNCTION public.inspect_exercise_result(er_id UUID) IS 'Function for inspect exercise result dialogs. Provides selection of all relevant data for an exercise result, including the associated exercise.';
 
--- edit_exercise_result
+-- TODO: edit_exercise_result
 
 CREATE OR REPLACE FUNCTION public.start_workout(w_id UUID)
 RETURNS void

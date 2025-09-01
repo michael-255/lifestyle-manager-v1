@@ -8,8 +8,6 @@ const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 const recordStore = useRecordStore()
 
-const label = 'Workout'
-
 const isLoading = ref(true)
 
 onMounted(async () => {
@@ -51,7 +49,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <DialogEdit :label="label" :on-submit-handler="onSubmit" :is-loading>
+  <DialogEdit label="Workout" :on-submit-handler="onSubmit" :is-loading>
     <DialogSharedFormName />
     <DialogSharedFormDescription />
     <DialogSharedFormCreatedDate />

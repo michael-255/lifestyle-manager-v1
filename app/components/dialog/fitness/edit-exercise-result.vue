@@ -8,8 +8,6 @@ const logger = useLogger()
 // const supabase = useSupabaseClient<Database>()
 const recordStore = useRecordStore()
 
-const label = 'Exercise Result'
-
 const isLoading = ref(true)
 
 onMounted(async () => {
@@ -26,10 +24,13 @@ onMounted(async () => {
 })
 
 async function onSubmit() {
+  // TODO: implement
   logger.info('Exercise result updated', { id: props.id })
 }
 </script>
 
 <template>
-  <DialogEdit :label="label" :on-submit-handler="onSubmit" :is-loading> Pending... </DialogEdit>
+  <DialogEdit label="Exercise Result" :on-submit-handler="onSubmit" :is-loading>
+    Pending...
+  </DialogEdit>
 </template>

@@ -550,6 +550,10 @@ export type Database = {
         Args: { w_id: string }
         Returns: Json
       }
+      inspect_workout_result: {
+        Args: { wr_id: string }
+        Returns: Json
+      }
       replace_workout: {
         Args: { w_id: string }
         Returns: undefined
