@@ -629,7 +629,22 @@ $$;
 
 COMMENT ON FUNCTION public.inspect_workout_result(wr_id UUID) IS 'Function for inspect workout result dialogs. Provides selection of all relevant data for a workout result, including the associated workout.';
 
--- TODO: edit_workout_result
+CREATE OR REPLACE FUNCTION public.edit_workout_result(wr_id UUID, wr_created_at TIMESTAMPTZ, wr_finished_at TIMESTAMPTZ, wr_note TEXT)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  -- Update workout_result
+  UPDATE public.workout_results
+  SET note = wr_note,
+      created_at = wr_created_at,
+      finished_at = wr_finished_at
+  WHERE id = wr_id;
+END;
+$$;
+
+COMMENT ON FUNCTION public.edit_workout_result(wr_id UUID, wr_created_at TIMESTAMPTZ, wr_finished_at TIMESTAMPTZ, wr_note TEXT) IS 'Function updates a workout result with the provided details.';
 
 CREATE OR REPLACE FUNCTION public.inspect_exercise_result(er_id UUID)
 RETURNS JSONB
