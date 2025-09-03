@@ -4,6 +4,8 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
+`REFACTOR IN PROGRESS`
+
 ### General
 
 - Build `Active Workout` page
@@ -12,41 +14,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
   - Add note at end for the workout
 - Live querying of data so forced updates or page reloads are not necessary
 - (Post completion) Use a view to get the counts for reminder notifications on apps
-
-### Exercise Result
-
-#### Dialog Components
-
-`EDIT`
-
-- ~~`item-parent-exercise.vue`~~ (cant't edit parent once created)
-- [@] `item-created-date.vue`
-- [@] `item-note.vue`
-- [ ] `item-exercise-checked.vue`
-
-#### RPC Functions
-
-- [ ] `create_exercise_result`
-- [ ] `inspect_exercise_result`
-- [ ] `edit_exercise_result`
-
-### Workout Result
-
-#### Dialog Components
-
-`EDIT`
-
-- ~~`item-parent-workout.vue`~~ (cant't edit parent once created)
-- [@] `item-created-date.vue`
-- [@] `item-finished-date.vue`
-- [@] `item-note.vue`
-- ~~[ ] `item-workout-result-exercise-results.vue`~~ (Can't edit associated exercises once created)
-
-#### RPC Functions
-
-- [ ] `create_workout_result`
-- [ ] `inspect_workout_result`
-- [ ] `edit_workout_result`
 
 ### Data Tables
 
