@@ -675,7 +675,22 @@ $$;
 
 COMMENT ON FUNCTION public.inspect_exercise_result(er_id UUID) IS 'Function for inspect exercise result dialogs. Provides selection of all relevant data for an exercise result, including the associated exercise.';
 
--- TODO: edit_exercise_result
+CREATE OR REPLACE FUNCTION public.edit_exercise_result(er_id UUID, er_created_at TIMESTAMPTZ, er_checked BOOLEAN[], er_note TEXT)
+RETURNS void
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  -- Update exercise_result
+  UPDATE public.exercise_results
+  SET created_at = er_created_at,
+      checked = er_checked,
+      note = er_note
+  WHERE id = er_id;
+END;
+$$;
+
+COMMENT ON FUNCTION public.edit_exercise_result(er_id UUID, er_created_at TIMESTAMPTZ, er_checked BOOLEAN[], er_note TEXT) IS 'Function updates an exercise result with the provided details.';
 
 CREATE OR REPLACE FUNCTION public.start_workout(w_id UUID)
 RETURNS void

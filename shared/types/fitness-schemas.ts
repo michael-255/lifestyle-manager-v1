@@ -89,6 +89,7 @@ export const inspectExerciseResultResponseSchema = z.object({
     id: idSchema,
     name: textLabelSchema,
     description: textAreaSchema.nullable(),
+    checklist: z.array(z.string()).nullable(),
   }),
 })
 

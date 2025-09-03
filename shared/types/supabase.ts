@@ -519,6 +519,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      edit_exercise_result: {
+        Args: {
+          er_checked: boolean[]
+          er_created_at: string
+          er_id: string
+          er_note: string
+        }
+        Returns: undefined
+      }
       edit_workout: {
         Args: {
           w_created_at?: string
@@ -527,6 +536,15 @@ export type Database = {
           w_id: string
           w_name: string
           w_schedule?: Database["public"]["Enums"]["workout_schedule_type"][]
+        }
+        Returns: undefined
+      }
+      edit_workout_result: {
+        Args: {
+          wr_created_at: string
+          wr_finished_at: string
+          wr_id: string
+          wr_note: string
         }
         Returns: undefined
       }

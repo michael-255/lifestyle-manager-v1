@@ -10,18 +10,25 @@ import { computed, ref, watch } from 'vue'
 
 const recordStore = useRecordStore()
 
-const dateTimePicker = ref(localPickerDate(recordStore.record?.created_at))
-const displayDate = computed(() => localDisplayDate(recordStore.record?.created_at))
+const dateTimePicker = ref(localPickerDate(recordStore.record?.finished_at))
+const displayDate = computed(() => localDisplayDate(recordStore.record?.finished_at))
 
 watch(dateTimePicker, () => {
   if (dateTimePicker.value) {
-    // Convert back to UTC string for the store
-    recordStore.record.created_at = new Date(dateTimePicker.value).toISOString()
+    // Only set if valid
+    const date = new Date(dateTimePicker.value)
+    if (!isNaN(date.getTime())) {
+      recordStore.record.finished_at = date.toISOString()
+    } else {
+      recordStore.record.finished_at = null
+    }
+  } else {
+    recordStore.record.finished_at = null
   }
 })
 
 function onClear() {
-  recordStore.record.created_at = null
+  recordStore.record.finished_at = null
   dateTimePicker.value = localPickerDate('')
 }
 </script>
@@ -47,7 +54,7 @@ function onClear() {
         </QPopupProxy>
       </QBtn>
 
-      <QBtn :icon="calendarClearIcon" size="sm" color="negative" @click="onClear" />
+      <QBtn :icon="calendarClearIcon" size="sm" color="negative" label="Clear" @click="onClear" />
     </QItemLabel>
   </DialogSharedBaseItemForm>
 </template>
