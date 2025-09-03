@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import {
-  inspectWorkoutResultResponseSchema,
-  type InspectWorkoutResultResponse,
-} from '#shared/types/fitness-schemas'
-
 const props = defineProps<{
   id: IdType
 }>()
@@ -13,20 +8,20 @@ const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 
 const isLoading = ref(true)
-const workoutResult = ref({} as InspectWorkoutResultResponse['workout_result'])
-const workout = ref({} as InspectWorkoutResultResponse['workout'])
+const workoutResult: Ref<Record<string, any>> = ref({})
 
 onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.rpc('inspect_workout_result', { wr_id: props.id })
+    const { data, error } = await supabase
+      .from('workout_results')
+      .select('*')
+      .eq('id', props.id)
+      .single()
     if (error) throw error
 
-    const res = inspectWorkoutResultResponseSchema.parse(data)
-
-    workout.value = res.workout
-    workoutResult.value = res.workout_result
+    workoutResult.value = data
   } catch (error) {
     logger.error('Error opening workout result inspect dialog', error as Error)
   } finally {
@@ -40,9 +35,12 @@ onMounted(async () => {
   <DialogInspect label="Workout Result" :is-loading>
     <DialogSharedInspectText label="Id" :value="workoutResult.id" />
     <DialogSharedInspectDate label="Created At" :value="workoutResult.created_at" />
-    <DialogSharedInspectText label="Parent Name" :value="workout.name" />
-    <DialogSharedInspectText label="Parent Description" :value="workout.description" />
-    <DialogSharedInspectText label="Duration" :value="workoutResult.duration_seconds" />
+    <DialogSharedInspectDate label="Finished At" :value="workoutResult.finished_at" />
+    <DialogSharedInspectText label="Note" :value="workoutResult.note" />
+    <DialogSharedInspectObjectList
+      label="Exercise Results"
+      :value="workoutResult.exercise_results"
+    />
     <DialogSharedInspectBoolean label="Active Workout" :value="workoutResult.is_active" />
   </DialogInspect>
 </template>

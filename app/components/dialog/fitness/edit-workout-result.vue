@@ -14,12 +14,14 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.rpc('inspect_workout_result', { wr_id: props.id })
+    const { data, error } = await supabase
+      .from('workout_results')
+      .select('*')
+      .eq('id', props.id)
+      .single()
     if (error) throw error
 
-    const res = inspectWorkoutResultResponseSchema.parse(data)
-
-    recordStore.record = res.workout_result
+    recordStore.record = data
   } catch (error) {
     logger.error('Error opening workout result edit dialog', error as Error)
   } finally {
@@ -29,12 +31,17 @@ onMounted(async () => {
 })
 
 async function onSubmit() {
-  const { error } = await supabase.rpc('edit_workout_result', {
-    wr_id: props.id,
-    wr_created_at: recordStore.record.created_at,
-    wr_finished_at: recordStore.record.finished_at,
-    wr_note: recordStore.record.note,
-  })
+  const { error } = await supabase
+    .from('workout_results')
+    .update({
+      name: recordStore.record.name,
+      description: recordStore.record.description,
+      created_at: recordStore.record.created_at,
+      finished_at: recordStore.record.finished_at,
+      note: recordStore.record.note,
+      exercise_results: recordStore.record.exercise_results,
+    })
+    .eq('id', props.id)
   if (error) throw error
 
   logger.info('Workout result updated', { id: props.id })

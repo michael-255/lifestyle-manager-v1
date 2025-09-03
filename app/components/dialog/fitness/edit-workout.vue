@@ -14,15 +14,10 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.rpc('inspect_workout', { w_id: props.id })
+    const { data, error } = await supabase.from('workouts').select('*').eq('id', props.id).single()
     if (error) throw error
 
-    const res = inspectWorkoutResponseSchema.parse(data)
-
-    recordStore.record = {
-      ...res.workout,
-      exercises: res.exercises?.map((e) => e.id) || [],
-    }
+    recordStore.record = data
   } catch (error) {
     logger.error('Error opening workout edit dialog', error as Error)
   } finally {
@@ -32,16 +27,16 @@ onMounted(async () => {
 })
 
 async function onSubmit() {
-  const exerciseIds = recordStore.record.exercises?.map((id: string) => id) || []
-
-  const { error } = await supabase.rpc('edit_workout', {
-    w_id: props.id,
-    w_name: recordStore.record.name,
-    w_description: recordStore.record.description,
-    w_created_at: recordStore.record.created_at,
-    w_schedule: recordStore.record.schedule,
-    w_exercise_ids: exerciseIds,
-  })
+  const { error } = await supabase
+    .from('workouts')
+    .update({
+      name: recordStore.record.name,
+      description: recordStore.record.description,
+      created_at: recordStore.record.created_at,
+      schedule: recordStore.record.schedule,
+      exercises: recordStore.record.exercises,
+    })
+    .eq('id', props.id)
   if (error) throw error
 
   logger.info('Workout updated', { id: props.id })
@@ -53,7 +48,7 @@ async function onSubmit() {
     <DialogSharedFormName />
     <DialogSharedFormDescription />
     <DialogSharedFormCreatedDate />
-    <DialogFitnessFormWorkoutExercises />
     <DialogFitnessFormWorkoutSchedule />
+    <DialogFitnessFormWorkoutExercises />
   </DialogEdit>
 </template>
