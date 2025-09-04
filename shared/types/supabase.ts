@@ -137,19 +137,23 @@ export type Database = {
       }
     }
     Functions: {
-      finish_workout: {
-        Args: { w_id: string }
+      cancel_active_workout: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      finish_active_workout: {
+        Args: { w_id: string; wr_exercise_results: Json; wr_note: string }
         Returns: undefined
       }
       get_active_workout: {
-        Args: { w_id: string }
+        Args: Record<PropertyKey, never>
         Returns: Json
       }
-      replace_workout: {
+      replace_active_workout: {
         Args: { w_id: string }
         Returns: undefined
       }
-      start_workout: {
+      start_active_workout: {
         Args: { w_id: string }
         Returns: undefined
       }

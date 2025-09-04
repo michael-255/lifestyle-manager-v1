@@ -26,7 +26,7 @@ CREATE TABLE public.workouts (
     name TEXT NOT NULL,
     description TEXT,
     schedule public.workout_schedule_type[],
-    exercises JSONB DEFAULT '[]'::jsonb, -- name, description, rest_timer, checklist[]
+    exercises JSONB DEFAULT NULL, -- name, description, rest_timer, checklist[]
     is_active BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE public.workout_results (
     created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'utc'),
     finished_at TIMESTAMPTZ,
     note TEXT,
-    exercise_results JSONB DEFAULT '[]'::jsonb, -- note, checked[]
+    exercise_results JSONB DEFAULT NULL, -- note, checked[]
     is_active BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -178,7 +178,7 @@ BEGIN
   SELECT to_jsonb(w)
   INTO workout_data
   FROM public.workouts w
-  AND w.is_active = TRUE
+  WHERE w.is_active = TRUE
   LIMIT 1;
 
   -- Fetch associated workout result

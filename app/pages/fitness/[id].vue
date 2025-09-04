@@ -57,7 +57,7 @@ async function onFinished() {
         $q.loading.show()
 
         const { error } = await supabase.rpc('finish_active_workout', {
-          w_id: workoutId,
+          w_id: workoutId as string,
           wr_note: workoutStore.workoutResult?.note || '',
           wr_exercise_results: JSON.stringify(workoutStore.workoutResult?.exercise_results || []),
         })

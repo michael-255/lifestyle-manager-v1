@@ -43,8 +43,8 @@ const tableColumns = [
   tableColumn('workout_name', 'Workout Name', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('finished_at', 'Finished Date', 'ISO-DATE'),
-  tableColumn('duration_seconds', 'Duration', 'TIME'),
   tableColumn('note', 'Note', 'TEXT'),
+  tableColumn('exercise_results', 'Exercise Results', 'OBJECT'),
   tableColumn('is_active', 'Active', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
@@ -56,7 +56,7 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.from('workout_results_table').select()
+    const { data, error } = await supabase.from('workout_results').select()
     if (error) throw error
 
     records.value = data || []
