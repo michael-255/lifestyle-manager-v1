@@ -22,13 +22,13 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.rpc('get_active_workout', { w_id: workoutId as IdType })
+    const { data, error } = await supabase.rpc('get_active_workout')
     if (error) throw error
 
     const res = getActiveWorkoutResponseSchema.parse(data)
 
-    workoutStore.name = res.workout.name
-    workoutStore.workoutResultCreatedAt = res.workout_result.created_at
+    workoutStore.workout = res.workout
+    workoutStore.workoutResult = res.workout_result
   } catch (error) {
     logger.error('Error starting active workout', error as Error)
     router.push('/fitness')
@@ -56,7 +56,11 @@ async function onFinished() {
       try {
         $q.loading.show()
 
-        const { error } = await supabase.rpc('finish_workout', { w_id: workoutId as IdType })
+        const { error } = await supabase.rpc('finish_active_workout', {
+          w_id: workoutId,
+          wr_note: workoutStore.workoutResult?.note || '',
+          wr_exercise_results: JSON.stringify(workoutStore.workoutResult?.exercise_results || []),
+        })
         if (error) throw error
 
         router.push('/fitness')

@@ -6,6 +6,8 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 `REFACTOR IN PROGRESS`
 
+- Add cancel active workout option
+
 ### General
 
 - Build `Active Workout` page

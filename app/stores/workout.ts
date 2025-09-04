@@ -5,7 +5,7 @@ import { defineStore } from 'pinia'
  */
 export const useWorkoutStore = defineStore('workout', {
   state: () => ({
-    name: '' as string,
-    workoutResultCreatedAt: '' as string,
+    workout: {} as Record<string, any>,
+    workoutResult: {} as Record<string, any>,
   }),
 })

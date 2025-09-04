@@ -31,7 +31,7 @@ async function onStart(id: IdType) {
   try {
     $q.loading.show()
 
-    const { error } = await supabase.rpc('start_workout', { w_id: id })
+    const { error } = await supabase.rpc('start_active_workout', { w_id: id })
     if (error) throw error
 
     router.push(`/fitness/${id}`)
@@ -57,7 +57,7 @@ async function onReplace(id: IdType) {
       try {
         $q.loading.show()
 
-        const { error } = await supabase.rpc('replace_workout', { w_id: id })
+        const { error } = await supabase.rpc('replace_active_workout', { w_id: id })
         if (error) throw error
 
         router.push(`/fitness/${id}`)
