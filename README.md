@@ -6,7 +6,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ### General
 
-- Get `exercise_results` looking right in Workout Result
 - Build `Active Workout` page
   - Display all exercises
   - Add note possible on each exercise

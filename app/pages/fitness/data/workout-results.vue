@@ -40,7 +40,8 @@ const tableColumns = [
   hiddenTableColumn('id'),
   hiddenTableColumn('workout_id'),
   tableColumn('id', 'Id', 'UUID'),
-  tableColumn('workout_name', 'Workout Name', 'TEXT'),
+  tableColumn('workout_id', 'Workout Id', 'UUID'),
+  tableColumn('name', 'Workout Name', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('finished_at', 'Finished Date', 'ISO-DATE'),
   tableColumn('note', 'Note', 'TEXT'),
@@ -50,16 +51,31 @@ const tableColumns = [
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))
 
-const records: Ref<any[]> = ref([])
+const records: Ref<Record<string, any>[]> = ref([])
 
 onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.from('workout_results').select()
-    if (error) throw error
+    const { data: resultsData, error: resultsError } = await supabase
+      .from('workout_results')
+      .select()
+    if (resultsError) throw resultsError
 
-    records.value = data || []
+    const { data: workoutsData, error: workoutsError } = await supabase
+      .from('workouts')
+      .select('id, name')
+    if (workoutsError) throw workoutsError
+
+    // Merge workout name into each result
+    const workoutResults = resultsData.map((result) => {
+      return {
+        ...result,
+        name: workoutsData.find((w) => w.id === result.workout_id)?.name || 'Unknown Workout',
+      }
+    })
+
+    records.value = workoutResults || []
   } catch (error) {
     logger.error(`Error fetching workout results table`, error as Error)
   } finally {

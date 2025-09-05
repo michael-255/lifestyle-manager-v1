@@ -1,14 +1,81 @@
 <script setup lang="ts">
+import { cancelIcon } from '~~/shared/constants'
+
 const recordStore = useRecordStore()
-// TODO
-// Each exercise result contains: note (string), checked (boolean[])
-// Map that to the Workout.exercises.checklist (string[])
+
+type Exercise = {
+  name: string
+  description: string
+  rest_timer: number
+  checklist: string[]
+}
+
+// Ensure exercise_results is initialized with correct structure
+if (
+  !Array.isArray(recordStore.record.exercise_results) ||
+  recordStore.record.exercise_results.length !== recordStore.record.exercises.length
+) {
+  recordStore.record.exercise_results = recordStore.record.exercises.map((ex: Exercise) => ({
+    note: '',
+    checked: Array.isArray(ex.checklist) ? ex.checklist.map(() => false) : [false],
+  }))
+}
 </script>
 
 <template>
-  <DialogSharedBaseItemForm label="Checked">
-    <QItemLabel>
-      {{ recordStore.record.exercise_results }}
-    </QItemLabel>
-  </DialogSharedBaseItemForm>
+  <div v-for="(exercise, exIdx) in recordStore.record.exercises" :key="exIdx">
+    <QSeparator inset class="q-mb-xs" />
+
+    <QItem>
+      <QItemSection>
+        <QItemLabel class="q-mb-sm text-body1">{{ exercise.name }}</QItemLabel>
+
+        <QCheckbox
+          v-for="(item, itemIdx) in exercise.checklist"
+          :key="itemIdx"
+          v-model="recordStore.record.exercise_results[exIdx].checked[itemIdx]"
+          :label="item"
+          :disable="!recordStore.record.exercise_results[exIdx]"
+        />
+      </QItemSection>
+    </QItem>
+
+    <DialogSharedBaseItemForm label="Exercise Notes">
+      <QItemLabel>
+        <QInput
+          v-model="recordStore.record.exercise_results[exIdx].note"
+          :rules="[
+            (val: string) =>
+              !val ||
+              val.length <= limitRuleLookup.maxTextArea ||
+              `Notes cannot exceed ${limitRuleLookup.maxTextArea} characters`,
+          ]"
+          :maxlength="limitRuleLookup.maxTextArea"
+          type="textarea"
+          lazy-rules
+          autogrow
+          counter
+          dense
+          outlined
+          color="primary"
+          @blur="
+            recordStore.record.exercise_results[exIdx].note =
+              recordStore.record.exercise_results[exIdx].note?.trim()
+          "
+        >
+          <template #append>
+            <QIcon
+              v-if="
+                recordStore.record.exercise_results[exIdx].note &&
+                recordStore.record.exercise_results[exIdx].note !== ''
+              "
+              class="cursor-pointer"
+              :name="cancelIcon"
+              @click="recordStore.record.exercise_results[exIdx].note = ''"
+            />
+          </template>
+        </QInput>
+      </QItemLabel>
+    </DialogSharedBaseItemForm>
+  </div>
 </template>

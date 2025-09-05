@@ -14,14 +14,24 @@ onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase
+    const { data: resultData, error: resultError } = await supabase
       .from('workout_results')
       .select('*')
       .eq('id', props.id)
       .single()
-    if (error) throw error
+    if (resultError) throw resultError
 
-    recordStore.record = data
+    const { data: workoutData, error: workoutError } = await supabase
+      .from('workouts')
+      .select('exercises')
+      .eq('id', resultData.workout_id)
+      .single()
+    if (workoutError) throw workoutError
+
+    recordStore.record = {
+      ...resultData,
+      exercises: workoutData.exercises,
+    }
   } catch (error) {
     logger.error('Error opening workout result edit dialog', error as Error)
   } finally {
