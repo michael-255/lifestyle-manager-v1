@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { textAreaSchema, textLabelSchema } from './common-schemas'
 
-export type TodaysWorkout = Tables<'todays_workouts'>
+export type TodaysWorkout = Tables<'todays_workouts'> & { is_completed: boolean }
 export type Workout = Database['public']['Tables']['workouts']['Row']
 export type WorkoutResult = Database['public']['Tables']['workout_results']['Row']
 export type WorkoutSchedule = Database['public']['Enums']['workout_schedule_type']

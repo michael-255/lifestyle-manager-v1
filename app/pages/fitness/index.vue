@@ -17,34 +17,15 @@ const todaysWorkouts = ref<TodaysWorkout[]>([])
 const hasActiveInList = ref(false)
 const finishedLoading = ref(false)
 
-// TODO: Need a better setup for realtime data updates
 const channel = supabase
   .channel('public.workouts')
   .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts' }, async () => {
-    const { data, error } = await supabase.from('todays_workouts').select()
-    if (error) throw error
-
-    todaysWorkouts.value = data
-    hasActiveInList.value = todaysWorkouts.value.some((workout) => workout.is_active)
+    await getTodaysWorkouts()
   })
   .subscribe()
 
 onMounted(async () => {
-  try {
-    $q.loading.show()
-
-    const { data, error } = await supabase.from('todays_workouts').select()
-
-    if (error) throw error
-
-    todaysWorkouts.value = data
-    hasActiveInList.value = todaysWorkouts.value.some((workout) => workout.is_active)
-  } catch (error) {
-    logger.error(`Error fetching today's workouts`, error as Error)
-  } finally {
-    finishedLoading.value = true
-    $q.loading.hide()
-  }
+  await getTodaysWorkouts()
 })
 
 onUnmounted(() => {
@@ -52,6 +33,37 @@ onUnmounted(() => {
     supabase.removeChannel(channel)
   }
 })
+
+async function getTodaysWorkouts() {
+  try {
+    $q.loading.show()
+
+    const { data, error } = await supabase.from('todays_workouts').select()
+    if (error) throw error
+
+    // Determine which workouts were completed today based on last_created_at
+    const todaysData = data.map((workout) => {
+      if (workout.last_created_at) {
+        const lastCreated = new Date(workout.last_created_at)
+        const now = new Date()
+        const isSameDay =
+          lastCreated.getFullYear() === now.getFullYear() &&
+          lastCreated.getMonth() === now.getMonth() &&
+          lastCreated.getDate() === now.getDate()
+        return { ...workout, is_completed: isSameDay }
+      }
+      return { ...workout, is_completed: false }
+    })
+
+    todaysWorkouts.value = todaysData
+    hasActiveInList.value = todaysWorkouts.value.some((workout) => workout.is_active)
+  } catch (error) {
+    logger.error(`Error fetching today's workouts`, error as Error)
+  } finally {
+    finishedLoading.value = true
+    $q.loading.hide()
+  }
+}
 </script>
 
 <template>

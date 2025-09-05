@@ -3,6 +3,7 @@ import { DialogConfirm } from '#components'
 import {
   cardMenuIcon,
   chartsIcon,
+  completedIcon,
   deleteIcon,
   editIcon,
   inspectIcon,
@@ -75,6 +76,34 @@ async function onReplace(id: IdType) {
 async function onResume(id: IdType) {
   // Will get all the needed data on the workout page
   router.push(`/fitness/${id}`)
+}
+
+async function onCancel() {
+  try {
+    $q.dialog({
+      component: DialogConfirm,
+      componentProps: {
+        title: 'Cancel Active Workout',
+        message: `Are you sure you want to cancel the active workout? This will delete any unsaved progress.`,
+        color: 'negative',
+        icon: deleteIcon,
+        requiresUnlock: false,
+      },
+    }).onOk(async () => {
+      try {
+        $q.loading.show()
+
+        const { error } = await supabase.rpc('cancel_active_workout')
+        if (error) throw error
+      } catch (error) {
+        logger.error('Error canceling active workout', error as Error)
+      } finally {
+        $q.loading.hide()
+      }
+    })
+  } catch (error) {
+    logger.error('Error opening cancel active workout dialog', error as Error)
+  }
 }
 </script>
 
@@ -169,14 +198,34 @@ async function onResume(id: IdType) {
 
         <QItem>
           <QItemSection>
-            <QBtn
-              v-if="!!todaysWorkout?.is_active"
-              class="full-width q-mb-sm"
-              :icon="refreshIcon"
-              label="Resume Workout"
-              color="positive"
-              @click="onResume(todaysWorkout.id!)"
-            />
+            <div v-if="todaysWorkout.is_completed">
+              <QBtn
+                :icon="completedIcon"
+                disable
+                outline
+                color="positive"
+                class="full-width q-mb-sm"
+                label="Completed"
+              />
+            </div>
+
+            <div v-else-if="!!todaysWorkout?.is_active">
+              <QBtn
+                :icon="deleteIcon"
+                color="negative"
+                class="full-width q-mb-sm"
+                label="Cancel Workout"
+                @click="onCancel"
+              />
+              <QBtn
+                class="full-width q-mb-sm"
+                :icon="refreshIcon"
+                label="Resume Workout"
+                color="positive"
+                @click="onResume(todaysWorkout.id!)"
+              />
+            </div>
+
             <div v-else>
               <QBtn
                 v-if="hasActiveInList"

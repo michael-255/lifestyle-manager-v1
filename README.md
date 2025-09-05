@@ -10,7 +10,6 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
   - Display all exercises
   - Add note possible on each exercise
   - Add note at end for the workout
-- Live querying of data so forced updates or page reloads are not necessary
 - (Post completion) Use a view to get the counts for reminder notifications on apps
 
 ### Data Tables

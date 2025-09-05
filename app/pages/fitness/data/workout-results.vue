@@ -44,6 +44,7 @@ const tableColumns = [
   tableColumn('name', 'Workout Name', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('finished_at', 'Finished Date', 'ISO-DATE'),
+  tableColumn('duration', 'Duration', 'TIME'),
   tableColumn('note', 'Note', 'TEXT'),
   tableColumn('exercise_results', 'Exercise Results', 'OBJECT'),
   tableColumn('is_active', 'Active', 'BOOL'),
@@ -53,7 +54,24 @@ const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableCo
 
 const records: Ref<Record<string, any>[]> = ref([])
 
+const channel = supabase
+  .channel('public.workouts')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'workout_results' }, async () => {
+    await getWorkoutResults()
+  })
+  .subscribe()
+
 onMounted(async () => {
+  await getWorkoutResults()
+})
+
+onUnmounted(() => {
+  if (channel) {
+    supabase.removeChannel(channel)
+  }
+})
+
+async function getWorkoutResults() {
   try {
     $q.loading.show()
 
@@ -68,10 +86,15 @@ onMounted(async () => {
     if (workoutsError) throw workoutsError
 
     // Merge workout name into each result
+    // Calculate the duration
     const workoutResults = resultsData.map((result) => {
       return {
         ...result,
         name: workoutsData.find((w) => w.id === result.workout_id)?.name || 'Unknown Workout',
+        duration: getDurationSeconds(
+          result.created_at,
+          result.finished_at ?? new Date().toISOString(),
+        ),
       }
     })
 
@@ -81,7 +104,13 @@ onMounted(async () => {
   } finally {
     $q.loading.hide()
   }
-})
+}
+
+function getDurationSeconds(startDateStr: string, endDateStr: string) {
+  const startDate = new Date(startDateStr)
+  const endDate = new Date(endDateStr)
+  return Math.floor((endDate.getTime() - startDate.getTime()) / 1000)
+}
 </script>
 
 <template>

@@ -47,11 +47,31 @@ const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableCo
 
 const records: Ref<any[]> = ref([])
 
+const channel = supabase
+  .channel('public.workouts')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts' }, async () => {
+    await getWorkouts()
+  })
+  .subscribe()
+
 onMounted(async () => {
+  await getWorkouts()
+})
+
+onUnmounted(() => {
+  if (channel) {
+    supabase.removeChannel(channel)
+  }
+})
+
+async function getWorkouts() {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.from('workouts').select()
+    const { data, error } = await supabase
+      .from('workouts')
+      .select()
+      .order('created_at', { ascending: false })
     if (error) throw error
 
     records.value = data || []
@@ -60,7 +80,7 @@ onMounted(async () => {
   } finally {
     $q.loading.hide()
   }
-})
+}
 </script>
 
 <template>
