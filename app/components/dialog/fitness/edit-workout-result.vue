@@ -53,5 +53,6 @@ async function onSubmit() {
     <DialogSharedFormCreatedDate />
     <DialogFitnessFormFinishedDate />
     <DialogSharedFormNote />
+    <DialogFitnessFormWorkoutExerciseResults />
   </DialogEdit>
 </template>

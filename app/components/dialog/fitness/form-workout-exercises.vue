@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { cancelIcon, removeIcon } from '~~/shared/constants'
 const recordStore = useRecordStore()
 
 type Exercise = {
@@ -24,7 +25,7 @@ const restTimerOptions = [
 
 function addExercise() {
   if (exercises.value.length < 20) {
-    exercises.value.push({ name: '', description: '', rest_timer: 0, checklist: [] })
+    exercises.value.push({ name: '', description: '', rest_timer: 0, checklist: [''] })
   }
 }
 
@@ -33,16 +34,24 @@ function removeExercise(idx: number) {
 }
 
 function addChecklistItem(exIdx: number) {
-  if (exercises.value[exIdx].checklist.length < 20) {
-    exercises.value[exIdx].checklist.push('')
+  const exercise = exercises.value[exIdx]
+  if (exercise && exercise.checklist.length < 20) {
+    exercise.checklist.push('')
+  }
+  // Ensure at least one item exists
+  if (exercise && exercise.checklist.length === 0) {
+    exercise.checklist.push('')
   }
 }
 
 function removeChecklistItem(exIdx: number, itemIdx: number) {
-  exercises.value[exIdx].checklist.splice(itemIdx, 1)
+  const exercise = exercises.value[exIdx]
+  if (exercise && exercise.checklist && exercise.checklist.length > 1) {
+    exercise.checklist.splice(itemIdx, 1)
+  }
+  // Do nothing if only one item left
 }
 
-// Sync with recordStore
 watch(
   exercises,
   (val) => {
@@ -53,58 +62,166 @@ watch(
 </script>
 
 <template>
-  <DialogSharedBaseItemForm label="Exercises">
-    <QItemLabel>
-      <div>
-        <QBtn color="primary" :disable="exercises.length >= 20" @click="addExercise">
-          Add Exercise
-        </QBtn>
-      </div>
+  <QItem>
+    <QItemSection>
+      <QItemLabel class="text-body1">Exercises (limit 20)</QItemLabel>
 
-      <QCard v-for="(exercise, exIdx) in exercises" :key="exIdx">
-        <QInput v-model="exercise.name" label="Name" outlined dense class="q-mb-sm" />
-        <QInput v-model="exercise.description" label="Description" outlined dense class="q-mb-sm" />
+      <QItemLabel>
+        <QBtn
+          color="positive"
+          :disable="exercises.length >= 20"
+          label="Add Exercise"
+          @click="addExercise"
+        />
+      </QItemLabel>
+    </QItemSection>
+  </QItem>
 
-        <DialogSharedBaseItemForm label="Rest Timer" class="q-mb-md">
-          <QItemLabel>
-            <QSelect
-              v-model="recordStore.record.rest_timer"
-              :options="restTimerOptions"
-              lazy-rules
-              emit-value
-              map-options
-              options-dense
-              dense
-              outlined
-              color="primary"
+  <div v-for="(exercise, exIdx) in exercises" :key="exIdx">
+    <QSeparator inset class="q-mb-xs" />
+
+    <QItem>
+      <QItemSection>
+        <QItemLabel class="text-body1">Exercise {{ exIdx + 1 }} </QItemLabel>
+      </QItemSection>
+      <QItemSection side>
+        <QItemLabel>
+          <QBtn color="negative" label="Remove Exercise" @click="removeExercise(exIdx)" />
+        </QItemLabel>
+      </QItemSection>
+    </QItem>
+
+    <DialogSharedBaseItemForm label="Name">
+      <QItemLabel>
+        <QInput
+          v-model="exercise.name"
+          :rules="[
+            (val: string) => (!!val && val.trim().length >= 1) || 'Name is required',
+            (val: string) =>
+              !val ||
+              val.length <= limitRuleLookup.maxTextLabel ||
+              `Name cannot exceed ${limitRuleLookup.maxTextLabel} characters`,
+          ]"
+          :maxlength="limitRuleLookup.maxTextLabel"
+          type="text"
+          lazy-rules
+          counter
+          dense
+          outlined
+          color="primary"
+          @blur="exercise.name = exercise.name?.trim()"
+        >
+          <template #append>
+            <QIcon
+              v-if="exercise.name && exercise.name !== ''"
+              class="cursor-pointer"
+              :name="cancelIcon"
+              @click="exercise.name = ''"
             />
-          </QItemLabel>
-        </DialogSharedBaseItemForm>
+          </template>
+        </QInput>
+      </QItemLabel>
+    </DialogSharedBaseItemForm>
 
-        <div>
-          <label>Checklist (up to 20 items):</label>
-          <QBtn
-            size="sm"
+    <DialogSharedBaseItemForm label="Description">
+      <QItemLabel>
+        <QInput
+          v-model="exercise.description"
+          :rules="[
+            (val: string) =>
+              !val ||
+              val.length <= limitRuleLookup.maxTextArea ||
+              `Description cannot exceed ${limitRuleLookup.maxTextArea} characters`,
+          ]"
+          :maxlength="limitRuleLookup.maxTextArea"
+          type="textarea"
+          lazy-rules
+          autogrow
+          counter
+          dense
+          outlined
+          color="primary"
+          @blur="exercise.description = exercise.description?.trim()"
+        >
+          <template #append>
+            <QIcon
+              v-if="exercise.description && exercise.description !== ''"
+              class="cursor-pointer"
+              :name="cancelIcon"
+              @click="exercise.description = ''"
+            />
+          </template>
+        </QInput>
+      </QItemLabel>
+    </DialogSharedBaseItemForm>
+
+    <DialogSharedBaseItemForm label="Rest Timer" class="q-mb-md">
+      <QItemLabel>
+        <QSelect
+          v-model="exercise.rest_timer"
+          :options="restTimerOptions"
+          lazy-rules
+          emit-value
+          map-options
+          options-dense
+          dense
+          outlined
+          color="primary"
+        />
+      </QItemLabel>
+    </DialogSharedBaseItemForm>
+
+    <DialogSharedBaseItemForm label="Checklist (limit 20)" class="q-mb-md">
+      <QItemLabel>
+        <QBtn
+          color="positive"
+          :disable="exercise.checklist.length >= 20"
+          label="Add Item"
+          class="q-mb-sm"
+          @click="addChecklistItem(exIdx)"
+        />
+      </QItemLabel>
+      <QItemLabel>
+        <div v-for="(item, itemIdx) in exercise.checklist" :key="itemIdx">
+          <QInput
+            v-model="exercise.checklist[itemIdx]"
+            :rules="[
+              (val: string) => (!!val && val.trim().length >= 1) || 'Checklist text is required',
+              (val: string) =>
+                !val ||
+                val.length <= limitRuleLookup.maxTextLabel ||
+                `Checklist text cannot exceed ${limitRuleLookup.maxTextLabel} characters`,
+            ]"
+            :maxlength="limitRuleLookup.maxTextLabel"
+            type="text"
+            lazy-rules
+            counter
+            dense
+            outlined
             color="primary"
-            :disable="exercise.checklist.length >= 20"
-            @click="addChecklistItem(exIdx)"
-            >Add Item</QBtn
+            :label="`Item ${itemIdx + 1}`"
+            @blur="exercise.checklist[itemIdx] = exercise.checklist[itemIdx]?.trim() || ''"
           >
-          <div v-for="(item, itemIdx) in exercise.checklist" :key="itemIdx" class="q-mt-xs">
-            <QInput
-              v-model="exercise.checklist[itemIdx]"
-              label="Checklist Item"
-              outlined
-              dense
-              class="q-mr-sm"
-            />
-            <QBtn size="sm" color="negative" @click="removeChecklistItem(exIdx, itemIdx)"
-              >Remove</QBtn
-            >
-          </div>
+            <template #append>
+              <QIcon
+                v-if="exercise.checklist[itemIdx] && exercise.checklist[itemIdx] !== ''"
+                class="cursor-pointer"
+                :name="cancelIcon"
+                @click="exercise.checklist[itemIdx] = ''"
+              />
+            </template>
+            <template #after>
+              <QBtn
+                round
+                color="negative"
+                :icon="removeIcon"
+                :disable="exercise.checklist.length === 1"
+                @click="removeChecklistItem(exIdx, itemIdx)"
+              />
+            </template>
+          </QInput>
         </div>
-        <QBtn color="negative" class="q-mt-sm" @click="removeExercise(exIdx)">Remove Exercise</QBtn>
-      </QCard>
-    </QItemLabel>
-  </DialogSharedBaseItemForm>
+      </QItemLabel>
+    </DialogSharedBaseItemForm>
+  </div>
 </template>
