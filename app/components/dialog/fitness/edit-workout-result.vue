@@ -3,6 +3,13 @@ const props = defineProps<{
   id: IdType
 }>()
 
+type Exercise = {
+  name: string
+  description: string
+  rest_timer: number
+  checklist: string[]
+}
+
 const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
@@ -27,6 +34,30 @@ onMounted(async () => {
       .eq('id', resultData.workout_id)
       .single()
     if (workoutError) throw workoutError
+
+    if (typeof resultData.exercise_results === 'string') {
+      resultData.exercise_results = JSON.parse(resultData.exercise_results)
+    } else if (!resultData.exercise_results) {
+      resultData.exercise_results = []
+    }
+
+    if (typeof workoutData.exercises === 'string') {
+      workoutData.exercises = JSON.parse(workoutData.exercises)
+    } else if (!workoutData.exercises) {
+      workoutData.exercises = []
+    }
+
+    // Ensure exercise_results is initialized with correct structure
+    if (
+      !Array.isArray(resultData.exercise_results) ||
+      resultData.exercise_results.length !==
+        (Array.isArray(workoutData.exercises) ? workoutData.exercises.length : 0)
+    ) {
+      resultData.exercise_results = (workoutData.exercises as Exercise[]).map((ex) => ({
+        note: '',
+        checked: Array.isArray(ex.checklist) ? ex.checklist.map(() => false) : [false],
+      }))
+    }
 
     recordStore.record = {
       ...resultData,

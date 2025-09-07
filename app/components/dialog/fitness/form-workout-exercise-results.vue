@@ -2,29 +2,11 @@
 import { cancelIcon } from '~~/shared/constants'
 
 const recordStore = useRecordStore()
-
-type Exercise = {
-  name: string
-  description: string
-  rest_timer: number
-  checklist: string[]
-}
-
-// Ensure exercise_results is initialized with correct structure
-if (
-  !Array.isArray(recordStore.record.exercise_results) ||
-  recordStore.record.exercise_results.length !== recordStore.record.exercises.length
-) {
-  recordStore.record.exercise_results = recordStore.record.exercises.map((ex: Exercise) => ({
-    note: '',
-    checked: Array.isArray(ex.checklist) ? ex.checklist.map(() => false) : [false],
-  }))
-}
 </script>
 
 <template>
   <div v-for="(exercise, exIdx) in recordStore.record.exercises" :key="exIdx">
-    <QSeparator inset class="q-mb-xs" />
+    <QSeparator inset class="q-my-md" />
 
     <QItem>
       <QItemSection>

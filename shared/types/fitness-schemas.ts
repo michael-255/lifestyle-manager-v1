@@ -38,7 +38,7 @@ export const getActiveWorkoutResponseSchema = z.object({
       .array(
         z.object({
           note: textAreaSchema.nullable(),
-          checked: z.array(textLabelSchema).nullable(),
+          checked: z.array(z.boolean()).nullable(),
         }),
       )
       .nullable(),

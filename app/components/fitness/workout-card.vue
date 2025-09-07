@@ -13,7 +13,7 @@ import {
 } from '#shared/constants'
 import type { TodaysWorkout } from '#shared/types/fitness-schemas'
 
-defineProps<{
+const props = defineProps<{
   todaysWorkout: TodaysWorkout
   hasActiveInList: boolean
 }>()
@@ -105,6 +105,17 @@ async function onCancel() {
     logger.error('Error opening cancel active workout dialog', error as Error)
   }
 }
+
+const workoutDuration = computed(() => {
+  if (props.todaysWorkout.last_duration_seconds) {
+    return timeFromDurationSeconds(props.todaysWorkout.last_duration_seconds)
+  } else {
+    const lastCreated = new Date(props.todaysWorkout.last_created_at ?? 0)
+    const now = new Date()
+    const seconds = Math.floor((now.getTime() - lastCreated.getTime()) / 1000)
+    return timeFromDurationSeconds(seconds) + ' (active)'
+  }
+})
 </script>
 
 <template>
@@ -122,6 +133,10 @@ async function onCancel() {
               <div class="q-mt-xs">
                 {{ localDisplayDate(todaysWorkout.last_created_at) }}
               </div>
+
+              <QItemLabel caption class="q-mt-xs">
+                {{ workoutDuration }}
+              </QItemLabel>
             </QItemLabel>
 
             <QItemLabel v-else caption> No previous records </QItemLabel>

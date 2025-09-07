@@ -41,7 +41,7 @@ async function getTodaysWorkouts() {
     const { data, error } = await supabase.from('todays_workouts').select()
     if (error) throw error
 
-    // Determine which workouts were completed today based on last_created_at
+    // Determine which workouts were completed today: last_created_at is today AND is_active is false
     const todaysData = data.map((workout) => {
       if (workout.last_created_at) {
         const lastCreated = new Date(workout.last_created_at)
@@ -50,7 +50,8 @@ async function getTodaysWorkouts() {
           lastCreated.getFullYear() === now.getFullYear() &&
           lastCreated.getMonth() === now.getMonth() &&
           lastCreated.getDate() === now.getDate()
-        return { ...workout, is_completed: isSameDay }
+        const isCompleted = isSameDay && workout.is_active === false
+        return { ...workout, is_completed: isCompleted }
       }
       return { ...workout, is_completed: false }
     })
