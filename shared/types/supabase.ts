@@ -137,6 +137,10 @@ export type Database = {
       }
     }
     Functions: {
+      app_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       cancel_active_workout: {
         Args: Record<PropertyKey, never>
         Returns: undefined

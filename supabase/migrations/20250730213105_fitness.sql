@@ -52,6 +52,7 @@ SELECT
   w.name,
   w.is_active,
   wr.created_at AS last_created_at,
+  wr.finished_at AS last_finished_at,
   wr.note AS last_note,
   (EXTRACT(EPOCH FROM (wr.finished_at - wr.created_at))::integer) AS last_duration_seconds
 FROM public.workouts w
@@ -164,6 +165,20 @@ USING (true);
 --
 -- Functions
 --
+
+CREATE OR REPLACE FUNCTION public.app_notifications()
+RETURNS JSONB
+LANGUAGE sql
+SET search_path = ''
+AS $$
+SELECT jsonb_build_object(
+  'workouts_due', (
+    SELECT COUNT(*)
+    FROM public.todays_workouts
+    WHERE last_finished_at IS NULL
+  )
+) AS notifications;
+$$;
 
 CREATE OR REPLACE FUNCTION public.get_active_workout()
 RETURNS JSONB

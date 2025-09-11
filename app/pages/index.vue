@@ -4,6 +4,9 @@ import { useMeta } from 'quasar'
 
 useMeta({ title: `${appTitle} | Applications` })
 
+const logger = useLogger()
+const supabase = useSupabaseClient<Database>()
+
 const applicationButtons = [
   {
     label: 'Fitness',
@@ -12,6 +15,21 @@ const applicationButtons = [
     to: '/fitness',
   },
 ]
+
+const workoutNotifications = ref(0)
+
+onMounted(async () => {
+  try {
+    const { data, error } = await supabase.rpc('app_notifications')
+    if (error) throw error
+
+    if (data && typeof data === 'object' && 'workouts_due' in data) {
+      workoutNotifications.value = (data.workouts_due ?? 0) as number
+    }
+  } catch (error) {
+    logger.error('Error fetching notifications', { error })
+  }
+})
 </script>
 
 <template>
@@ -29,7 +47,9 @@ const applicationButtons = [
         :color="button.color"
         :to="button.to"
       >
-        <!-- <QBadge color="red" floating>7 </QBadge> -->
+        <QBadge v-if="workoutNotifications" color="red" floating>
+          {{ workoutNotifications }}
+        </QBadge>
         <QIcon :name="button.icon" size="4rem" />
         <div class="q-mt-sm text-h6">
           {{ button.label }}
