@@ -4,26 +4,7 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
-### General
-
-- (Post completion) Use a view to get the counts for reminder notifications on apps
-
-### Data Tables
-
-The following options should be on the data tables:
-
-- `Create`
-- `Start` (Workout/Exercise)
-- `Charts`
-- `Inspect`
-- `Edit`
-- `Delete`
-
-### Other Packages
-
-```sh
-npm i @tanstack/vue-query
-```
+- TBD
 
 ## Budget TODO
 
