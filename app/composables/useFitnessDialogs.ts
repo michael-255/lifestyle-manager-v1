@@ -1,14 +1,9 @@
 import {
-  DialogCharts,
   DialogConfirm,
-  DialogFitnessCreateExercise,
+  DialogFitnessChartWorkout,
   DialogFitnessCreateWorkout,
-  DialogFitnessEditExercise,
-  DialogFitnessEditExerciseResult,
   DialogFitnessEditWorkout,
   DialogFitnessEditWorkoutResult,
-  DialogFitnessInspectExercise,
-  DialogFitnessInspectExerciseResult,
   DialogFitnessInspectWorkout,
   DialogFitnessInspectWorkoutResult,
 } from '#components'
@@ -20,154 +15,13 @@ export default function useFitnessDialogs() {
   const supabase = useSupabaseClient<Database>()
 
   //
-  // Exercises
-  //
-
-  async function openChartExercise(id: IdType) {
-    try {
-      $q.dialog({
-        component: DialogCharts,
-        componentProps: { id },
-      })
-    } catch (error) {
-      logger.error('Error opening exercise chart dialog', error as Error)
-    }
-  }
-
-  async function openInspectExercise(id: IdType) {
-    try {
-      $q.dialog({
-        component: DialogFitnessInspectExercise,
-        componentProps: { id },
-      })
-    } catch (error) {
-      logger.error('Error opening exercise inspect dialog', error as Error)
-    }
-  }
-
-  function openCreateExercise() {
-    try {
-      $q.dialog({ component: DialogFitnessCreateExercise })
-    } catch (error) {
-      logger.error('Error opening exercise create dialog', error as Error)
-    }
-  }
-
-  async function openEditExercise(id: IdType) {
-    try {
-      $q.dialog({
-        component: DialogFitnessEditExercise,
-        componentProps: { id },
-      })
-    } catch (error) {
-      logger.error('Error opening exercise edit dialog', error as Error)
-    }
-  }
-
-  function openDeleteExercise(id: IdType) {
-    try {
-      $q.dialog({
-        component: DialogConfirm,
-        componentProps: {
-          title: 'Delete Exercise',
-          message: `Are you sure you want to delete exercise "${id}"?`,
-          color: 'negative',
-          icon: deleteIcon,
-          requiresUnlock: true,
-        },
-      }).onOk(async () => {
-        try {
-          $q.loading.show()
-
-          const { data, error } = await supabase
-            .from('exercises')
-            .delete()
-            .eq('id', id)
-            .select()
-            .single()
-          if (error) throw error
-
-          logger.info('Exercise deleted', data)
-        } catch (error) {
-          logger.error('Error deleting exercise', error as Error)
-        } finally {
-          $q.loading.hide()
-        }
-      })
-    } catch (error) {
-      logger.error('Error opening exercise delete dialog', error as Error)
-    }
-  }
-
-  //
-  // Exercise Results
-  //
-
-  async function openInspectExerciseResult(id: IdType) {
-    try {
-      $q.dialog({
-        component: DialogFitnessInspectExerciseResult,
-        componentProps: { id },
-      })
-    } catch (error) {
-      logger.error('Error opening exercise result inspect dialog', error as Error)
-    }
-  }
-
-  async function openEditExerciseResult(id: IdType) {
-    try {
-      $q.dialog({
-        component: DialogFitnessEditExerciseResult,
-        componentProps: { id },
-      })
-    } catch (error) {
-      logger.error('Error opening exercise result edit dialog', error as Error)
-    }
-  }
-
-  function openDeleteExerciseResult(id: IdType) {
-    try {
-      $q.dialog({
-        component: DialogConfirm,
-        componentProps: {
-          title: 'Delete Exercise Result',
-          message: `Are you sure you want to delete exercise result "${id}"?`,
-          color: 'negative',
-          icon: deleteIcon,
-          requiresUnlock: true,
-        },
-      }).onOk(async () => {
-        try {
-          $q.loading.show()
-
-          const { data, error } = await supabase
-            .from('exercise_results')
-            .delete()
-            .eq('id', id)
-            .select()
-            .single()
-          if (error) throw error
-
-          logger.info('Exercise result deleted', data)
-        } catch (error) {
-          logger.error('Error deleting exercise result', error as Error)
-        } finally {
-          $q.loading.hide()
-        }
-      })
-    } catch (error) {
-      logger.error('Error opening exercise result delete dialog', error as Error)
-    }
-  }
-
-  //
   // Workouts
   //
 
   async function openChartWorkout(id: IdType) {
     try {
       $q.dialog({
-        component: DialogCharts,
+        component: DialogFitnessChartWorkout,
         componentProps: { id },
       })
     } catch (error) {
@@ -302,16 +156,6 @@ export default function useFitnessDialogs() {
   }
 
   return {
-    // Exercises
-    openChartExercise,
-    openInspectExercise,
-    openCreateExercise,
-    openEditExercise,
-    openDeleteExercise,
-    // Exercise Results
-    openInspectExerciseResult,
-    openEditExerciseResult,
-    openDeleteExerciseResult,
     // Workouts
     openChartWorkout,
     openInspectWorkout,

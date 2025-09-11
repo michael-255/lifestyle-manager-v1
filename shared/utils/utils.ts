@@ -128,7 +128,7 @@ export function tableColumn(
       return tableColumn
     case 'TIME':
       tableColumn.format = (val: number) =>
-        val === null || val === undefined ? '' : timeFromDuration(val)
+        val === null || val === undefined ? '' : timeFromDurationSeconds(val)
       return tableColumn
     default:
       tableColumn.format = (val: any) => (val === null || val === undefined ? '' : `${val}`)
@@ -204,6 +204,15 @@ export function localPickerDate(utcDate: string): string {
   if (!utcDate) return 'No Date'
   const localDate = new Date(utcDate).toLocaleString()
   return date.formatDate(localDate, localPickerDateFormat)
+}
+
+/**
+ * Converts a duration in seconds to a human-readable string.
+ * @param durationSeconds Duration in seconds
+ * @returns
+ */
+export function timeFromDurationSeconds(durationSeconds: number): string {
+  return timeFromDuration(durationSeconds * 1000)
 }
 
 /**

@@ -12,27 +12,23 @@ const $q = useQuasar()
 const logger = useLogger()
 const router = useRouter()
 const supabase = useSupabaseClient<Database>()
-const { openCreateWorkout, openCreateExercise } = useFitnessDialogs()
+const { openCreateWorkout } = useFitnessDialogs()
 
 const tableCounts = ref({
   workouts: 0,
-  exercises: 0,
   workoutResults: 0,
-  exerciseResults: 0,
 })
 
 onMounted(async () => {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.from('table_counts').select().single()
+    const { data, error } = await supabase.from('table_record_counts').select().single()
     if (error) throw error
 
     tableCounts.value = {
       workouts: data.workouts ?? 0,
-      exercises: data.exercises ?? 0,
       workoutResults: data.workout_results ?? 0,
-      exerciseResults: data.exercise_results ?? 0,
     }
   } catch (error) {
     logger.error(`Error fetching table counts`, error as Error)
@@ -86,53 +82,6 @@ onMounted(async () => {
                 color="primary"
                 class="q-px-sm q-mb-sm"
                 @click="router.push('/fitness/data/workout-results')"
-              />
-            </QItemSection>
-          </QItem>
-        </QCard>
-      </QItemSection>
-    </QItem>
-
-    <QItem>
-      <QItemSection>
-        <QCard flat bordered>
-          <QItem class="q-mt-sm">
-            <QItemSection top>
-              <QItemLabel class="text-body1">Exercises</QItemLabel>
-              <QItemLabel caption>{{ recordCount(tableCounts.exercises) }}</QItemLabel>
-            </QItemSection>
-
-            <QItemSection top side>
-              <QBtn
-                :icon="addIcon"
-                color="positive"
-                class="q-px-sm q-mb-sm"
-                @click="openCreateExercise"
-              />
-            </QItemSection>
-
-            <QItemSection top side>
-              <QBtn
-                :icon="databaseIcon"
-                color="primary"
-                class="q-px-sm q-mb-sm"
-                @click="router.push('/fitness/data/exercises')"
-              />
-            </QItemSection>
-          </QItem>
-
-          <QItem>
-            <QItemSection top>
-              <QItemLabel class="text-body1">Exercise Results</QItemLabel>
-              <QItemLabel caption>{{ recordCount(tableCounts.exerciseResults) }}</QItemLabel>
-            </QItemSection>
-
-            <QItemSection top side>
-              <QBtn
-                :icon="databaseIcon"
-                color="primary"
-                class="q-px-sm q-mb-sm"
-                @click="router.push('/fitness/data/exercise-results')"
               />
             </QItemSection>
           </QItem>

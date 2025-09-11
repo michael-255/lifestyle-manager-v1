@@ -104,7 +104,7 @@ async function onSubmit() {
                           :label="`Update ${label}`"
                           :icon="saveIcon"
                           :disable="!isFormValid"
-                          color="positive"
+                          color="warning"
                           type="submit"
                         />
                       </div>

@@ -40,32 +40,77 @@ const tableColumns = [
   hiddenTableColumn('id'),
   hiddenTableColumn('workout_id'),
   tableColumn('id', 'Id', 'UUID'),
-  tableColumn('workout_name', 'Workout Name', 'TEXT'),
+  tableColumn('workout_id', 'Workout Id', 'UUID'),
+  tableColumn('name', 'Workout Name', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('finished_at', 'Finished Date', 'ISO-DATE'),
-  tableColumn('duration_seconds', 'Duration', 'TIME'),
+  tableColumn('duration', 'Duration', 'TIME'),
   tableColumn('note', 'Note', 'TEXT'),
+  tableColumn('exercise_results', 'Exercise Results', 'OBJECT'),
   tableColumn('is_active', 'Active', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
 const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableColumns))
 
-const records: Ref<any[]> = ref([])
+const records: Ref<Record<string, any>[]> = ref([])
+
+const channel = supabase
+  .channel('public.workouts')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'workout_results' }, async () => {
+    await getWorkoutResults()
+  })
+  .subscribe()
 
 onMounted(async () => {
+  await getWorkoutResults()
+})
+
+onUnmounted(() => {
+  if (channel) {
+    supabase.removeChannel(channel)
+  }
+})
+
+async function getWorkoutResults() {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.from('workout_results_table').select()
-    if (error) throw error
+    const { data: resultsData, error: resultsError } = await supabase
+      .from('workout_results')
+      .select()
+    if (resultsError) throw resultsError
 
-    records.value = data || []
+    const { data: workoutsData, error: workoutsError } = await supabase
+      .from('workouts')
+      .select('id, name')
+    if (workoutsError) throw workoutsError
+
+    // Merge workout name into each result
+    // Calculate the duration
+    const workoutResults = resultsData.map((result) => {
+      return {
+        ...result,
+        name: workoutsData.find((w) => w.id === result.workout_id)?.name || 'Unknown Workout',
+        duration: getDurationSeconds(
+          result.created_at,
+          result.finished_at ?? new Date().toISOString(),
+        ),
+      }
+    })
+
+    records.value = workoutResults || []
   } catch (error) {
     logger.error(`Error fetching workout results table`, error as Error)
   } finally {
     $q.loading.hide()
   }
-})
+}
+
+function getDurationSeconds(startDateStr: string, endDateStr: string) {
+  const startDate = new Date(startDateStr)
+  const endDate = new Date(endDateStr)
+  return Math.floor((endDate.getTime() - startDate.getTime()) / 1000)
+}
 </script>
 
 <template>

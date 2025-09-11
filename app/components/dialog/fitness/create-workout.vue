@@ -6,26 +6,29 @@ const recordStore = useRecordStore()
 const label = 'Workout'
 
 recordStore.record = {
-  name: '',
+  name: 'My Workout',
   description: '',
   created_at: new Date().toISOString(),
   schedule: null,
-  exercises: null,
+  exercises: [],
 }
 
 async function onSubmit() {
-  const exerciseIds = recordStore.record.exercises?.map((id: string) => id) || []
+  const { data, error } = await supabase
+    .from('workouts')
+    .insert({
+      name: recordStore.record.name,
+      description: recordStore.record.description,
+      created_at: recordStore.record.created_at,
+      schedule: recordStore.record.schedule,
+      exercises: recordStore.record.exercises,
+    })
+    .select()
+    .single()
 
-  const { error } = await supabase.rpc('create_workout', {
-    w_name: recordStore.record.name,
-    w_description: recordStore.record.description,
-    w_created_at: recordStore.record.created_at,
-    w_schedule: recordStore.record.schedule,
-    w_exercise_ids: exerciseIds,
-  })
   if (error) throw error
 
-  logger.info('Workout created', { name: recordStore.record.name })
+  logger.info('Workout created', { name: recordStore.record.name, id: data.id })
 }
 </script>
 
@@ -34,7 +37,7 @@ async function onSubmit() {
     <DialogSharedFormName />
     <DialogSharedFormDescription />
     <DialogSharedFormCreatedDate />
-    <DialogFitnessFormWorkoutExercises />
     <DialogFitnessFormWorkoutSchedule />
+    <DialogFitnessFormWorkoutExercises />
   </DialogCreate>
 </template>

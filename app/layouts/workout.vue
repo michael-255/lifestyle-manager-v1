@@ -8,8 +8,8 @@ const elapsedTime = ref('')
 let timer: number | undefined
 
 const startTime = computed(() => {
-  return workoutStore.workoutResultCreatedAt
-    ? new Date(workoutStore.workoutResultCreatedAt).getTime()
+  return workoutStore.workoutResult.created_at
+    ? new Date(workoutStore.workoutResult.created_at).getTime()
     : Date.now()
 })
 
@@ -31,7 +31,7 @@ onUnmounted(() => {
   <QLayout view="hHh lpr lfr">
     <QHeader bordered>
       <QToolbar class="toolbar-height">
-        <QToolbarTitle>{{ workoutStore.name }}</QToolbarTitle>
+        <QToolbarTitle>{{ workoutStore.workout.name }}</QToolbarTitle>
         <QBtn flat round :icon="closeIcon" to="/fitness" />
       </QToolbar>
     </QHeader>

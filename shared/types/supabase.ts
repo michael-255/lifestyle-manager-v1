@@ -34,256 +34,10 @@ export type Database = {
   }
   public: {
     Tables: {
-      exercise_result_item: {
-        Row: {
-          calories: number | null
-          duration_seconds: number | null
-          exercise_result_id: string
-          is_checked: boolean | null
-          left_reps: number | null
-          left_weight: number | null
-          position: number
-          reps: number | null
-          right_reps: number | null
-          right_weight: number | null
-          weight: number | null
-        }
-        Insert: {
-          calories?: number | null
-          duration_seconds?: number | null
-          exercise_result_id: string
-          is_checked?: boolean | null
-          left_reps?: number | null
-          left_weight?: number | null
-          position: number
-          reps?: number | null
-          right_reps?: number | null
-          right_weight?: number | null
-          weight?: number | null
-        }
-        Update: {
-          calories?: number | null
-          duration_seconds?: number | null
-          exercise_result_id?: string
-          is_checked?: boolean | null
-          left_reps?: number | null
-          left_weight?: number | null
-          position?: number
-          reps?: number | null
-          right_reps?: number | null
-          right_weight?: number | null
-          weight?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercise_result_item_exercise_result_id_fkey"
-            columns: ["exercise_result_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_results"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "exercise_result_item_exercise_result_id_fkey"
-            columns: ["exercise_result_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_results_table"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      exercise_results: {
-        Row: {
-          created_at: string
-          exercise_id: string
-          id: string
-          is_active: boolean
-          note: string | null
-        }
-        Insert: {
-          created_at?: string
-          exercise_id: string
-          id?: string
-          is_active?: boolean
-          note?: string | null
-        }
-        Update: {
-          created_at?: string
-          exercise_id?: string
-          id?: string
-          is_active?: boolean
-          note?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_options"
-            referencedColumns: ["value"]
-          },
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises_table"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      exercises: {
-        Row: {
-          checklist_labels: string[] | null
-          created_at: string
-          description: string | null
-          id: string
-          initial_sets: number | null
-          is_active: boolean
-          name: string
-          rest_timer: number | null
-          type: Database["public"]["Enums"]["exercise_type"]
-        }
-        Insert: {
-          checklist_labels?: string[] | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          initial_sets?: number | null
-          is_active?: boolean
-          name: string
-          rest_timer?: number | null
-          type: Database["public"]["Enums"]["exercise_type"]
-        }
-        Update: {
-          checklist_labels?: string[] | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          initial_sets?: number | null
-          is_active?: boolean
-          name?: string
-          rest_timer?: number | null
-          type?: Database["public"]["Enums"]["exercise_type"]
-        }
-        Relationships: []
-      }
-      workout_exercises: {
-        Row: {
-          exercise_id: string
-          position: number
-          workout_id: string
-        }
-        Insert: {
-          exercise_id: string
-          position: number
-          workout_id: string
-        }
-        Update: {
-          exercise_id?: string
-          position?: number
-          workout_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "workout_exercises_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_options"
-            referencedColumns: ["value"]
-          },
-          {
-            foreignKeyName: "workout_exercises_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_exercises_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises_table"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_exercises_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "todays_workouts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_exercises_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "workouts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_exercises_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "workouts_table"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      workout_result_exercise_results: {
-        Row: {
-          exercise_result_id: string
-          position: number
-          workout_result_id: string
-        }
-        Insert: {
-          exercise_result_id: string
-          position: number
-          workout_result_id: string
-        }
-        Update: {
-          exercise_result_id?: string
-          position?: number
-          workout_result_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "workout_result_exercise_results_exercise_result_id_fkey"
-            columns: ["exercise_result_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_results"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_result_exercise_results_exercise_result_id_fkey"
-            columns: ["exercise_result_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_results_table"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_result_exercise_results_workout_result_id_fkey"
-            columns: ["workout_result_id"]
-            isOneToOne: false
-            referencedRelation: "workout_results"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_result_exercise_results_workout_result_id_fkey"
-            columns: ["workout_result_id"]
-            isOneToOne: false
-            referencedRelation: "workout_results_table"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       workout_results: {
         Row: {
           created_at: string
+          exercise_results: Json | null
           finished_at: string | null
           id: string
           is_active: boolean
@@ -292,6 +46,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          exercise_results?: Json | null
           finished_at?: string | null
           id?: string
           is_active?: boolean
@@ -300,6 +55,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          exercise_results?: Json | null
           finished_at?: string | null
           id?: string
           is_active?: boolean
@@ -321,19 +77,13 @@ export type Database = {
             referencedRelation: "workouts"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "workout_results_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "workouts_table"
-            referencedColumns: ["id"]
-          },
         ]
       }
       workouts: {
         Row: {
           created_at: string
           description: string | null
+          exercises: Json | null
           id: string
           is_active: boolean
           name: string
@@ -344,6 +94,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          exercises?: Json | null
           id?: string
           is_active?: boolean
           name: string
@@ -354,6 +105,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          exercises?: Json | null
           id?: string
           is_active?: boolean
           name?: string
@@ -365,104 +117,8 @@ export type Database = {
       }
     }
     Views: {
-      exercise_options: {
+      table_record_counts: {
         Row: {
-          disable: boolean | null
-          label: string | null
-          value: string | null
-        }
-        Insert: {
-          disable?: never
-          label?: never
-          value?: string | null
-        }
-        Update: {
-          disable?: never
-          label?: never
-          value?: string | null
-        }
-        Relationships: []
-      }
-      exercise_results_table: {
-        Row: {
-          created_at: string | null
-          exercise_id: string | null
-          exercise_name: string | null
-          exercise_type: Database["public"]["Enums"]["exercise_type"] | null
-          id: string | null
-          is_active: boolean | null
-          note: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercise_options"
-            referencedColumns: ["value"]
-          },
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "exercise_results_exercise_id_fkey"
-            columns: ["exercise_id"]
-            isOneToOne: false
-            referencedRelation: "exercises_table"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      exercises_table: {
-        Row: {
-          checklist_labels: string[] | null
-          created_at: string | null
-          description: string | null
-          exercise_result_count: number | null
-          id: string | null
-          initial_sets: number | null
-          is_active: boolean | null
-          name: string | null
-          rest_timer: number | null
-          type: Database["public"]["Enums"]["exercise_type"] | null
-          workout_count: number | null
-        }
-        Insert: {
-          checklist_labels?: string[] | null
-          created_at?: string | null
-          description?: string | null
-          exercise_result_count?: never
-          id?: string | null
-          initial_sets?: number | null
-          is_active?: boolean | null
-          name?: string | null
-          rest_timer?: number | null
-          type?: Database["public"]["Enums"]["exercise_type"] | null
-          workout_count?: never
-        }
-        Update: {
-          checklist_labels?: string[] | null
-          created_at?: string | null
-          description?: string | null
-          exercise_result_count?: never
-          id?: string | null
-          initial_sets?: number | null
-          is_active?: boolean | null
-          name?: string | null
-          rest_timer?: number | null
-          type?: Database["public"]["Enums"]["exercise_type"] | null
-          workout_count?: never
-        }
-        Relationships: []
-      }
-      table_counts: {
-        Row: {
-          exercise_results: number | null
-          exercises: number | null
           workout_results: number | null
           workouts: number | null
         }
@@ -479,156 +135,34 @@ export type Database = {
         }
         Relationships: []
       }
-      workout_results_table: {
-        Row: {
-          created_at: string | null
-          duration_seconds: number | null
-          finished_at: string | null
-          id: string | null
-          is_active: boolean | null
-          note: string | null
-          workout_id: string | null
-          workout_name: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "workout_results_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "todays_workouts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_results_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "workouts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_results_workout_id_fkey"
-            columns: ["workout_id"]
-            isOneToOne: false
-            referencedRelation: "workouts_table"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      workouts_table: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          exercise_count: number | null
-          id: string | null
-          is_active: boolean | null
-          name: string | null
-          schedule:
-            | Database["public"]["Enums"]["workout_schedule_type"][]
-            | null
-          workout_result_count: number | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          exercise_count?: never
-          id?: string | null
-          is_active?: boolean | null
-          name?: string | null
-          schedule?:
-            | Database["public"]["Enums"]["workout_schedule_type"][]
-            | null
-          workout_result_count?: never
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          exercise_count?: never
-          id?: string | null
-          is_active?: boolean | null
-          name?: string | null
-          schedule?:
-            | Database["public"]["Enums"]["workout_schedule_type"][]
-            | null
-          workout_result_count?: never
-        }
-        Relationships: []
-      }
     }
     Functions: {
-      create_exercise: {
-        Args: {
-          e_checklist_labels: string[]
-          e_created_at: string
-          e_description: string
-          e_initial_sets: number
-          e_name: string
-          e_rest_timer: number
-          e_type: Database["public"]["Enums"]["exercise_type"]
-        }
+      app_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      cancel_active_workout: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      create_workout: {
-        Args: {
-          w_created_at?: string
-          w_description?: string
-          w_exercise_ids?: string[]
-          w_name: string
-          w_schedule?: Database["public"]["Enums"]["workout_schedule_type"][]
-        }
-        Returns: undefined
-      }
-      edit_exercise: {
-        Args: {
-          e_description: string
-          e_id: string
-          e_initial_sets: number
-          e_name: string
-          e_rest_timer: number
-        }
-        Returns: undefined
-      }
-      edit_workout: {
-        Args: {
-          w_created_at?: string
-          w_description?: string
-          w_exercise_ids?: string[]
-          w_id: string
-          w_name: string
-          w_schedule?: Database["public"]["Enums"]["workout_schedule_type"][]
-        }
-        Returns: undefined
-      }
-      finish_workout: {
-        Args: { w_id: string }
+      finish_active_workout: {
+        Args: { w_id: string; wr_exercise_results: Json; wr_note: string }
         Returns: undefined
       }
       get_active_workout: {
-        Args: { w_id: string }
+        Args: Record<PropertyKey, never>
         Returns: Json
       }
-      inspect_exercise: {
-        Args: { e_id: string }
-        Returns: Json
-      }
-      inspect_workout: {
-        Args: { w_id: string }
-        Returns: Json
-      }
-      replace_workout: {
+      replace_active_workout: {
         Args: { w_id: string }
         Returns: undefined
       }
-      start_workout: {
+      start_active_workout: {
         Args: { w_id: string }
         Returns: undefined
       }
     }
     Enums: {
-      exercise_type:
-        | "Checklist"
-        | "Cardio"
-        | "Weightlifting"
-        | "Sided Weightlifting"
       workout_schedule_type:
         | "Daily"
         | "Weekly"
@@ -769,12 +303,6 @@ export const Constants = {
   },
   public: {
     Enums: {
-      exercise_type: [
-        "Checklist",
-        "Cardio",
-        "Weightlifting",
-        "Sided Weightlifting",
-      ],
       workout_schedule_type: [
         "Daily",
         "Weekly",

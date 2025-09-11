@@ -3,6 +3,7 @@ import { DialogConfirm } from '#components'
 import {
   cardMenuIcon,
   chartsIcon,
+  completedIcon,
   deleteIcon,
   editIcon,
   inspectIcon,
@@ -12,7 +13,7 @@ import {
 } from '#shared/constants'
 import type { TodaysWorkout } from '#shared/types/fitness-schemas'
 
-defineProps<{
+const props = defineProps<{
   todaysWorkout: TodaysWorkout
   hasActiveInList: boolean
 }>()
@@ -21,17 +22,14 @@ const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 const router = useRouter()
-const { openInspectWorkout, openEditWorkout, openDeleteWorkout } = useFitnessDialogs()
-
-function onCharts() {
-  console.log('Charts clicked')
-}
+const { openChartWorkout, openInspectWorkout, openEditWorkout, openDeleteWorkout } =
+  useFitnessDialogs()
 
 async function onStart(id: IdType) {
   try {
     $q.loading.show()
 
-    const { error } = await supabase.rpc('start_workout', { w_id: id })
+    const { error } = await supabase.rpc('start_active_workout', { w_id: id })
     if (error) throw error
 
     router.push(`/fitness/${id}`)
@@ -57,7 +55,7 @@ async function onReplace(id: IdType) {
       try {
         $q.loading.show()
 
-        const { error } = await supabase.rpc('replace_workout', { w_id: id })
+        const { error } = await supabase.rpc('replace_active_workout', { w_id: id })
         if (error) throw error
 
         router.push(`/fitness/${id}`)
@@ -76,6 +74,45 @@ async function onResume(id: IdType) {
   // Will get all the needed data on the workout page
   router.push(`/fitness/${id}`)
 }
+
+async function onCancel() {
+  try {
+    $q.dialog({
+      component: DialogConfirm,
+      componentProps: {
+        title: 'Cancel Active Workout',
+        message: `Are you sure you want to cancel the active workout? This will delete any unsaved progress.`,
+        color: 'negative',
+        icon: deleteIcon,
+        requiresUnlock: false,
+      },
+    }).onOk(async () => {
+      try {
+        $q.loading.show()
+
+        const { error } = await supabase.rpc('cancel_active_workout')
+        if (error) throw error
+      } catch (error) {
+        logger.error('Error canceling active workout', error as Error)
+      } finally {
+        $q.loading.hide()
+      }
+    })
+  } catch (error) {
+    logger.error('Error opening cancel active workout dialog', error as Error)
+  }
+}
+
+const workoutDuration = computed(() => {
+  if (props.todaysWorkout.last_duration_seconds) {
+    return timeFromDurationSeconds(props.todaysWorkout.last_duration_seconds)
+  } else {
+    const lastCreated = new Date(props.todaysWorkout.last_created_at ?? 0)
+    const now = new Date()
+    const seconds = Math.floor((now.getTime() - lastCreated.getTime()) / 1000)
+    return timeFromDurationSeconds(seconds) + ' (active)'
+  }
+})
 </script>
 
 <template>
@@ -93,6 +130,10 @@ async function onResume(id: IdType) {
               <div class="q-mt-xs">
                 {{ localDisplayDate(todaysWorkout.last_created_at) }}
               </div>
+
+              <QItemLabel caption class="q-mt-xs">
+                {{ workoutDuration }}
+              </QItemLabel>
             </QItemLabel>
 
             <QItemLabel v-else caption> No previous records </QItemLabel>
@@ -107,12 +148,9 @@ async function onResume(id: IdType) {
                 transition-hide="flip-left"
               >
                 <QList>
-                  <QItem clickable :disable="!todaysWorkout.last_created_at" @click="onCharts">
+                  <QItem clickable @click="openChartWorkout(todaysWorkout.id!)">
                     <QItemSection avatar>
-                      <QIcon
-                        :color="!todaysWorkout.last_created_at ? 'grey' : 'cyan'"
-                        :name="chartsIcon"
-                      />
+                      <QIcon color="cyan" :name="chartsIcon" />
                     </QItemSection>
 
                     <QItemSection>Charts</QItemSection>
@@ -169,14 +207,34 @@ async function onResume(id: IdType) {
 
         <QItem>
           <QItemSection>
-            <QBtn
-              v-if="!!todaysWorkout?.is_active"
-              class="full-width q-mb-sm"
-              :icon="refreshIcon"
-              label="Resume Workout"
-              color="positive"
-              @click="onResume(todaysWorkout.id!)"
-            />
+            <div v-if="todaysWorkout.is_completed">
+              <QBtn
+                :icon="completedIcon"
+                disable
+                outline
+                color="positive"
+                class="full-width q-mb-sm"
+                label="Completed"
+              />
+            </div>
+
+            <div v-else-if="!!todaysWorkout?.is_active">
+              <QBtn
+                :icon="deleteIcon"
+                color="negative"
+                class="full-width q-mb-sm"
+                label="Cancel Workout"
+                @click="onCancel"
+              />
+              <QBtn
+                class="full-width q-mb-sm"
+                :icon="refreshIcon"
+                label="Resume Workout"
+                color="positive"
+                @click="onResume(todaysWorkout.id!)"
+              />
+            </div>
+
             <div v-else>
               <QBtn
                 v-if="hasActiveInList"

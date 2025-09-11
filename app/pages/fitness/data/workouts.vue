@@ -39,8 +39,7 @@ const tableColumns = [
   tableColumn('description', 'Description', 'TEXT'),
   tableColumn('created_at', 'Created Date', 'ISO-DATE'),
   tableColumn('schedule', 'Schedule', 'LIST-PRINT'),
-  tableColumn('exercise_count', 'Exercises Used', 'NUMBER'),
-  tableColumn('workout_result_count', 'Total Results', 'NUMBER'),
+  tableColumn('exercises', 'Exercises', 'OBJECT'),
   tableColumn('is_active', 'Active Workout', 'BOOL'),
 ]
 const columnOptions: Ref<QTableColumn[]> = ref(columnOptionsFromTableColumns(tableColumns))
@@ -48,11 +47,31 @@ const visibleColumns: Ref<string[]> = ref(visibleColumnsFromTableColumns(tableCo
 
 const records: Ref<any[]> = ref([])
 
+const channel = supabase
+  .channel('public.workouts')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'workouts' }, async () => {
+    await getWorkouts()
+  })
+  .subscribe()
+
 onMounted(async () => {
+  await getWorkouts()
+})
+
+onUnmounted(() => {
+  if (channel) {
+    supabase.removeChannel(channel)
+  }
+})
+
+async function getWorkouts() {
   try {
     $q.loading.show()
 
-    const { data, error } = await supabase.from('workouts_table').select()
+    const { data, error } = await supabase
+      .from('workouts')
+      .select()
+      .order('created_at', { ascending: false })
     if (error) throw error
 
     records.value = data || []
@@ -61,7 +80,7 @@ onMounted(async () => {
   } finally {
     $q.loading.hide()
   }
-})
+}
 </script>
 
 <template>
@@ -96,12 +115,11 @@ onMounted(async () => {
         </QTd>
         <QTd auto-width>
           <QBtn
-            :disable="!props.row.workout_result_count"
             flat
             round
             dense
             class="q-ml-xs"
-            :color="!props.row.workout_result_count ? 'grey' : 'cyan'"
+            color="cyan"
             :icon="chartsIcon"
             @click="openChartWorkout(props.row.id)"
           />
