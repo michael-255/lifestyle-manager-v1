@@ -22,11 +22,8 @@ const $q = useQuasar()
 const logger = useLogger()
 const supabase = useSupabaseClient<Database>()
 const router = useRouter()
-const { openInspectWorkout, openEditWorkout, openDeleteWorkout } = useFitnessDialogs()
-
-function onCharts() {
-  console.log('Charts clicked')
-}
+const { openChartWorkout, openInspectWorkout, openEditWorkout, openDeleteWorkout } =
+  useFitnessDialogs()
 
 async function onStart(id: IdType) {
   try {
@@ -151,12 +148,9 @@ const workoutDuration = computed(() => {
                 transition-hide="flip-left"
               >
                 <QList>
-                  <QItem clickable :disable="!todaysWorkout.last_created_at" @click="onCharts">
+                  <QItem clickable @click="openChartWorkout(todaysWorkout.id!)">
                     <QItemSection avatar>
-                      <QIcon
-                        :color="!todaysWorkout.last_created_at ? 'grey' : 'cyan'"
-                        :name="chartsIcon"
-                      />
+                      <QIcon color="cyan" :name="chartsIcon" />
                     </QItemSection>
 
                     <QItemSection>Charts</QItemSection>

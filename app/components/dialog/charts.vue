@@ -4,8 +4,8 @@ import { useDialogPluginComponent } from 'quasar'
 
 defineProps<{
   label: string
-  record: Record<string, any>
-  chartComponent: { component: string; props: Record<string, any> }
+  id: IdType
+  isLoading: boolean
 }>()
 
 defineEmits([...useDialogPluginComponent.emits])
@@ -30,8 +30,8 @@ const { dialogRef, onDialogHide, onDialogCancel } = useDialogPluginComponent()
       <QCardSection>
         <div class="row justify-center">
           <div class="page-width-limit">
-            <QList padding>
-              <component :is="chartComponent.component" v-bind="chartComponent.props" />
+            <QList v-if="!isLoading" padding>
+              <slot />
             </QList>
             <div class="q-mt-xl" />
           </div>

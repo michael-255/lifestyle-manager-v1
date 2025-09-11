@@ -23,7 +23,6 @@ The following options should be on the data tables:
 
 ```sh
 npm i @tanstack/vue-query
-npm i @observablehq/plot
 ```
 
 ## Budget TODO

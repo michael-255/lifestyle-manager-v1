@@ -115,12 +115,11 @@ async function getWorkouts() {
         </QTd>
         <QTd auto-width>
           <QBtn
-            :disable="!props.row.workout_result_count"
             flat
             round
             dense
             class="q-ml-xs"
-            :color="!props.row.workout_result_count ? 'grey' : 'cyan'"
+            color="cyan"
             :icon="chartsIcon"
             @click="openChartWorkout(props.row.id)"
           />

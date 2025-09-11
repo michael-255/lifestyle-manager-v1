@@ -1,6 +1,6 @@
 import {
-  DialogCharts,
   DialogConfirm,
+  DialogFitnessChartWorkout,
   DialogFitnessCreateWorkout,
   DialogFitnessEditWorkout,
   DialogFitnessEditWorkoutResult,
@@ -21,7 +21,7 @@ export default function useFitnessDialogs() {
   async function openChartWorkout(id: IdType) {
     try {
       $q.dialog({
-        component: DialogCharts,
+        component: DialogFitnessChartWorkout,
         componentProps: { id },
       })
     } catch (error) {
