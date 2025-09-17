@@ -10,7 +10,17 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Journaling App
 
-- WIP
+- Add link to `Journal` on dashboard
+- `writing` - Home route, defaults to a writing inputs
+  - Store `type`, `subject`, and `content` in Dexie (recallable, offline first)
+  - Push to Postgres on save, but only clear Dexie after save is confirmed
+  - Have a random writing prompt that can be rotated through
+  - Have a badge that lets you know how many writings you've done today/week/month/year/all time
+- `writing/new` - create a new writing
+- `writing/read/:id` - read a specific writing
+- `writing/edit/:id` - edit a specific writing
+- `writings/search` - search writings
+- Button to export writings to JSON
 
 ## Budget TODO
 
