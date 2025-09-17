@@ -4,7 +4,13 @@ Lifestyle Manager is a project for managing your daily activities, health, and w
 
 ## Fitness App
 
-- TBD
+- RPC for notifications of workouts that need to be done
+- Fix for workouts that are done `Weekly`
+- Need to test the app now
+
+## Journaling App
+
+- WIP
 
 ## Budget TODO
 
