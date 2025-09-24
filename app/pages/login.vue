@@ -14,16 +14,16 @@ const logger = useLogger()
 const supabase = useSupabaseClient()
 const settingsStore = useSettingsStore()
 
-const email = ref(settingsStore.userEmail || '')
+const email = ref('')
 const password = ref('')
 
-onMounted(() => {
-  // Pre-fill email if available in settings
-  // This allows the user to quickly log in if they have previously logged in
-  if (settingsStore.userEmail) {
-    email.value = settingsStore.userEmail
-  }
-})
+watch(
+  () => settingsStore.userEmail,
+  (newEmail) => {
+    if (newEmail) email.value = newEmail
+  },
+  { immediate: true },
+)
 
 async function login() {
   try {
